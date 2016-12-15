@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace MagickyBoardGames.Models.ManageViewModels
-{
-    public class VerifyPhoneNumberViewModel
-    {
+namespace MagickyBoardGames.Models.ManageViewModels {
+    public class VerifyPhoneNumberViewModel {
         [Required]
         public string Code { get; set; }
 
