@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace MagickyBoardGames.Models.AccountViewModels
-{
-    public class SendCodeViewModel
-    {
+namespace MagickyBoardGames.Models.AccountViewModels {
+    public class SendCodeViewModel {
         public string SelectedProvider { get; set; }
 
         public ICollection<SelectListItem> Providers { get; set; }
