@@ -8,6 +8,6 @@ namespace MagickyBoardGames.Controllers {
 
         public IActionResult Error() {
             return View();
-        }
+        }        
     }
 }
