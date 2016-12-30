@@ -20,7 +20,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Index_Result() {
-            var viewModels = new List<CategoryViewModel>() {
+            var viewModels = new List<CategoryViewModel> {
                 new CategoryViewModel(),
                 new CategoryViewModel()
             };
@@ -76,7 +76,7 @@ namespace MagickyBoardGames.Tests.Controllers {
         }
 
         [Fact]
-        public void Display_Create_Result() {            
+        public void Display_Create_Result() {
             var controller = BuildCategoryController();
 
             var result = controller.Create();
@@ -249,7 +249,7 @@ namespace MagickyBoardGames.Tests.Controllers {
         }
 
         [Fact]
-        public async void Display_DeleteConfirmed_Result() {         
+        public async void Display_DeleteConfirmed_Result() {
             var categoryContext = new MockCategoryContext();
             var controller = BuildCategoryController(categoryContext);
 
