@@ -137,6 +137,7 @@ DocProject/Help/html
 publish/
 
 # Publish Web Output
+[Pp]ublishProfiles/
 *.[Pp]ublish.xml
 *.azurePubxml
 
