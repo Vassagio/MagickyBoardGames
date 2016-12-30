@@ -1,4 +1,4 @@
-@model MagickyBoardGames.Models.CategoryViewModel
+@model MagickyBoardGames.ViewModels.CategoryViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -8,7 +8,7 @@
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>CategoryViewModel</h4>
+        <h4>Category</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
