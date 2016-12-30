@@ -12,21 +12,55 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "MagickyBoardGames", "src\MagickyBoardGames\MagickyBoardGames.xproj", "{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "MagickyBoardGames.Tests", "src\MagickyBoardGames.Tests\MagickyBoardGames.Tests.xproj", "{7A6986EB-3933-4332-B012-53C81C3EB4B3}"
+EndProject
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "dotnet", "..\..\..\Program Files\dotnet\dotnet.exe", "{14CFF171-BB11-4418-AE61-AB680737D71B}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = C:\Program Files\dotnet\dotnet.exe
+		RemoteMachine = LHOFITS0L4K
+		StartingDirectory = C:\Program Files\dotnet
+		Environment = Default
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		UseLegacyDebugEngines = No
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}.Debug|x64.Build.0 = Debug|Any CPU
 		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}.Release|x64.ActiveCfg = Release|Any CPU
+		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97}.Release|x64.Build.0 = Release|Any CPU
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3}.Debug|x64.Build.0 = Debug|Any CPU
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3}.Release|x64.ActiveCfg = Release|Any CPU
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3}.Release|x64.Build.0 = Release|Any CPU
+		{14CFF171-BB11-4418-AE61-AB680737D71B}.Debug|Any CPU.ActiveCfg = Release|x64
+		{14CFF171-BB11-4418-AE61-AB680737D71B}.Debug|x64.ActiveCfg = Release|x64
+		{14CFF171-BB11-4418-AE61-AB680737D71B}.Release|Any CPU.ActiveCfg = Release|x64
+		{14CFF171-BB11-4418-AE61-AB680737D71B}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{307EE32D-9E5E-4A72-A0AF-6744B7B81C97} = {C69A401B-CD97-416A-9B9F-5E8DBB844727}
+		{7A6986EB-3933-4332-B012-53C81C3EB4B3} = {C69A401B-CD97-416A-9B9F-5E8DBB844727}
 	EndGlobalSection
 EndGlobal

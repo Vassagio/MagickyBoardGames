@@ -1,4 +1,5 @@
-﻿using MagickyBoardGames.Data;
+﻿using MagickyBoardGames.Contexts;
+using MagickyBoardGames.Data;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.Services;
 using Microsoft.AspNetCore.Builder;
@@ -35,6 +36,7 @@ namespace MagickyBoardGames {
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<ICategoryContext, CategoryContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

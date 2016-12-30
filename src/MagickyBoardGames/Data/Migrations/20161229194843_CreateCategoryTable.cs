@@ -9,8 +9,12 @@ namespace MagickyBoardGames.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropIndex(
+                name: "IX_AspNetUserRoles_UserId",
+                table: "AspNetUserRoles");
+
             migrationBuilder.CreateTable(
-                name: "CategoryViewModel",
+                name: "Category",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -19,13 +23,13 @@ namespace MagickyBoardGames.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CategoryViewModel", x => x.Id)
+                    table.PrimaryKey("PK_Category", x => x.Id)
                         .Annotation("SqlServer:Clustered", false);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CategoryViewModel_Description",
-                table: "CategoryViewModel",
+                name: "IX_Category_Description",
+                table: "Category",
                 column: "Description",
                 unique: true)
                 .Annotation("SqlServer:Clustered", true);
@@ -34,7 +38,12 @@ namespace MagickyBoardGames.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CategoryViewModel");
+                name: "Category");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_UserId",
+                table: "AspNetUserRoles",
+                column: "UserId");
         }
     }
 }

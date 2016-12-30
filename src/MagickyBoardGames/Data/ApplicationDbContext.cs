@@ -9,11 +9,11 @@ namespace MagickyBoardGames.Data {
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
 
-            builder.Entity<CategoryViewModel>().HasKey(c => c.Id).ForSqlServerIsClustered(false);
-            builder.Entity<CategoryViewModel>().Property(c => c.Id).UseSqlServerIdentityColumn();
-            builder.Entity<CategoryViewModel>().HasIndex(c => c.Description).ForSqlServerIsClustered().IsUnique();
+            builder.Entity<Category>().HasKey(c => c.Id).ForSqlServerIsClustered(false);
+            builder.Entity<Category>().Property(c => c.Id).UseSqlServerIdentityColumn();
+            builder.Entity<Category>().HasIndex(c => c.Description).ForSqlServerIsClustered().IsUnique();
         }
 
-        public DbSet<CategoryViewModel> CategoryViewModel { get; set; }
+        public DbSet<Category> Category { get; set; }
     }
 }
