@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using FluentValidation;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Controllers;
 using MagickyBoardGames.Tests.Mocks;
+using MagickyBoardGames.Validations;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
@@ -91,8 +93,8 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Another Item"
             };
             var categoryContext = new MockCategoryContext();
-            var controller = BuildCategoryController(categoryContext);
-            controller.ModelState.AddModelError("Error", "This is an error.");
+            var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnInvalid();
+            var controller = BuildCategoryController(categoryContext, validator);
 
             var result = await controller.Create(viewModel);
 
@@ -101,6 +103,7 @@ namespace MagickyBoardGames.Tests.Controllers {
             model.Id.Should().Be(9);
             model.Description.Should().Be("Another Item");
             categoryContext.VerifyAddNotCalled();
+            validator.VerifyValidateCalled(viewModel);
         }
 
         [Fact]
@@ -110,13 +113,15 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Another Item"
             };
             var categoryContext = new MockCategoryContext();
-            var controller = BuildCategoryController(categoryContext);
+            var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnValid();
+            var controller = BuildCategoryController(categoryContext, validator);
 
             var result = await controller.Create(viewModel);
 
             var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             var model = viewResult.ActionName.Should().Be("Index");
             categoryContext.VerifyAddCalled(viewModel);
+            validator.VerifyValidateCalled(viewModel);
         }
 
         [Fact]
@@ -220,8 +225,8 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Description"
             };
             var categoryContext = new MockCategoryContext();
-            var controller = BuildCategoryController(categoryContext);
-            controller.ModelState.AddModelError("Error", "This is an error");
+            var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnInvalid();
+            var controller = BuildCategoryController(categoryContext, validator);
 
             var result = await controller.Edit(22, viewModel);
 
@@ -230,6 +235,7 @@ namespace MagickyBoardGames.Tests.Controllers {
             model.Id.Should().Be(22);
             model.Description.Should().Be("Description");
             categoryContext.VerifyUpdateNotCalled();
+            validator.VerifyValidateCalled(viewModel);
         }
 
         [Fact]
@@ -239,13 +245,15 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Description"
             };
             var categoryContext = new MockCategoryContext();
-            var controller = BuildCategoryController(categoryContext);
+            var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnValid();
+            var controller = BuildCategoryController(categoryContext, validator);
 
             var result = await controller.Edit(22, viewModel);
 
             var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             viewResult.ActionName.Should().Be("Index");
             categoryContext.VerifyUpdateCalled(viewModel);
+            validator.VerifyValidateCalled(viewModel);
         }
 
         [Fact]
@@ -260,9 +268,10 @@ namespace MagickyBoardGames.Tests.Controllers {
             categoryContext.VerifyDeleteCalled(11);
         }
 
-        private static CategoryController BuildCategoryController(ICategoryContext categoryContext = null) {
+        private static CategoryController BuildCategoryController(ICategoryContext categoryContext = null, IValidator<CategoryViewModel> validator = null) {
             categoryContext = categoryContext ?? new MockCategoryContext();
-            return new CategoryController(categoryContext);
+            validator = validator ?? new MockValidator<CategoryViewModel>();
+            return new CategoryController(categoryContext, validator);
         }
     }
 }
