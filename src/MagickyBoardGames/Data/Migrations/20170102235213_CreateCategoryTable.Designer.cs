@@ -8,7 +8,7 @@ using MagickyBoardGames.Data;
 namespace MagickyBoardGames.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161229194843_CreateCategoryTable")]
+    [Migration("20170102235213_CreateCategoryTable")]
     partial class CreateCategoryTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,7 +73,9 @@ namespace MagickyBoardGames.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 30);
 
                     b.HasKey("Id")
                         .HasAnnotation("SqlServer:Clustered", false);

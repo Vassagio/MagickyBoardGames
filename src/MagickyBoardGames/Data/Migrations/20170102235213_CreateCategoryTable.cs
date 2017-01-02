@@ -19,7 +19,7 @@ namespace MagickyBoardGames.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Description = table.Column<string>(nullable: true)
+                    Description = table.Column<string>(maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {

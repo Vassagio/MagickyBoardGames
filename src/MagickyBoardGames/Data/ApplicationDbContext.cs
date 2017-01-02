@@ -12,6 +12,7 @@ namespace MagickyBoardGames.Data {
             builder.Entity<Category>().HasKey(c => c.Id).ForSqlServerIsClustered(false);
             builder.Entity<Category>().Property(c => c.Id).UseSqlServerIdentityColumn();
             builder.Entity<Category>().HasIndex(c => c.Description).ForSqlServerIsClustered().IsUnique();
+            builder.Entity<Category>().Property(c => c.Description).IsRequired().HasMaxLength(30);
         }
 
         public DbSet<Category> Category { get; set; }
