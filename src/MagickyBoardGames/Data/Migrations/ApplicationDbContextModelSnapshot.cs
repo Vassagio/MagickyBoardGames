@@ -72,7 +72,9 @@ namespace MagickyBoardGames.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 30);
 
                     b.HasKey("Id")
                         .HasAnnotation("SqlServer:Clustered", false);

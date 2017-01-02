@@ -60,7 +60,7 @@ namespace MagickyBoardGames.Controllers {
                 if (result.IsLockedOut) {
                     _logger.LogWarning(2, "User account locked out.");
                     return View("Lockout");
-                }
+                }       
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(model);
             }
