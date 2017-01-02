@@ -1,7 +1,11 @@
-﻿using MagickyBoardGames.Contexts;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Data;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.Services;
+using MagickyBoardGames.Validations;
+using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -31,12 +35,13 @@ namespace MagickyBoardGames {
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
-            services.AddMvc();
+            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddTransient<ICategoryContext, CategoryContext>();
+            services.AddTransient<IValidator<CategoryViewModel>, CategoryViewModelValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

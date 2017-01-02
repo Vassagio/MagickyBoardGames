@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -7,9 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace MagickyBoardGames.Controllers {
     public class CategoryController : Controller {
         private readonly ICategoryContext _categoryContext;
+        private readonly IValidator<CategoryViewModel> _validator;
 
-        public CategoryController(ICategoryContext categoryContext) {
+        public CategoryController(ICategoryContext categoryContext, IValidator<CategoryViewModel> validator) {
             _categoryContext = categoryContext;
+            _validator = validator;
         }
 
         public async Task<IActionResult> Index() {
@@ -36,7 +40,7 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Description")] CategoryViewModel categoryViewModel) {
-            if (!ModelState.IsValid)
+            if (!IsValid(categoryViewModel))
                 return View(categoryViewModel);
 
             await _categoryContext.Add(categoryViewModel);
@@ -61,7 +65,7 @@ namespace MagickyBoardGames.Controllers {
             if (id != categoryViewModel.Id)
                 return NotFound();
 
-            if (!ModelState.IsValid)
+            if (!IsValid(categoryViewModel))
                 return View(categoryViewModel);
 
             await _categoryContext.Update(categoryViewModel);
@@ -87,6 +91,12 @@ namespace MagickyBoardGames.Controllers {
         public async Task<IActionResult> DeleteConfirmed(int id) {
             await _categoryContext.Delete(id);
             return RedirectToAction("Index");
+        }   
+
+        private bool IsValid(CategoryViewModel categoryViewModel) {
+            var results = _validator.Validate(categoryViewModel);
+            results.AddToModelState(ModelState, null);
+            return results.IsValid;
         }
     }
 }
