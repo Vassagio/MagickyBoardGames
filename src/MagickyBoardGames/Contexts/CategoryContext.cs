@@ -21,12 +21,12 @@ namespace MagickyBoardGames.Contexts {
             }).ToListAsync();
         }
 
-        public async Task<int> Add(CategoryViewModel categoryViewModel) {
-            if (string.IsNullOrEmpty(categoryViewModel.Description))
+        public async Task<int> Add(CategoryViewModel viewModel) {
+            if (string.IsNullOrEmpty(viewModel.Description))
                 throw new ArgumentException();
 
             var category = new Category {
-                Description = categoryViewModel.Description
+                Description = viewModel.Description
             };
             await _context.Categories.AddAsync(category);
             return await _context.SaveChangesAsync();
@@ -46,15 +46,15 @@ namespace MagickyBoardGames.Contexts {
             }).SingleOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task Update(CategoryViewModel categoryViewModel) {
-            if (string.IsNullOrEmpty(categoryViewModel.Description))
+        public async Task Update(CategoryViewModel viewModel) {
+            if (string.IsNullOrEmpty(viewModel.Description))
                 throw new ArgumentException();
 
-            var category = await _context.Categories.SingleOrDefaultAsync(c => c.Id == categoryViewModel.Id);
+            var category = await _context.Categories.SingleOrDefaultAsync(c => c.Id == viewModel.Id);
             if (category == null)
                 throw new ArgumentException();
 
-            category.Description = categoryViewModel.Description;
+            category.Description = viewModel.Description;
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
         }

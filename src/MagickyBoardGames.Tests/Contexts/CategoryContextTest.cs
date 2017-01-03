@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MagickyBoardGames.Contexts;
-using MagickyBoardGames.Data;
+using MagickyBoardGames.Models;
 using MagickyBoardGames.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -30,10 +30,11 @@ namespace MagickyBoardGames.Tests.Contexts {
                 Description = "Added Category"
             };
             var context = BuildCategoryContext();
+            await _fixture.Populate();
 
             var id = await context.Add(viewModel);
 
-            var expected = await context.GetBy(id);
+            var expected = await _fixture.Db.Categories.SingleOrDefaultAsync(c => c.Id == id);
             expected.Description.Should().Be(viewModel.Description);
         }
 
@@ -48,16 +49,16 @@ namespace MagickyBoardGames.Tests.Contexts {
 
         [Fact]
         public async void Deletes_A_Record() {
-            var viewModel = new CategoryViewModel {
+            var category = new Category {
+                Id = 1,
                 Description = "Deleted Category"
             };
             var context = BuildCategoryContext();
+            await _fixture.Populate(category);
 
-            var id = await context.Add(viewModel);
-            await context.Delete(id);
+            await context.Delete(1);
 
-            var expected = await context.GetBy(id);
-            expected.Should().BeNull();
+            _fixture.Db.Categories.Any().Should().BeFalse();
         }
 
         [Fact]
@@ -70,32 +71,37 @@ namespace MagickyBoardGames.Tests.Contexts {
 
         [Fact]
         public async void Updates_A_Record() {
-            var viewModel = new CategoryViewModel {
+            var category = new Category {
+                Id = 1,
                 Description = "Original Category"
             };
             var context = BuildCategoryContext();
-
-            var id = await context.Add(viewModel);
-            var updated = await context.GetBy(id);
-            updated.Description = "Updated Category";
+            await _fixture.Populate(category);
+            var updated = new CategoryViewModel {
+                Id = 1,
+                Description = "Updated Category"
+            };
 
             await context.Update(updated);
 
-            var expected = await context.GetBy(id);
+            var expected = _fixture.Db.Categories.SingleOrDefault(g => g.Id == 1);
             expected.Description.Should().Be("Updated Category");
         }
 
         [Fact]
-        public void Throws_Exception_When_Updating_With_Invalid_Record() {
-            var viewModel = new CategoryViewModel {
+        public async void Throws_Exception_When_Updating_With_Invalid_Record() {
+            var category = new Category {
+                Id = 10,
                 Description = "Original Category"
             };
             var context = BuildCategoryContext();
+            await _fixture.Populate(category);
 
             Func<Task> asyncFunction = async () => {
-                var id = await context.Add(viewModel);
-                var updated = await context.GetBy(id);
-                updated.Description = "";
+                var updated = new CategoryViewModel {
+                    Id = 10,
+                    Description = ""
+                };
                 await context.Update(updated);
             };
             asyncFunction.ShouldThrow<ArgumentException>();
@@ -116,23 +122,21 @@ namespace MagickyBoardGames.Tests.Contexts {
         }
 
         [Fact]
-        public async void Get_All_Records() {            
-            var category1 = new CategoryViewModel {
+        public async void Get_All_Records() {
+            var category1 = new Category {
+                Id = 1,
                 Description = "Category 1"
             };
-            var category2 = new CategoryViewModel {
+            var category2 = new Category {
+                Id = 2,
                 Description = "Category 2"
             };
             var context = BuildCategoryContext();
+            await _fixture.Populate(category1, category2);
+
             var categories = await context.GetAll();
-            var originalCount = categories.Count();
 
-            await context.Add(category1);
-            await context.Add(category2);
-
-            categories = await context.GetAll();
-
-            categories.Count().Should().Be(originalCount + 2);
+            categories.Count().Should().Be(2);
         }
 
         private CategoryContext BuildCategoryContext() {

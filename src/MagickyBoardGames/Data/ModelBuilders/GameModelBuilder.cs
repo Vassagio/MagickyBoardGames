@@ -8,7 +8,7 @@ namespace MagickyBoardGames.Data.ModelBuilders {
             builder.Entity<Game>().Property(c => c.Id).UseSqlServerIdentityColumn();
             builder.Entity<Game>().HasIndex(c => c.Name).ForSqlServerIsClustered().IsUnique();
             builder.Entity<Game>().Property(c => c.Name).IsRequired().HasMaxLength(100);
-            builder.Entity<Game>().Property(c => c.Description);
+            builder.Entity<Game>().Property(c => c.Description).IsRequired(false);
             builder.Entity<Game>().Property(c => c.MinPlayers).IsRequired();
             builder.Entity<Game>().Property(c => c.MaxPlayers).IsRequired();
         }

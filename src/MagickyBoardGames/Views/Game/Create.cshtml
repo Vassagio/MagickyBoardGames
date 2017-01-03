@@ -1,0 +1,56 @@
+@model MagickyBoardGames.ViewModels.GameViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Game</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Name" class="col-md-3 control-label"></label>
+            <div class="col-md-9">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="col-md-3 control-label"></label>
+            <div class="col-md-9">
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="MinPlayers" class="col-md-3 control-label"></label>
+            <div class="col-md-1">
+                <input asp-for="MinPlayers" class="form-control" />
+            </div>
+            <span asp-validation-for="MinPlayers" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="MaxPlayers" class="col-md-3 control-label"></label>
+            <div class="col-md-1">
+                <input asp-for="MaxPlayers" class="form-control" />
+            </div>
+            <span asp-validation-for="MaxPlayers" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
