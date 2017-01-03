@@ -8,54 +8,54 @@ using MagickyBoardGames.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagickyBoardGames.Contexts {
-    public class CategoryContext : ICategoryContext {
+    public class CategoryContext : IContext<CategoryViewModel> {
         private readonly ApplicationDbContext _context;
 
         public CategoryContext(ApplicationDbContext context) {
             _context = context;
         }
         public async Task<IEnumerable<CategoryViewModel>> GetAll() {
-            return await _context.Category.Select(category => new CategoryViewModel {
+            return await _context.Categories.Select(category => new CategoryViewModel {
                 Id = category.Id,
                 Description = category.Description
             }).ToListAsync();
         }
 
-        public async Task<int> Add(CategoryViewModel categoryViewModel) {
-            if (string.IsNullOrEmpty(categoryViewModel.Description))
+        public async Task<int> Add(CategoryViewModel viewModel) {
+            if (string.IsNullOrEmpty(viewModel.Description))
                 throw new ArgumentException();
 
             var category = new Category {
-                Description = categoryViewModel.Description
+                Description = viewModel.Description
             };
-            await _context.Category.AddAsync(category);
+            await _context.Categories.AddAsync(category);
             return await _context.SaveChangesAsync();
         }
 
         public async Task Delete(int id) {
-            var category = await _context.Category.SingleOrDefaultAsync(c => c.Id == id);
+            var category = await _context.Categories.SingleOrDefaultAsync(c => c.Id == id);
             if (category != null)
-                _context.Category.Remove(category);
+                _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
         }
 
         public async Task<CategoryViewModel> GetBy(int id) {
-            return await _context.Category.Select(category => new CategoryViewModel {
+            return await _context.Categories.Select(category => new CategoryViewModel {
                 Id = category.Id,
                 Description = category.Description
             }).SingleOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task Update(CategoryViewModel categoryViewModel) {
-            if (string.IsNullOrEmpty(categoryViewModel.Description))
+        public async Task Update(CategoryViewModel viewModel) {
+            if (string.IsNullOrEmpty(viewModel.Description))
                 throw new ArgumentException();
 
-            var category = await _context.Category.SingleOrDefaultAsync(c => c.Id == categoryViewModel.Id);
+            var category = await _context.Categories.SingleOrDefaultAsync(c => c.Id == viewModel.Id);
             if (category == null)
                 throw new ArgumentException();
 
-            category.Description = categoryViewModel.Description;
-            _context.Category.Update(category);
+            category.Description = viewModel.Description;
+            _context.Categories.Update(category);
             await _context.SaveChangesAsync();
         }
     }
