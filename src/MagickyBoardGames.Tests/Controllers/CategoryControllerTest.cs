@@ -26,7 +26,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 new CategoryViewModel(),
                 new CategoryViewModel()
             };
-            var categoryContext = new MockCategoryContext().GetAllStubbedToReturn(viewModels);
+            var categoryContext = new MockContext<CategoryViewModel>().GetAllStubbedToReturn(viewModels);
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Index();
@@ -39,7 +39,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Details_Not_Found_When_Id_Is_Null() {
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Details(null);
@@ -50,7 +50,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Details_Not_Found_When_No_Record_Is_Found() {
-            var categoryContext = new MockCategoryContext().GetByStubbedToReturn(null);
+            var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(null);
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Details(5);
@@ -65,7 +65,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Id = 7,
                 Description = "Found Item"
             };
-            var categoryContext = new MockCategoryContext().GetByStubbedToReturn(foundViewModel);
+            var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(foundViewModel);
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Details(7);
@@ -92,7 +92,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Id = 9,
                 Description = "Another Item"
             };
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnInvalid();
             var controller = BuildCategoryController(categoryContext, validator);
 
@@ -112,7 +112,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Id = 9,
                 Description = "Another Item"
             };
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnValid();
             var controller = BuildCategoryController(categoryContext, validator);
 
@@ -126,7 +126,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Delete_Not_Found_When_Id_Is_Null() {
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Delete(null);
@@ -137,7 +137,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Delete_Not_Found_When_No_Record_Is_Found() {
-            var categoryContext = new MockCategoryContext().GetByStubbedToReturn(null);
+            var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(null);
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Delete(5);
@@ -152,7 +152,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Id = 7,
                 Description = "Found Item"
             };
-            var categoryContext = new MockCategoryContext().GetByStubbedToReturn(foundViewModel);
+            var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(foundViewModel);
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Delete(7);
@@ -166,7 +166,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Edit_Not_Found_When_Id_Is_Null() {
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Edit(null);
@@ -177,7 +177,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Edit_Not_Found_When_No_Record_Is_Found() {
-            var categoryContext = new MockCategoryContext().GetByStubbedToReturn(null);
+            var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(null);
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Edit(5);
@@ -192,7 +192,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Id = 7,
                 Description = "Found Item"
             };
-            var categoryContext = new MockCategoryContext().GetByStubbedToReturn(foundViewModel);
+            var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(foundViewModel);
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Edit(7);
@@ -209,7 +209,7 @@ namespace MagickyBoardGames.Tests.Controllers {
             var viewModel = new CategoryViewModel {
                 Id = 22
             };
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.Edit(11, viewModel);
@@ -224,7 +224,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Id = 22,
                 Description = "Description"
             };
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnInvalid();
             var controller = BuildCategoryController(categoryContext, validator);
 
@@ -244,7 +244,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Id = 22,
                 Description = "Description"
             };
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnValid();
             var controller = BuildCategoryController(categoryContext, validator);
 
@@ -258,7 +258,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_DeleteConfirmed_Result() {
-            var categoryContext = new MockCategoryContext();
+            var categoryContext = new MockContext<CategoryViewModel>();
             var controller = BuildCategoryController(categoryContext);
 
             var result = await controller.DeleteConfirmed(11);
@@ -268,8 +268,8 @@ namespace MagickyBoardGames.Tests.Controllers {
             categoryContext.VerifyDeleteCalled(11);
         }
 
-        private static CategoryController BuildCategoryController(ICategoryContext categoryContext = null, IValidator<CategoryViewModel> validator = null) {
-            categoryContext = categoryContext ?? new MockCategoryContext();
+        private static CategoryController BuildCategoryController(IContext<CategoryViewModel> categoryContext = null, IValidator<CategoryViewModel> validator = null) {
+            categoryContext = categoryContext ?? new MockContext<CategoryViewModel>();
             validator = validator ?? new MockValidator<CategoryViewModel>();
             return new CategoryController(categoryContext, validator);
         }

@@ -21,7 +21,7 @@ namespace MagickyBoardGames.Tests.Contexts {
             var context = BuildCategoryContext();
 
             context.Should().NotBeNull();
-            context.Should().BeAssignableTo<ICategoryContext>();
+            context.Should().BeAssignableTo<IContext<CategoryViewModel>>();
         }
 
         [Fact]

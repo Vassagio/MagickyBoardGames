@@ -6,38 +6,38 @@ using MagickyBoardGames.ViewModels;
 using Moq;
 
 namespace MagickyBoardGames.Tests.Mocks {
-    public class MockCategoryContext : ICategoryContext {
-        private readonly Mock<ICategoryContext> _mock;
+    public class MockContext<T> : IContext<T> where T: IViewModel {
+        private readonly Mock<IContext<T>> _mock;
 
-        public MockCategoryContext() {
-            _mock = new Mock<ICategoryContext>();
+        public MockContext() {
+            _mock = new Mock<IContext<T>>();
         }
 
-        public Task<IEnumerable<CategoryViewModel>> GetAll() {
+        public Task<IEnumerable<T>> GetAll() {
             return _mock.Object.GetAll();
         }
 
-        public Task<CategoryViewModel> GetBy(int id) {
+        public Task<T> GetBy(int id) {
             return _mock.Object.GetBy(id);
         }
 
-        public Task<int> Add(CategoryViewModel categoryViewModel) {
-            return _mock.Object.Add(categoryViewModel);
+        public Task<int> Add(T viewModel) {
+            return _mock.Object.Add(viewModel);
         }
 
         public Task Delete(int id) {
             return _mock.Object.Delete(id);
         }
 
-        public Task Update(CategoryViewModel categoryViewModel) {
-            return _mock.Object.Update(categoryViewModel);
+        public Task Update(T viewModel) {
+            return _mock.Object.Update(viewModel);
         }
-        public MockCategoryContext GetAllStubbedToReturn(IEnumerable<CategoryViewModel> categoryViewModels) {
-            _mock.Setup(m => m.GetAll()).Returns(Task.FromResult(categoryViewModels));
+        public MockContext<T> GetAllStubbedToReturn(IEnumerable<T> viewModels) {
+            _mock.Setup(m => m.GetAll()).Returns(Task.FromResult(viewModels));
             return this;
         }
-        public MockCategoryContext GetByStubbedToReturn(CategoryViewModel categoryViewModel) {
-            _mock.Setup(m => m.GetBy(It.IsAny<int>())).Returns(Task.FromResult(categoryViewModel));
+        public MockContext<T> GetByStubbedToReturn(T viewModel) {
+            _mock.Setup(m => m.GetBy(It.IsAny<int>())).Returns(Task.FromResult(viewModel));
             return this;
         }
 
@@ -57,20 +57,20 @@ namespace MagickyBoardGames.Tests.Mocks {
             _mock.Verify(m => m.Delete(id), Times.Exactly(times));
         }
 
-        public void VerifyAddCalled(CategoryViewModel viewModel, int times = 1) {
+        public void VerifyAddCalled(T viewModel, int times = 1) {
             _mock.Verify(m => m.Add(viewModel), Times.Exactly(times));
         }
 
         public void VerifyAddNotCalled() {
-            _mock.Verify(m => m.Add(It.IsAny<CategoryViewModel>()), Times.Never);
+            _mock.Verify(m => m.Add(It.IsAny<T>()), Times.Never);
         }
 
-        public void VerifyUpdateCalled(CategoryViewModel viewModel, int times = 1) {
+        public void VerifyUpdateCalled(T viewModel, int times = 1) {
             _mock.Verify(m => m.Update(viewModel), Times.Exactly(times));
         }
 
         public void VerifyUpdateNotCalled() {
-            _mock.Verify(m => m.Update(It.IsAny<CategoryViewModel>()), Times.Never);
+            _mock.Verify(m => m.Update(It.IsAny<T>()), Times.Never);
         }
     }
 }

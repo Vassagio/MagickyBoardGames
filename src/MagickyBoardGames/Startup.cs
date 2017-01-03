@@ -40,7 +40,7 @@ namespace MagickyBoardGames {
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
-            services.AddTransient<ICategoryContext, CategoryContext>();
+            services.AddTransient<IContext<CategoryViewModel>, CategoryContext>();
             services.AddTransient<IValidator<CategoryViewModel>, CategoryViewModelValidator>();
         }
 

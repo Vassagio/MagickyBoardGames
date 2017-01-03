@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MagickyBoardGames.Controllers {
     public class CategoryController : Controller {
-        private readonly ICategoryContext _categoryContext;
+        private readonly IContext<CategoryViewModel> _categoryContext;
         private readonly IValidator<CategoryViewModel> _validator;
 
-        public CategoryController(ICategoryContext categoryContext, IValidator<CategoryViewModel> validator) {
+        public CategoryController(IContext<CategoryViewModel> categoryContext, IValidator<CategoryViewModel> validator) {
             _categoryContext = categoryContext;
             _validator = validator;
         }

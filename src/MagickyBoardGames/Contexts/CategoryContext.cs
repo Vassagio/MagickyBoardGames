@@ -8,7 +8,7 @@ using MagickyBoardGames.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagickyBoardGames.Contexts {
-    public class CategoryContext : ICategoryContext {
+    public class CategoryContext : IContext<CategoryViewModel> {
         private readonly ApplicationDbContext _context;
 
         public CategoryContext(ApplicationDbContext context) {
