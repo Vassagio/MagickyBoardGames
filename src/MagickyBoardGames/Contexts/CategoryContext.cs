@@ -15,7 +15,7 @@ namespace MagickyBoardGames.Contexts {
             _context = context;
         }
         public async Task<IEnumerable<CategoryViewModel>> GetAll() {
-            return await _context.Category.Select(category => new CategoryViewModel {
+            return await _context.Categories.Select(category => new CategoryViewModel {
                 Id = category.Id,
                 Description = category.Description
             }).ToListAsync();
@@ -28,19 +28,19 @@ namespace MagickyBoardGames.Contexts {
             var category = new Category {
                 Description = categoryViewModel.Description
             };
-            await _context.Category.AddAsync(category);
+            await _context.Categories.AddAsync(category);
             return await _context.SaveChangesAsync();
         }
 
         public async Task Delete(int id) {
-            var category = await _context.Category.SingleOrDefaultAsync(c => c.Id == id);
+            var category = await _context.Categories.SingleOrDefaultAsync(c => c.Id == id);
             if (category != null)
-                _context.Category.Remove(category);
+                _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
         }
 
         public async Task<CategoryViewModel> GetBy(int id) {
-            return await _context.Category.Select(category => new CategoryViewModel {
+            return await _context.Categories.Select(category => new CategoryViewModel {
                 Id = category.Id,
                 Description = category.Description
             }).SingleOrDefaultAsync(c => c.Id == id);
@@ -50,12 +50,12 @@ namespace MagickyBoardGames.Contexts {
             if (string.IsNullOrEmpty(categoryViewModel.Description))
                 throw new ArgumentException();
 
-            var category = await _context.Category.SingleOrDefaultAsync(c => c.Id == categoryViewModel.Id);
+            var category = await _context.Categories.SingleOrDefaultAsync(c => c.Id == categoryViewModel.Id);
             if (category == null)
                 throw new ArgumentException();
 
             category.Description = categoryViewModel.Description;
-            _context.Category.Update(category);
+            _context.Categories.Update(category);
             await _context.SaveChangesAsync();
         }
     }

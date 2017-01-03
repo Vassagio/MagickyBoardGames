@@ -1,20 +1,19 @@
-﻿using MagickyBoardGames.Models;
+﻿using MagickyBoardGames.Data.ModelBuilders;
+using MagickyBoardGames.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagickyBoardGames.Data {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Game> Games { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
 
-            builder.Entity<Category>().HasKey(c => c.Id).ForSqlServerIsClustered(false);
-            builder.Entity<Category>().Property(c => c.Id).UseSqlServerIdentityColumn();
-            builder.Entity<Category>().HasIndex(c => c.Description).ForSqlServerIsClustered().IsUnique();
-            builder.Entity<Category>().Property(c => c.Description).IsRequired().HasMaxLength(30);
+            CategoryModelBuilder.Build(builder);
+            GameModelBuilder.Build(builder);
         }
-
-        public DbSet<Category> Category { get; set; }
     }
 }
