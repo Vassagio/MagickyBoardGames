@@ -65,7 +65,7 @@ namespace MagickyBoardGames.Tests.Contexts {
         [Fact]
         public async void Deletes_A_Record() {
             var game = new Game {
-                Id = 1,
+                Id = 666,
                 Name = "Deleted Game",
                 Description = "Description",
                 MinPlayers = 1,
@@ -74,7 +74,7 @@ namespace MagickyBoardGames.Tests.Contexts {
             var context = BuildGameContext();
             await _fixture.Populate(game);
 
-            await context.Delete(1);
+            await context.Delete(666);
 
             _fixture.Db.Games.Any().Should().BeFalse();
         }
@@ -90,7 +90,7 @@ namespace MagickyBoardGames.Tests.Contexts {
         [Fact]
         public async void Updates_A_Record() {
             var game = new Game {
-                Id = 1,
+                Id = 999,
                 Name = "Original Game",
                 Description = "Description",
                 MinPlayers = 1,
@@ -99,7 +99,7 @@ namespace MagickyBoardGames.Tests.Contexts {
             var context = BuildGameContext();
             await _fixture.Populate(game);
             var updated = new GameViewModel {
-                Id = 1,
+                Id = 999,
                 Name = "Updated Game",
                 Description = "We are updated",
                 MinPlayers = 2,
@@ -108,7 +108,7 @@ namespace MagickyBoardGames.Tests.Contexts {
 
             await context.Update(updated);
 
-            var expected = await _fixture.Db.Games.SingleOrDefaultAsync(g => g.Id == 1);
+            var expected = await _fixture.Db.Games.SingleOrDefaultAsync(g => g.Id == 999);
             expected.Name.Should().Be("Updated Game");
             expected.Description.Should().Be("We are updated");
             expected.MinPlayers.Should().Be(2);
@@ -121,7 +121,7 @@ namespace MagickyBoardGames.Tests.Contexts {
         [InlineData(null, 1, 10)]
         public async void Throws_Exception_When_Updating_With_Invalid_Record(string name, int? minPlayers, int? maxPlayers) {
             var game = new Game {
-                Id = 1,
+                Id = 9991,
                 Name = "Original Game",
                 Description = "Description",
                 MinPlayers = 1,
@@ -132,7 +132,7 @@ namespace MagickyBoardGames.Tests.Contexts {
 
             Func<Task> asyncFunction = async () => {
                 var updated = new GameViewModel {
-                    Id = 1,
+                    Id = 9991,
                     Name = name,
                     MinPlayers = minPlayers,
                     MaxPlayers = maxPlayers
@@ -161,14 +161,14 @@ namespace MagickyBoardGames.Tests.Contexts {
         [Fact]
         public async void Get_All_Records() {
             var game1 = new Game {
-                Id = 1,
+                Id = 111,
                 Name = "Game 1",
                 Description = "Description",
                 MinPlayers = 1,
                 MaxPlayers = 10
             };
             var game2 = new Game {
-                Id = 2,
+                Id = 222,
                 Name = "Game 2",
                 Description = "Description",
                 MinPlayers = 1,

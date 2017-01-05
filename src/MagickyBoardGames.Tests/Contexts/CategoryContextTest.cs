@@ -50,13 +50,13 @@ namespace MagickyBoardGames.Tests.Contexts {
         [Fact]
         public async void Deletes_A_Record() {
             var category = new Category {
-                Id = 1,
+                Id = 666,
                 Description = "Deleted Category"
             };
             var context = BuildCategoryContext();
             await _fixture.Populate(category);
 
-            await context.Delete(1);
+            await context.Delete(666);
 
             _fixture.Db.Categories.Any().Should().BeFalse();
         }
@@ -72,26 +72,26 @@ namespace MagickyBoardGames.Tests.Contexts {
         [Fact]
         public async void Updates_A_Record() {
             var category = new Category {
-                Id = 1,
+                Id = 999,
                 Description = "Original Category"
             };
             var context = BuildCategoryContext();
             await _fixture.Populate(category);
             var updated = new CategoryViewModel {
-                Id = 1,
+                Id = 999,
                 Description = "Updated Category"
             };
 
             await context.Update(updated);
 
-            var expected = _fixture.Db.Categories.SingleOrDefault(g => g.Id == 1);
+            var expected = _fixture.Db.Categories.SingleOrDefault(g => g.Id == 999);
             expected.Description.Should().Be("Updated Category");
         }
 
         [Fact]
         public async void Throws_Exception_When_Updating_With_Invalid_Record() {
             var category = new Category {
-                Id = 10,
+                Id = 9991,
                 Description = "Original Category"
             };
             var context = BuildCategoryContext();
@@ -99,7 +99,7 @@ namespace MagickyBoardGames.Tests.Contexts {
 
             Func<Task> asyncFunction = async () => {
                 var updated = new CategoryViewModel {
-                    Id = 10,
+                    Id = 9991,
                     Description = ""
                 };
                 await context.Update(updated);
@@ -124,11 +124,11 @@ namespace MagickyBoardGames.Tests.Contexts {
         [Fact]
         public async void Get_All_Records() {
             var category1 = new Category {
-                Id = 1,
+                Id = 111,
                 Description = "Category 1"
             };
             var category2 = new Category {
-                Id = 2,
+                Id = 222,
                 Description = "Category 2"
             };
             var context = BuildCategoryContext();
