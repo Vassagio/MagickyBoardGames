@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagickyBoardGames.Data.ModelBuilders
 {
-    public class CategoryModelBuilder
+    public class CategoryModelBuilder: BaseModelBuilder
     {
-        public static void Build(ModelBuilder builder) {
-            builder.Entity<Category>().HasKey(c => c.Id).ForSqlServerIsClustered(false);
-            builder.Entity<Category>().Property(c => c.Id).UseSqlServerIdentityColumn();
-            builder.Entity<Category>().HasIndex(c => c.Description).ForSqlServerIsClustered().IsUnique();
-            builder.Entity<Category>().Property(c => c.Description).IsRequired().HasMaxLength(30);
+        public CategoryModelBuilder(ModelBuilder builder) : base(builder) {}
+        public override void Build() {
+            Builder.Entity<Category>().HasKey(c => c.Id).ForSqlServerIsClustered(false);
+            Builder.Entity<Category>().Property(c => c.Id).UseSqlServerIdentityColumn();
+            Builder.Entity<Category>().HasIndex(c => c.Description).ForSqlServerIsClustered().IsUnique();
+            Builder.Entity<Category>().Property(c => c.Description).IsRequired().HasMaxLength(30);
         }
     }
 }
