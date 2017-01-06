@@ -45,6 +45,7 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
             await context.Save(viewModel);
 
             repository.VerifyGetByCalled(category);
+            repository.VerifyGetByIdNotCalled();
             repository.VerifyAddCalled(category);
             builder.VerifyBuildCalled(viewModel);
         }
@@ -64,8 +65,9 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
             await context.Save(viewModel);
 
             repository.VerifyGetByCalled(category);
+            repository.VerifyGetByIdNotCalled();
             repository.VerifyAddNotCalled();
-            repository.VerifyUpdateNotCalled();
+            repository.VerifyUpdateCalled(category);
             builder.VerifyBuildCalled(viewModel);
         }
 
@@ -85,7 +87,8 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
 
             await context.Save(viewModel);
 
-            repository.VerifyGetByCalled(category);
+            repository.VerifyGetByCalled(50);
+            repository.VerifyGetByNotCalled();
             repository.VerifyAddCalled(category);
             builder.VerifyBuildCalled(viewModel);
         }
@@ -106,7 +109,8 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
 
             await context.Save(viewModel);
 
-            repository.VerifyGetByCalled(category);
+            repository.VerifyGetByCalled(60);
+            repository.VerifyGetByNotCalled();
             repository.VerifyUpdateCalled(category);
             builder.VerifyBuildCalled(viewModel);
         }

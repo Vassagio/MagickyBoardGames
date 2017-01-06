@@ -24,18 +24,22 @@ namespace MagickyBoardGames.Contexts.CategoryContexts {
 
         public async Task Save(CategoryViewModel viewModel) {
             var entity = _builder.Build(viewModel);
-            var found = await _repository.GetBy(entity);
-            if (found != null && !viewModel.Id.HasValue)
-                return;
-
-            if (found != null)
-                await Update(entity);
-            else
-                await Insert(entity);            
+            if (viewModel.Id.HasValue) 
+                await Save(await _repository.GetBy(viewModel.Id.Value), entity);            
+            else 
+                await Save(await _repository.GetBy(entity), entity);            
         }
 
-        private async Task Update(Category entity) {
-            await _repository.Update(entity);
+        private async Task Save(Category found, Category entity) {
+            if (found != null)
+                await Update(found, entity);
+            else
+                await Insert(entity);
+        }
+
+        private async Task Update(Category found, Category entity) {
+            found.Description = entity.Description;
+            await _repository.Update(found);
         }
 
         private async Task Insert(Category entity) {

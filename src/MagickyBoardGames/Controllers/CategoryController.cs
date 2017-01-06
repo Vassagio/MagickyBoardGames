@@ -1,6 +1,4 @@
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -45,35 +43,38 @@ namespace MagickyBoardGames.Controllers {
             if (!result.IsValid)
                 return View(categoryViewModel);
 
-            await context.Save(categoryViewModel);            
-            return RedirectToAction("Index");            
+            await context.Save(categoryViewModel);
+            return RedirectToAction("Index");
         }
 
         [Authorize]
         public async Task<IActionResult> Edit(int? id) {
-            //if (id == null)
-            //    return NotFound();
+            if (id == null)
+                return NotFound();
 
-            //var categoryViewModel = await _categoryContext.GetBy(id.Value);
-            //if (categoryViewModel == null)
-            //    return NotFound();
-            //return View(categoryViewModel);
-            return View();
+            var context = _loader.LoadCategoryViewContext();
+            var categoryViewViewModel = await context.BuildViewModel(id.Value);
+            if (categoryViewViewModel == null)
+                return NotFound();
+
+            return View(categoryViewViewModel.Category);
+
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] CategoryViewModel categoryViewModel) {
-            //if (id != categoryViewModel.Id)
-            //    return NotFound();
+            if (id != categoryViewModel.Id)
+                return NotFound();
 
-            //if (!IsValid(categoryViewModel))
-            //    return View(categoryViewModel);
+            var context = _loader.LoadCategorySaveContext();
+            var result = context.Validate(categoryViewModel);
+            if (!result.IsValid)            
+                return View(categoryViewModel);
 
-            //await _categoryContext.Update(categoryViewModel);
-            //return RedirectToAction("Index");
-            return View();
+            await context.Save(categoryViewModel);
+            return RedirectToAction("Index");
         }
 
         [Authorize]

@@ -52,5 +52,9 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
         public void VerifyLoadCategorySaveContextCalled(int times = 1) {
             _mock.Verify(m => m.LoadCategorySaveContext(), Times.Exactly(times));
         }
+
+        public void VerifyLoadCategorySaveContextNotCalled() {
+            _mock.Verify(m => m.LoadCategorySaveContext(), Times.Never);
+        }
     }
 }

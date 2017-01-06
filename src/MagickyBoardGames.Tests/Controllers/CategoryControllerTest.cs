@@ -43,8 +43,8 @@ namespace MagickyBoardGames.Tests.Controllers {
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Details(null);
-            result.Should().BeOfType<NotFoundResult>();
 
+            result.Should().BeOfType<NotFoundResult>();
             contextLoader.VerifyLoadCategoryViewContextNotCalled();
         }
 
@@ -55,6 +55,7 @@ namespace MagickyBoardGames.Tests.Controllers {
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Details(5);
+
             result.Should().BeOfType<NotFoundResult>();
             context.VerifyBuildViewModelCalled(5);
             contextLoader.VerifyLoadCategoryViewContextCalled();
@@ -82,8 +83,8 @@ namespace MagickyBoardGames.Tests.Controllers {
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Delete(null);
-            result.Should().BeOfType<NotFoundResult>();
 
+            result.Should().BeOfType<NotFoundResult>();
             contextLoader.VerifyLoadCategoryViewContextNotCalled();
         }
 
@@ -94,6 +95,7 @@ namespace MagickyBoardGames.Tests.Controllers {
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Delete(5);
+
             result.Should().BeOfType<NotFoundResult>();
             context.VerifyBuildViewModelCalled(5);
             contextLoader.VerifyLoadCategoryViewContextCalled();
@@ -177,79 +179,106 @@ namespace MagickyBoardGames.Tests.Controllers {
             context.VerifySaveCalled(viewModel);
         }
 
-        //[Fact]
-        //public async void Display_Edit_Not_Found_When_Id_Is_Null() {
-        //    var categoryContext = new MockContext<CategoryViewModel>();
-        //    var controller = BuildCategoryController(categoryContext);
+        [Fact]
+        public async void Display_Edit_Not_Found_When_Id_Is_Null() {
+            var context = new MockCategoryViewContext();
+            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            var controller = BuildCategoryController(contextLoader);
 
-        //    var result = await controller.Edit(null);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.Edit(null);
 
-        //    categoryContext.VerifyGetByNotCalled();
-        //}
+            result.Should().BeOfType<NotFoundResult>();            
+            contextLoader.VerifyLoadCategoryViewContextNotCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Not_Found_When_No_Record_Is_Found() {
-        //    var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(null);
-        //    var controller = BuildCategoryController(categoryContext);
+        [Fact]
+        public async void Display_Edit_Not_Found_When_No_Record_Is_Found() {
+            var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(null);
+            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            var controller = BuildCategoryController(contextLoader);
 
-        //    var result = await controller.Edit(5);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.Edit(5);
 
-        //    categoryContext.VerifyGetByCalled(5);
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            context.VerifyBuildViewModelCalled(5);
+            contextLoader.VerifyLoadCategoryViewContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Result() {
-        //    var foundViewModel = new CategoryViewModel {
-        //        Id = 7,
-        //        Description = "Found Item"
-        //    };
-        //    var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(foundViewModel);
-        //    var controller = BuildCategoryController(categoryContext);
+        [Fact]
+        public async void Display_Edit_Result() {
+            var viewModel = new CategoryViewViewModel {
+                Category = new CategoryViewModel {
+                    Id = 7,
+                    Description = "Found Item"
+                }
+            };
+            var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            var controller = BuildCategoryController(contextLoader);
 
-        //    var result = await controller.Edit(7);
+            var result = await controller.Edit(7);
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<CategoryViewModel>().Subject;
-        //    model.Id.Should().Be(7);
-        //    model.Description.Should().Be("Found Item");
-        //    categoryContext.VerifyGetByCalled(7);
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeAssignableTo<CategoryViewModel>().Subject;
+            model.Should().Be(viewModel.Category);
+            context.VerifyBuildViewModelCalled(7);
+            contextLoader.VerifyLoadCategoryViewContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Not_Found_When_Id_Not_Equal() {
-        //    var viewModel = new CategoryViewModel {
-        //        Id = 22
-        //    };
-        //    var categoryContext = new MockContext<CategoryViewModel>();
-        //    var controller = BuildCategoryController(categoryContext);
+        [Fact]
+        public async void Display_Edit_Not_Found_When_Id_Not_Equal() {
+            var viewModel = new CategoryViewModel {
+                Description = "Found Item"
+            };
+            var context = new MockCategorySaveContext();
+            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var controller = BuildCategoryController(contextLoader);
 
-        //    var result = await controller.Edit(11, viewModel);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.Edit(7, viewModel);
 
-        //    categoryContext.VerifyUpdateNotCalled();
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            contextLoader.VerifyLoadCategorySaveContextNotCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Post_Result_Invalid() {
-        //    var viewModel = new CategoryViewModel {
-        //        Id = 22,
-        //        Description = "Description"
-        //    };
-        //    var categoryContext = new MockContext<CategoryViewModel>();
-        //    var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnInvalid();
-        //    var controller = BuildCategoryController(categoryContext, validator);
+        [Fact]
+        public async void Display_Edit_Post_Result_Invalid() {
+            var viewModel = new CategoryViewModel {
+                Id = 22,
+                Description = "Description"
+            };
+            var context = new MockCategorySaveContext().ValidateStubbedToBeInvalid();
+            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var controller = BuildCategoryController(contextLoader);
 
-        //    var result = await controller.Edit(22, viewModel);
+            var result = await controller.Edit(22, viewModel);
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<CategoryViewModel>().Subject;
-        //    model.Id.Should().Be(22);
-        //    model.Description.Should().Be("Description");
-        //    categoryContext.VerifyUpdateNotCalled();
-        //    validator.VerifyValidateCalled(viewModel);
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeAssignableTo<CategoryViewModel>().Subject;
+            model.Id.Should().Be(22);
+            model.Description.Should().Be("Description");
+            context.VerifyValidateCalled(viewModel);
+            context.VerifySaveNotCalled();
+            contextLoader.VerifyLoadCategorySaveContextCalled();
+        }
+
+        [Fact]
+        public async void Display_Edit_Post_Result_Valid() {
+            var viewModel = new CategoryViewModel {
+                Id = 22,
+                Description = "Description"
+            };
+            var context = new MockCategorySaveContext().ValidateStubbedToBeValid();
+            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var controller = BuildCategoryController(contextLoader);
+
+            var result = await controller.Edit(22, viewModel);
+
+            var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
+            viewResult.ActionName.Should().Be("Index");
+            context.VerifyValidateCalled(viewModel);
+            context.VerifySaveCalled(viewModel);
+            contextLoader.VerifyLoadCategorySaveContextCalled();
+        }
 
         //[Fact]
         //public async void Display_Edit_Post_Result_Valid() {

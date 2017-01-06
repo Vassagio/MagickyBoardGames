@@ -57,8 +57,12 @@ namespace MagickyBoardGames.Tests.Mocks {
             _mock.Verify(m => m.GetBy(entity), Times.Exactly(times));
         }
 
-        public void VerifyGetByNotCalled() {
+        public void VerifyGetByIdNotCalled() {
             _mock.Verify(m => m.GetBy(It.IsAny<int>()), Times.Never);
+        }
+
+        public void VerifyGetByNotCalled() {
+            _mock.Verify(m => m.GetBy(It.IsAny<T>()), Times.Never);
         }
 
         public void VerifyDeleteCalled(int id, int times = 1) {
