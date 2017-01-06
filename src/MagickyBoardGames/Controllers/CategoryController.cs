@@ -1,6 +1,4 @@
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -8,27 +6,27 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MagickyBoardGames.Controllers {
     public class CategoryController : Controller {
-        private readonly IContext<CategoryViewModel> _categoryContext;
-        private readonly IValidator<CategoryViewModel> _validator;
+        private readonly IContextLoader _loader;
 
-        public CategoryController(IContext<CategoryViewModel> categoryContext, IValidator<CategoryViewModel> validator) {
-            _categoryContext = categoryContext;
-            _validator = validator;
+        public CategoryController(IContextLoader loader) {
+            _loader = loader;
         }
 
         public async Task<IActionResult> Index() {
-            return View(await _categoryContext.GetAll());
+            var context = _loader.LoadCategoryListContext();
+            return View(await context.BuildViewModel());
         }
 
         public async Task<IActionResult> Details(int? id) {
             if (id == null)
                 return NotFound();
 
-            var categoryViewModel = await _categoryContext.GetBy(id.Value);
-            if (categoryViewModel == null)
+            var context = _loader.LoadCategoryViewContext();
+            var viewModel = await context.BuildViewModel(id.Value);
+            if (viewModel == null)
                 return NotFound();
 
-            return View(categoryViewModel);
+            return View(viewModel);
         }
 
         [Authorize]
@@ -40,10 +38,12 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Description")] CategoryViewModel categoryViewModel) {
-            if (!IsValid(categoryViewModel))
+            var context = _loader.LoadCategorySaveContext();
+            var result = context.Validate(categoryViewModel);
+            if (!result.IsValid)
                 return View(categoryViewModel);
 
-            await _categoryContext.Add(categoryViewModel);
+            await context.Save(categoryViewModel);
             return RedirectToAction("Index");
         }
 
@@ -52,10 +52,13 @@ namespace MagickyBoardGames.Controllers {
             if (id == null)
                 return NotFound();
 
-            var categoryViewModel = await _categoryContext.GetBy(id.Value);
-            if (categoryViewModel == null)
+            var context = _loader.LoadCategoryViewContext();
+            var categoryViewViewModel = await context.BuildViewModel(id.Value);
+            if (categoryViewViewModel == null)
                 return NotFound();
-            return View(categoryViewModel);
+
+            return View(categoryViewViewModel.Category);
+
         }
 
         [HttpPost]
@@ -65,10 +68,12 @@ namespace MagickyBoardGames.Controllers {
             if (id != categoryViewModel.Id)
                 return NotFound();
 
-            if (!IsValid(categoryViewModel))
+            var context = _loader.LoadCategorySaveContext();
+            var result = context.Validate(categoryViewModel);
+            if (!result.IsValid)            
                 return View(categoryViewModel);
 
-            await _categoryContext.Update(categoryViewModel);
+            await context.Save(categoryViewModel);
             return RedirectToAction("Index");
         }
 
@@ -77,11 +82,12 @@ namespace MagickyBoardGames.Controllers {
             if (id == null)
                 return NotFound();
 
-            var categoryViewModel = await _categoryContext.GetBy(id.Value);
-            if (categoryViewModel == null)
+            var context = _loader.LoadCategoryViewContext();
+            var viewModel = await context.BuildViewModel(id.Value);
+            if (viewModel == null)
                 return NotFound();
 
-            return View(categoryViewModel);
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -89,14 +95,16 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id) {
-            await _categoryContext.Delete(id);
+            var context = _loader.LoadCategoryViewContext();
+            await context.Delete(id);
             return RedirectToAction("Index");
-        }   
+        }
 
         private bool IsValid(CategoryViewModel categoryViewModel) {
-            var results = _validator.Validate(categoryViewModel);
-            results.AddToModelState(ModelState, null);
-            return results.IsValid;
+            //var results = _validator.Validate(categoryViewModel);
+            //results.AddToModelState(ModelState, null);
+            //return results.IsValid;
+            return true;
         }
     }
 }
