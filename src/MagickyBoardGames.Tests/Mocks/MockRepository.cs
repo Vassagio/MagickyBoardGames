@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using MagickyBoardGames.Contexts;
-using MagickyBoardGames.ViewModels;
+using MagickyBoardGames.Models;
+using MagickyBoardGames.Repositories;
 using Moq;
 
 namespace MagickyBoardGames.Tests.Mocks {
-    public class MockContext<T> : IContext<T> where T: IViewModel {
-        private readonly Mock<IContext<T>> _mock;
+    public class MockRepository<T> : IRepository<T> where T: IEntity {
+        private readonly Mock<IRepository<T>> _mock;
 
-        public MockContext() {
-            _mock = new Mock<IContext<T>>();
+        public MockRepository() {
+            _mock = new Mock<IRepository<T>>();
         }
 
         public Task<IEnumerable<T>> GetAll() {
@@ -21,8 +20,8 @@ namespace MagickyBoardGames.Tests.Mocks {
             return _mock.Object.GetBy(id);
         }
 
-        public Task<int> Add(T viewModel) {
-            return _mock.Object.Add(viewModel);
+        public Task<int> Add(T entity) {
+            return _mock.Object.Add(entity);
         }
 
         public Task Delete(int id) {
@@ -32,12 +31,12 @@ namespace MagickyBoardGames.Tests.Mocks {
         public Task Update(T viewModel) {
             return _mock.Object.Update(viewModel);
         }
-        public MockContext<T> GetAllStubbedToReturn(IEnumerable<T> viewModels) {
-            _mock.Setup(m => m.GetAll()).Returns(Task.FromResult(viewModels));
+        public MockRepository<T> GetAllStubbedToReturn(IEnumerable<T> entities) {
+            _mock.Setup(m => m.GetAll()).Returns(Task.FromResult(entities));
             return this;
         }
-        public MockContext<T> GetByStubbedToReturn(T viewModel) {
-            _mock.Setup(m => m.GetBy(It.IsAny<int>())).Returns(Task.FromResult(viewModel));
+        public MockRepository<T> GetByStubbedToReturn(T entities) {
+            _mock.Setup(m => m.GetBy(It.IsAny<int>())).Returns(Task.FromResult(entities));
             return this;
         }
 

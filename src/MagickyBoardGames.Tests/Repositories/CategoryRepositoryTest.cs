@@ -2,48 +2,47 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Models;
-using MagickyBoardGames.ViewModels;
+using MagickyBoardGames.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace MagickyBoardGames.Tests.Contexts {
-    public class CategoryContextTest : IClassFixture<DatabaseFixture> {
+namespace MagickyBoardGames.Tests.Repositories {
+    public class CategoryRepositoryTest : IClassFixture<DatabaseFixture> {
         private readonly DatabaseFixture _fixture;
 
-        public CategoryContextTest(DatabaseFixture fixture) {
+        public CategoryRepositoryTest(DatabaseFixture fixture) {
             _fixture = fixture;
         }
 
         [Fact]
-        public void Initialize_A_Category_Context() {
-            var context = BuildCategoryContext();
+        public void Initialize_A_Category_Repository() {
+            var context = BuildCategoryRepository();
 
             context.Should().NotBeNull();
-            context.Should().BeAssignableTo<IContext<CategoryViewModel>>();
+            context.Should().BeAssignableTo<IRepository<Category>>();
         }
 
         [Fact]
         public async void Adds_A_Record() {
-            var viewModel = new CategoryViewModel {
+            var entity = new Category {
                 Description = "Added Category"
             };
-            var context = BuildCategoryContext();
+            var context = BuildCategoryRepository();
             await _fixture.Populate();
 
-            var id = await context.Add(viewModel);
+            var id = await context.Add(entity);
 
             var expected = await _fixture.Db.Categories.SingleOrDefaultAsync(c => c.Id == id);
-            expected.Description.Should().Be(viewModel.Description);
+            expected.Description.Should().Be(entity.Description);
         }
 
         [Fact]
         public void Throws_Exception_When_Adding_An_Invalid_Record() {
-            var viewModel = new CategoryViewModel();
-            var context = BuildCategoryContext();
+            var entity = new Category();
+            var context = BuildCategoryRepository();
 
-            Func<Task> asyncFunction = async () => { await context.Add(viewModel); };
+            Func<Task> asyncFunction = async () => { await context.Add(entity); };
             asyncFunction.ShouldThrow<ArgumentException>();
         }
 
@@ -53,7 +52,7 @@ namespace MagickyBoardGames.Tests.Contexts {
                 Id = 666,
                 Description = "Deleted Category"
             };
-            var context = BuildCategoryContext();
+            var context = BuildCategoryRepository();
             await _fixture.Populate(category);
 
             await context.Delete(666);
@@ -63,7 +62,7 @@ namespace MagickyBoardGames.Tests.Contexts {
 
         [Fact]
         public void Does_Not_Throw_Exception_When_Deleting_An_Unknown_Record() {
-            var context = BuildCategoryContext();
+            var context = BuildCategoryRepository();
 
             Func<Task> asyncFunction = async () => { await context.Delete(100); };
             asyncFunction.ShouldNotThrow();
@@ -75,14 +74,11 @@ namespace MagickyBoardGames.Tests.Contexts {
                 Id = 999,
                 Description = "Original Category"
             };
-            var context = BuildCategoryContext();
+            var context = BuildCategoryRepository();
             await _fixture.Populate(category);
-            var updated = new CategoryViewModel {
-                Id = 999,
-                Description = "Updated Category"
-            };
+            category.Description = "Updated Category";
 
-            await context.Update(updated);
+            await context.Update(category);
 
             var expected = _fixture.Db.Categories.SingleOrDefault(g => g.Id == 999);
             expected.Description.Should().Be("Updated Category");
@@ -94,25 +90,22 @@ namespace MagickyBoardGames.Tests.Contexts {
                 Id = 9991,
                 Description = "Original Category"
             };
-            var context = BuildCategoryContext();
+            var context = BuildCategoryRepository();
             await _fixture.Populate(category);
 
             Func<Task> asyncFunction = async () => {
-                var updated = new CategoryViewModel {
-                    Id = 9991,
-                    Description = ""
-                };
-                await context.Update(updated);
+                category.Description = "";
+                await context.Update(category);
             };
             asyncFunction.ShouldThrow<ArgumentException>();
         }
 
         [Fact]
         public void Throws_Exception_When_Updating_A_Record_That_Doesnt_Exists() {
-            var context = BuildCategoryContext();
+            var context = BuildCategoryRepository();
 
             Func<Task> asyncFunction = async () => {
-                var updated = new CategoryViewModel {
+                var updated = new Category {
                     Id = 1000,
                     Description = "Doesn't Exist"
                 };
@@ -131,7 +124,7 @@ namespace MagickyBoardGames.Tests.Contexts {
                 Id = 222,
                 Description = "Category 2"
             };
-            var context = BuildCategoryContext();
+            var context = BuildCategoryRepository();
             await _fixture.Populate(category1, category2);
 
             var categories = await context.GetAll();
@@ -139,8 +132,8 @@ namespace MagickyBoardGames.Tests.Contexts {
             categories.Count().Should().Be(2);
         }
 
-        private CategoryContext BuildCategoryContext() {
-            return new CategoryContext(_fixture.Db);
+        private CategoryRepository BuildCategoryRepository() {
+            return new CategoryRepository(_fixture.Db);
         }
     }
 }

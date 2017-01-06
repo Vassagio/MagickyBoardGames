@@ -2,41 +2,39 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MagickyBoardGames.Builders;
-using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Models;
-using MagickyBoardGames.ViewModels;
+using MagickyBoardGames.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace MagickyBoardGames.Tests.Contexts {
-    public class GameContextTest : IClassFixture<DatabaseFixture> {
+namespace MagickyBoardGames.Tests.Repositories {
+    public class GameRepositoryTest : IClassFixture<DatabaseFixture> {
         private readonly DatabaseFixture _fixture;
 
-        public GameContextTest(DatabaseFixture fixture) {
+        public GameRepositoryTest(DatabaseFixture fixture) {
             _fixture = fixture;
         }
 
         [Fact]
-        public void Initialize_A_Game_Context() {
-            var context = BuildGameContext();
+        public void Initialize_A_Game_Repository() {
+            var context = BuildGameRepository();
 
             context.Should().NotBeNull();
-            context.Should().BeAssignableTo<IContext<GameViewModel>>();
+            context.Should().BeAssignableTo<IRepository<Game>>();
         }
 
         [Fact]
         public async void Adds_A_Record() {
-            var viewModel = new GameViewModel {
+            var entity = new Game {
                 Name = "Added Game",
                 Description = "Description",
                 MinPlayers = 1,
                 MaxPlayers = 10
             };
-            var context = BuildGameContext();
+            var context = BuildGameRepository();
             await _fixture.Populate();
 
-            var id = await context.Add(viewModel);
+            var id = await context.Add(entity);
 
             var expected = await _fixture.Db.Games.SingleOrDefaultAsync(g => g.Id == id);
             expected.Name.Should().Be("Added Game");
@@ -45,20 +43,17 @@ namespace MagickyBoardGames.Tests.Contexts {
             expected.MaxPlayers.Should().Be(10);
         }
 
-        [Theory]
-        [InlineData("Added Game 1", null, 10)]
-        [InlineData("Added Game 2", 1, null)]
-        [InlineData(null, 1, 10)]
-        public void Throws_Exception_When_Adding_An_Invalid_Record(string name, int? minPlayers, int? maxPlayers) {
-            var viewModel = new GameViewModel {
-                Name = name,
+        [Fact]
+        public void Throws_Exception_When_Adding_An_Invalid_Record() {
+            var entity = new Game {
+                Name = null,
                 Description = "Description",
-                MinPlayers = minPlayers,
-                MaxPlayers = maxPlayers
+                MinPlayers = 1,
+                MaxPlayers = 10
             };
-            var context = BuildGameContext();
+            var context = BuildGameRepository();
 
-            Func<Task> asyncFunction = async () => { await context.Add(viewModel); };
+            Func<Task> asyncFunction = async () => { await context.Add(entity); };
             asyncFunction.ShouldThrow<ArgumentException>();
         }
 
@@ -71,7 +66,7 @@ namespace MagickyBoardGames.Tests.Contexts {
                 MinPlayers = 1,
                 MaxPlayers = 10
             };
-            var context = BuildGameContext();
+            var context = BuildGameRepository();
             await _fixture.Populate(game);
 
             await context.Delete(666);
@@ -81,7 +76,7 @@ namespace MagickyBoardGames.Tests.Contexts {
 
         [Fact]
         public void Does_Not_Throw_Exception_When_Deleting_An_Unknown_Record() {
-            var context = BuildGameContext();
+            var context = BuildGameRepository();
 
             Func<Task> asyncFunction = async () => { await context.Delete(100); };
             asyncFunction.ShouldNotThrow();
@@ -96,17 +91,14 @@ namespace MagickyBoardGames.Tests.Contexts {
                 MinPlayers = 1,
                 MaxPlayers = 10
             };
-            var context = BuildGameContext();
+            var context = BuildGameRepository();
             await _fixture.Populate(game);
-            var updated = new GameViewModel {
-                Id = 999,
-                Name = "Updated Game",
-                Description = "We are updated",
-                MinPlayers = 2,
-                MaxPlayers = 8
-            };
+            game.Name = "Updated Game";
+            game.Description = "We are updated";
+            game.MinPlayers = 2;
+            game.MaxPlayers = 8;
 
-            await context.Update(updated);
+            await context.Update(game);
 
             var expected = await _fixture.Db.Games.SingleOrDefaultAsync(g => g.Id == 999);
             expected.Name.Should().Be("Updated Game");
@@ -115,11 +107,8 @@ namespace MagickyBoardGames.Tests.Contexts {
             expected.MaxPlayers.Should().Be(8);
         }
 
-        [Theory]
-        [InlineData("Added Game 1", null, 10)]
-        [InlineData("Added Game 2", 1, null)]
-        [InlineData(null, 1, 10)]
-        public async void Throws_Exception_When_Updating_With_Invalid_Record(string name, int? minPlayers, int? maxPlayers) {
+        [Fact]        
+        public async void Throws_Exception_When_Updating_With_Invalid_Record() {
             var game = new Game {
                 Id = 9991,
                 Name = "Original Game",
@@ -127,27 +116,22 @@ namespace MagickyBoardGames.Tests.Contexts {
                 MinPlayers = 1,
                 MaxPlayers = 10
             };
-            var context = BuildGameContext();
+            var context = BuildGameRepository();
             await _fixture.Populate(game);
 
             Func<Task> asyncFunction = async () => {
-                var updated = new GameViewModel {
-                    Id = 9991,
-                    Name = name,
-                    MinPlayers = minPlayers,
-                    MaxPlayers = maxPlayers
-                };
-                await context.Update(updated);
+                game.Name = null;
+                await context.Update(game);
             };
             asyncFunction.ShouldThrow<ArgumentException>();
         }
 
         [Fact]
         public void Throws_Exception_When_Updating_A_Record_That_Doesnt_Exists() {
-            var context = BuildGameContext();
+            var context = BuildGameRepository();
 
             Func<Task> asyncFunction = async () => {
-                var updated = new GameViewModel {
+                var updated = new Game {
                     Id = 1000,
                     Name = "Doesn't Exist",
                     MinPlayers = 1,
@@ -174,7 +158,7 @@ namespace MagickyBoardGames.Tests.Contexts {
                 MinPlayers = 1,
                 MaxPlayers = 10
             };
-            var context = BuildGameContext();
+            var context = BuildGameRepository();
             await _fixture.Populate(game1, game2);
 
             var games = await context.GetAll();
@@ -182,9 +166,8 @@ namespace MagickyBoardGames.Tests.Contexts {
             games.Count().Should().Be(2);
         }
 
-        private GameContext BuildGameContext() {
-            var gameBuilder = new GameBuilder();
-            return new GameContext(_fixture.Db, gameBuilder);
+        private GameRepository BuildGameRepository() {
+            return new GameRepository(_fixture.Db);
         }
     }
 }

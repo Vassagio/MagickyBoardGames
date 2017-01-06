@@ -5,7 +5,7 @@ using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Builders
 {
-    public class GameBuilder
+    public class GameBuilder: IBuilder<Game, GameViewModel>
     {
         private int? _id;
         private string _name;
@@ -13,7 +13,7 @@ namespace MagickyBoardGames.Builders
         private int? _minPlayers;
         private int? _maxPlayers;
 
-        private GameViewModel ToViewModel() {
+        public GameViewModel ToViewModel() {
             return new GameViewModel {
                 Id = _id,
                 Name = _name,
@@ -24,7 +24,7 @@ namespace MagickyBoardGames.Builders
             };
         }
 
-        private Game ToObject() {
+        public Game ToEntity() {
             if (!_id.HasValue || !_minPlayers.HasValue || !_maxPlayers.HasValue)
                 throw new ArgumentException();
 
@@ -37,12 +37,12 @@ namespace MagickyBoardGames.Builders
             };
         }
 
-        public GameViewModel Build(Game game) {
-            _id = game.Id;
-            _name = game.Name;
-            _description = game.Description;
-            _minPlayers = game.MinPlayers;
-            _maxPlayers = game.MaxPlayers;
+        public GameViewModel Build(Game entity) {
+            _id = entity.Id;
+            _name = entity.Name;
+            _description = entity.Description;
+            _minPlayers = entity.MinPlayers;
+            _maxPlayers = entity.MaxPlayers;
             return ToViewModel();
         }
 
@@ -52,7 +52,7 @@ namespace MagickyBoardGames.Builders
             _description = viewModel.Description;
             _minPlayers = viewModel.MinPlayers;
             _maxPlayers = viewModel.MaxPlayers;
-            return ToObject();
+            return ToEntity();
         }
     }
 }

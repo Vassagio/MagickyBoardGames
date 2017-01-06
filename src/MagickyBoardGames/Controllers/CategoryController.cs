@@ -8,27 +8,27 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MagickyBoardGames.Controllers {
     public class CategoryController : Controller {
-        private readonly IContext<CategoryViewModel> _categoryContext;
-        private readonly IValidator<CategoryViewModel> _validator;
+        private readonly IContextLoader _loader;
 
-        public CategoryController(IContext<CategoryViewModel> categoryContext, IValidator<CategoryViewModel> validator) {
-            _categoryContext = categoryContext;
-            _validator = validator;
+        public CategoryController(IContextLoader loader) {
+            _loader = loader;
         }
 
         public async Task<IActionResult> Index() {
-            return View(await _categoryContext.GetAll());
+            var context = _loader.LoadCategoryIndexContext();
+            return View(await context.BuildViewModel());
         }
 
         public async Task<IActionResult> Details(int? id) {
             if (id == null)
                 return NotFound();
 
-            var categoryViewModel = await _categoryContext.GetBy(id.Value);
-            if (categoryViewModel == null)
+            var context = _loader.LoadCategoryDetailContext();
+            var viewModel = await context.BuildViewModel(id.Value);
+            if (viewModel == null)
                 return NotFound();
 
-            return View(categoryViewModel);
+            return View(viewModel);
         }
 
         [Authorize]
@@ -40,48 +40,52 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Description")] CategoryViewModel categoryViewModel) {
-            if (!IsValid(categoryViewModel))
-                return View(categoryViewModel);
+            //if (!IsValid(categoryViewModel))
+            //    return View(categoryViewModel);
 
-            await _categoryContext.Add(categoryViewModel);
-            return RedirectToAction("Index");
+            //await _categoryContext.Add(categoryViewModel);
+            //return RedirectToAction("Index");
+            return View();
         }
 
         [Authorize]
         public async Task<IActionResult> Edit(int? id) {
-            if (id == null)
-                return NotFound();
+            //if (id == null)
+            //    return NotFound();
 
-            var categoryViewModel = await _categoryContext.GetBy(id.Value);
-            if (categoryViewModel == null)
-                return NotFound();
-            return View(categoryViewModel);
+            //var categoryViewModel = await _categoryContext.GetBy(id.Value);
+            //if (categoryViewModel == null)
+            //    return NotFound();
+            //return View(categoryViewModel);
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] CategoryViewModel categoryViewModel) {
-            if (id != categoryViewModel.Id)
-                return NotFound();
+            //if (id != categoryViewModel.Id)
+            //    return NotFound();
 
-            if (!IsValid(categoryViewModel))
-                return View(categoryViewModel);
+            //if (!IsValid(categoryViewModel))
+            //    return View(categoryViewModel);
 
-            await _categoryContext.Update(categoryViewModel);
-            return RedirectToAction("Index");
+            //await _categoryContext.Update(categoryViewModel);
+            //return RedirectToAction("Index");
+            return View();
         }
 
         [Authorize]
         public async Task<IActionResult> Delete(int? id) {
-            if (id == null)
-                return NotFound();
+            //if (id == null)
+            //    return NotFound();
 
-            var categoryViewModel = await _categoryContext.GetBy(id.Value);
-            if (categoryViewModel == null)
-                return NotFound();
+            //var categoryViewModel = await _categoryContext.GetBy(id.Value);
+            //if (categoryViewModel == null)
+            //    return NotFound();
 
-            return View(categoryViewModel);
+            //return View(categoryViewModel);
+            return View();
         }
 
         [HttpPost]
@@ -89,14 +93,16 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id) {
-            await _categoryContext.Delete(id);
-            return RedirectToAction("Index");
+            //await _categoryContext.Delete(id);
+            //return RedirectToAction("Index");
+            return View();
         }   
 
         private bool IsValid(CategoryViewModel categoryViewModel) {
-            var results = _validator.Validate(categoryViewModel);
-            results.AddToModelState(ModelState, null);
-            return results.IsValid;
+            //var results = _validator.Validate(categoryViewModel);
+            //results.AddToModelState(ModelState, null);
+            //return results.IsValid;
+            return true;
         }
     }
 }
