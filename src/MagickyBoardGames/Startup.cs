@@ -54,8 +54,8 @@ namespace MagickyBoardGames {
             services.AddTransient<IValidator<CategoryViewModel>, CategoryViewModelValidator>();
             services.AddTransient<IValidator<GameViewModel>, GameViewModelValidator>();
 
-            services.AddTransient<ICategoryIndexContext, CategoryIndexContext>();
-            services.AddTransient<ICategoryDetailContext, CategoryDetailContext>();
+            services.AddTransient<ICategoryListContext, CategoryListContext>();
+            services.AddTransient<ICategoryViewContext, CategoryViewContext>();
             services.AddTransient<IContextLoader, ContextLoader>();
         }
 

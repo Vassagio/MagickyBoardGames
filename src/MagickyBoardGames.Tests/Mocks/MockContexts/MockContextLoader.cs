@@ -10,33 +10,33 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
             _mock = new Mock<IContextLoader>();
         }
 
-        public ICategoryIndexContext LoadCategoryIndexContext() {
-            return _mock.Object.LoadCategoryIndexContext();
+        public ICategoryListContext LoadCategoryListContext() {
+            return _mock.Object.LoadCategoryListContext();
         }
 
-        public ICategoryDetailContext LoadCategoryDetailContext() {
-            return _mock.Object.LoadCategoryDetailContext();
+        public ICategoryViewContext LoadCategoryViewContext() {
+            return _mock.Object.LoadCategoryViewContext();
         }
 
-        public MockContextLoader LoadCategoryIndexContextStubbedToReturn(ICategoryIndexContext context) {
-            _mock.Setup(m => m.LoadCategoryIndexContext()).Returns(context);
+        public MockContextLoader LoadCategoryListContextStubbedToReturn(ICategoryListContext context) {
+            _mock.Setup(m => m.LoadCategoryListContext()).Returns(context);
             return this;
         }
 
-        public void VerifyLoadCategoryIndexContextCalled(int times = 1) {
-            _mock.Verify(m => m.LoadCategoryIndexContext(), Times.Exactly(times));
+        public void VerifyLoadCategoryListContextCalled(int times = 1) {
+            _mock.Verify(m => m.LoadCategoryListContext(), Times.Exactly(times));
         }
 
-        public void VerifyLoadCategoryDetailContextNotCalled() {
-            _mock.Verify(m => m.LoadCategoryDetailContext(), Times.Never);
+        public void VerifyLoadCategoryViewContextNotCalled() {
+            _mock.Verify(m => m.LoadCategoryViewContext(), Times.Never);
         }
 
-        public void VerifyLoadCategoryDetailContextCalled(int times = 1) {
-            _mock.Verify(m => m.LoadCategoryDetailContext(), Times.Exactly(times));
+        public void VerifyLoadCategoryViewContextCalled(int times = 1) {
+            _mock.Verify(m => m.LoadCategoryViewContext(), Times.Exactly(times));
         }
 
-        public MockContextLoader LoadCategoryDetailContextStubbedToReturn(ICategoryDetailContext context) {
-            _mock.Setup(m => m.LoadCategoryDetailContext()).Returns(context);
+        public MockContextLoader LoadCategoryViewContextStubbedToReturn(ICategoryViewContext context) {
+            _mock.Setup(m => m.LoadCategoryViewContext()).Returns(context);
             return this;
         }
     }

@@ -5,19 +5,19 @@ using Moq;
 
 namespace MagickyBoardGames.Tests.Mocks.MockContexts
 {
-    public class MockCategoryIndexContext: ICategoryIndexContext
+    public class MockCategoryListContext: ICategoryListContext
     {
-        private readonly Mock<ICategoryIndexContext> _mock;
+        private readonly Mock<ICategoryListContext> _mock;
 
-        public MockCategoryIndexContext() {
-            _mock = new Mock<ICategoryIndexContext>();
+        public MockCategoryListContext() {
+            _mock = new Mock<ICategoryListContext>();
         }
 
-        public Task<CategoryIndexViewModel> BuildViewModel() {
+        public Task<CategoryListViewModel> BuildViewModel() {
             return _mock.Object.BuildViewModel();
         }
 
-        public MockCategoryIndexContext BuildViewModelStubbedToReturn(CategoryIndexViewModel viewModel) {
+        public MockCategoryListContext BuildViewModelStubbedToReturn(CategoryListViewModel viewModel) {
             _mock.Setup(m => m.BuildViewModel()).Returns(Task.FromResult(viewModel));
             return this;
         }

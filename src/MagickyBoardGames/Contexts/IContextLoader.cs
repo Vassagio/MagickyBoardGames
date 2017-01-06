@@ -5,7 +5,7 @@ namespace MagickyBoardGames.Contexts
 {
     public interface IContextLoader
     {
-        ICategoryIndexContext LoadCategoryIndexContext();
-        ICategoryDetailContext LoadCategoryDetailContext();
+        ICategoryListContext LoadCategoryListContext();
+        ICategoryViewContext LoadCategoryViewContext();
     }
 }

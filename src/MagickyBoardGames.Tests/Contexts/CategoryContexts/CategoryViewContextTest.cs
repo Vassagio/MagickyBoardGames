@@ -10,10 +10,10 @@ using MagickyBoardGames.ViewModels;
 using Xunit;
 
 namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
-    public class CategoryDetailContextTest {
+    public class CategoryViewContextTest {
         [Fact]
-        public void Initialize_Category_Detail_Context() {
-            var context = BuildCategoryDetailContext();
+        public void Initialize_Category_View_Context() {
+            var context = BuildCategoryViewContext();
             context.Should().NotBeNull();
         }
 
@@ -22,11 +22,11 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
             var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(null);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>();
             var gameBuilder = new MockBuilder<Game, GameViewModel>();
-            var context = BuildCategoryDetailContext(categoryRepository, categoryBuilder, gameBuilder);
+            var context = BuildCategoryViewContext(categoryRepository, categoryBuilder, gameBuilder);
 
-            var categoryDetailViewModel = await context.BuildViewModel(1000);
+            var categoryViewViewModel = await context.BuildViewModel(1000);
 
-            categoryDetailViewModel.Should().BeOfType<CategoryDetailViewModel>();
+            categoryViewViewModel.Should().BeOfType<CategoryViewViewModel>();
             categoryRepository.VerifyGetByCalled(1000);
             categoryBuilder.VerifyBuildNotCalled();
             gameBuilder.VerifyBuildNotCalled();
@@ -45,13 +45,13 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
             var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(category);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
             var gameBuilder = new MockBuilder<Game, GameViewModel>();
-            var context = BuildCategoryDetailContext(categoryRepository, categoryBuilder, gameBuilder);
+            var context = BuildCategoryViewContext(categoryRepository, categoryBuilder, gameBuilder);
 
-            var categoryDetailViewModel = await context.BuildViewModel(category.Id);
+            var categoryViewViewModel = await context.BuildViewModel(category.Id);
 
-            categoryDetailViewModel.Should().BeOfType<CategoryDetailViewModel>();
-            categoryDetailViewModel.Category.Should().Be(categoryViewModel);
-            categoryDetailViewModel.Games.Should().BeEmpty();
+            categoryViewViewModel.Should().BeOfType<CategoryViewViewModel>();
+            categoryViewViewModel.Category.Should().Be(categoryViewModel);
+            categoryViewViewModel.Games.Should().BeEmpty();
             categoryRepository.VerifyGetByCalled(category.Id);
             categoryBuilder.VerifyBuildCalled(category);
             gameBuilder.VerifyBuildNotCalled();
@@ -87,24 +87,47 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
             var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(category);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
-            var context = BuildCategoryDetailContext(categoryRepository, categoryBuilder, gameBuilder);
+            var context = BuildCategoryViewContext(categoryRepository, categoryBuilder, gameBuilder);
 
-            var categoryDetailViewModel = await context.BuildViewModel(category.Id);
+            var categoryViewViewModel = await context.BuildViewModel(category.Id);
 
-            categoryDetailViewModel.Should().BeOfType<CategoryDetailViewModel>();
-            categoryDetailViewModel.Category.Should().Be(categoryViewModel);
-            categoryDetailViewModel.Games.Count().Should().Be(1);
-            categoryDetailViewModel.Games.Should().Contain(gameViewModel);
+            categoryViewViewModel.Should().BeOfType<CategoryViewViewModel>();
+            categoryViewViewModel.Category.Should().Be(categoryViewModel);
+            categoryViewViewModel.Games.Count().Should().Be(1);
+            categoryViewViewModel.Games.Should().Contain(gameViewModel);
             categoryRepository.VerifyGetByCalled(category.Id);
             categoryBuilder.VerifyBuildCalled(category);
             gameBuilder.VerifyBuildCalled(game);
         }
 
-        private static CategoryDetailContext BuildCategoryDetailContext(IRepository<Category> categoryRepository = null, IBuilder<Category, CategoryViewModel> categoryBuilder = null, IBuilder<Game, GameViewModel> gameBuilder = null) {
+        [Fact]
+        public async void Does_Not_Throw_Exception_When_Deleting_Nonexistant_Record() {
+            var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(null);
+            var context = BuildCategoryViewContext(categoryRepository);
+
+            await context.Delete(1000);
+
+            categoryRepository.VerifyDeleteCalled(1000);
+        }
+
+        [Fact]
+        public async void Delete_A_Record() {
+            var category = new Category {
+                Id = 500,
+                Description = "Category"
+            };
+            var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(category);
+            var context = BuildCategoryViewContext(categoryRepository);
+
+            await context.Delete(500);
+
+            categoryRepository.VerifyDeleteCalled(500);
+        }
+        private static CategoryViewContext BuildCategoryViewContext(IRepository<Category> categoryRepository = null, IBuilder<Category, CategoryViewModel> categoryBuilder = null, IBuilder<Game, GameViewModel> gameBuilder = null) {
             categoryRepository = categoryRepository ?? new MockRepository<Category>();
             categoryBuilder = categoryBuilder ?? new MockBuilder<Category, CategoryViewModel>();
             gameBuilder = gameBuilder ?? new MockBuilder<Game, GameViewModel>();
-            return new CategoryDetailContext(categoryRepository, categoryBuilder, gameBuilder);
+            return new CategoryViewContext(categoryRepository, categoryBuilder, gameBuilder);
         }
     }
 }

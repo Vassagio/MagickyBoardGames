@@ -2,7 +2,7 @@
 
 namespace MagickyBoardGames.ViewModels
 {
-    public class CategoryDetailViewModel
+    public class CategoryViewViewModel
     {
         public CategoryViewModel Category { get; set; }
         public IEnumerable<GameViewModel> Games { get; set; }

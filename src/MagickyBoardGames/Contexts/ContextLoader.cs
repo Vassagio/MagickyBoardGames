@@ -4,20 +4,20 @@ namespace MagickyBoardGames.Contexts
 {
     public class ContextLoader : IContextLoader
     {
-        private readonly ICategoryIndexContext _categoryIndexContext;
-        private readonly ICategoryDetailContext _categoryDetailContext;
+        private readonly ICategoryListContext _categoryListContext;
+        private readonly ICategoryViewContext _categoryViewContext;
 
-        public ContextLoader(ICategoryIndexContext categoryIndexContext, ICategoryDetailContext categoryDetailContext) {
-            _categoryIndexContext = categoryIndexContext;
-            _categoryDetailContext = categoryDetailContext;
+        public ContextLoader(ICategoryListContext categoryListContext, ICategoryViewContext categoryViewContext) {
+            _categoryListContext = categoryListContext;
+            _categoryViewContext = categoryViewContext;
         }
 
-        public ICategoryIndexContext LoadCategoryIndexContext() {
-            return _categoryIndexContext;
+        public ICategoryListContext LoadCategoryListContext() {
+            return _categoryListContext;
         }
 
-        public ICategoryDetailContext LoadCategoryDetailContext() {
-            return _categoryDetailContext;
+        public ICategoryViewContext LoadCategoryViewContext() {
+            return _categoryViewContext;
         }
     }
 }

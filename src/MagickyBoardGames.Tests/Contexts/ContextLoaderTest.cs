@@ -16,29 +16,29 @@ namespace MagickyBoardGames.Tests.Contexts
         }
 
         [Fact]
-        public void Loads_Category_Index_Context() {
-            var categoryIndexContext = new MockCategoryIndexContext();
-            var contextLoader = BuildContextLoader(categoryIndexContext);
+        public void Loads_Category_List_Context() {
+            var categoryListContext = new MockCategoryListContext();
+            var contextLoader = BuildContextLoader(categoryListContext);
 
-            var context = contextLoader.LoadCategoryIndexContext();
+            var context = contextLoader.LoadCategoryListContext();
 
-            context.Should().Be(categoryIndexContext);
+            context.Should().Be(categoryListContext);
         }
 
         [Fact]
-        public void Loads_Category_Detail_Context() {
-            var categoryDetailContext = new MockCategoryDetailContext();
-            var contextLoader = BuildContextLoader(categoryDetailContext: categoryDetailContext);
+        public void Loads_Category_View_Context() {
+            var categoryViewContext = new MockCategoryViewContext();
+            var contextLoader = BuildContextLoader(categoryViewContext: categoryViewContext);
 
-            var context = contextLoader.LoadCategoryDetailContext();
+            var context = contextLoader.LoadCategoryViewContext();
 
-            context.Should().Be(categoryDetailContext);
+            context.Should().Be(categoryViewContext);
         }
 
-        private static ContextLoader BuildContextLoader(ICategoryIndexContext categoryIndexContext = null, ICategoryDetailContext categoryDetailContext = null) {
-            categoryIndexContext = categoryIndexContext ?? new MockCategoryIndexContext();
-            categoryDetailContext = categoryDetailContext ?? new MockCategoryDetailContext();
-            return new ContextLoader(categoryIndexContext, categoryDetailContext);
+        private static ContextLoader BuildContextLoader(ICategoryListContext categoryListContext = null, ICategoryViewContext categoryViewContext = null) {
+            categoryListContext = categoryListContext ?? new MockCategoryListContext();
+            categoryViewContext = categoryViewContext ?? new MockCategoryViewContext();
+            return new ContextLoader(categoryListContext, categoryViewContext);
         }
     }
 }

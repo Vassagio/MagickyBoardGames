@@ -23,18 +23,18 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Index_Result() {    
-            var viewModel = new CategoryIndexViewModel();
-            var context = new MockCategoryIndexContext().BuildViewModelStubbedToReturn(viewModel);
-            var contextLoader = new MockContextLoader().LoadCategoryIndexContextStubbedToReturn(context);
+            var viewModel = new CategoryListViewModel();
+            var context = new MockCategoryListContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockContextLoader().LoadCategoryListContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Index();
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            viewResult.Model.Should().BeAssignableTo<CategoryIndexViewModel>();
+            viewResult.Model.Should().BeAssignableTo<CategoryListViewModel>();
             viewResult.Model.Should().Be(viewModel);
             context.VerifyBuildViewModelCalled();
-            contextLoader.VerifyLoadCategoryIndexContextCalled();
+            contextLoader.VerifyLoadCategoryListContextCalled();
         }
 
         [Fact]
@@ -45,35 +45,87 @@ namespace MagickyBoardGames.Tests.Controllers {
             var result = await controller.Details(null);
             result.Should().BeOfType<NotFoundResult>();
 
-            contextLoader.VerifyLoadCategoryDetailContextNotCalled();
+            contextLoader.VerifyLoadCategoryViewContextNotCalled();
         }
 
         [Fact]
         public async void Display_Details_Not_Found_When_No_Record_Is_Found() {
-            var context = new MockCategoryDetailContext().BuildViewModelStubbedToReturn(null);
-            var contextLoader = new MockContextLoader().LoadCategoryDetailContextStubbedToReturn(context); ;
+            var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(null);
+            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Details(5);
             result.Should().BeOfType<NotFoundResult>();
             context.VerifyBuildViewModelCalled(5);
-            contextLoader.VerifyLoadCategoryDetailContextCalled();
+            contextLoader.VerifyLoadCategoryViewContextCalled();
         }
 
         [Fact]
         public async void Display_Details_Result() {
-            var viewModel = new CategoryDetailViewModel();
-            var context = new MockCategoryDetailContext().BuildViewModelStubbedToReturn(viewModel);
-            var contextLoader = new MockContextLoader().LoadCategoryDetailContextStubbedToReturn(context); ;
+            var viewModel = new CategoryViewViewModel();
+            var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Details(7);
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            viewResult.Model.Should().BeAssignableTo<CategoryDetailViewModel>();
+            viewResult.Model.Should().BeAssignableTo<CategoryViewViewModel>();
             viewResult.Model.Should().Be(viewModel);
             context.VerifyBuildViewModelCalled(7);
-            contextLoader.VerifyLoadCategoryDetailContextCalled();
+            contextLoader.VerifyLoadCategoryViewContextCalled();
+        }
+
+        [Fact]
+        public async void Display_Delete_Not_Found_When_Id_Is_Null() {
+            var contextLoader = new MockContextLoader();
+            var controller = BuildCategoryController(contextLoader);
+
+            var result = await controller.Delete(null);
+            result.Should().BeOfType<NotFoundResult>();
+
+            contextLoader.VerifyLoadCategoryViewContextNotCalled();
+        }
+
+        [Fact]
+        public async void Display_Delete_Not_Found_When_No_Record_Is_Found() {
+            var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(null);
+            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
+            var controller = BuildCategoryController(contextLoader);
+
+            var result = await controller.Delete(5);
+            result.Should().BeOfType<NotFoundResult>();
+            context.VerifyBuildViewModelCalled(5);
+            contextLoader.VerifyLoadCategoryViewContextCalled();
+        }
+
+        [Fact]
+        public async void Display_Delete_Result() {
+            var viewModel = new CategoryViewViewModel();
+            var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
+            var controller = BuildCategoryController(contextLoader);
+
+            var result = await controller.Delete(7);
+
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            viewResult.Model.Should().BeAssignableTo<CategoryViewViewModel>();
+            viewResult.Model.Should().Be(viewModel);
+            context.VerifyBuildViewModelCalled(7);
+            contextLoader.VerifyLoadCategoryViewContextCalled();
+        }
+
+        [Fact]
+        public async void Display_DeleteConfirmed_Result() {
+            var context = new MockCategoryViewContext();
+            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
+            var controller = BuildCategoryController(contextLoader);
+
+            var result = await controller.DeleteConfirmed(11);
+
+            var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
+            redirectResult.ActionName.Should().Be("Index");
+            context.VerifyDeleteCalled(11);
         }
 
         //[Fact]
@@ -121,47 +173,7 @@ namespace MagickyBoardGames.Tests.Controllers {
         //    var model = viewResult.ActionName.Should().Be("Index");
         //    categoryContext.VerifyAddCalled(viewModel);
         //    validator.VerifyValidateCalled(viewModel);
-        //}
-
-        //[Fact]
-        //public async void Display_Delete_Not_Found_When_Id_Is_Null() {
-        //    var categoryContext = new MockContext<CategoryViewModel>();
-        //    var controller = BuildCategoryController(categoryContext);
-
-        //    var result = await controller.Delete(null);
-        //    result.Should().BeOfType<NotFoundResult>();
-
-        //    categoryContext.VerifyGetByNotCalled();
-        //}
-
-        //[Fact]
-        //public async void Display_Delete_Not_Found_When_No_Record_Is_Found() {
-        //    var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(null);
-        //    var controller = BuildCategoryController(categoryContext);
-
-        //    var result = await controller.Delete(5);
-        //    result.Should().BeOfType<NotFoundResult>();
-
-        //    categoryContext.VerifyGetByCalled(5);
-        //}
-
-        //[Fact]
-        //public async void Display_Delete_Result() {
-        //    var foundViewModel = new CategoryViewModel {
-        //        Id = 7,
-        //        Description = "Found Item"
-        //    };
-        //    var categoryContext = new MockContext<CategoryViewModel>().GetByStubbedToReturn(foundViewModel);
-        //    var controller = BuildCategoryController(categoryContext);
-
-        //    var result = await controller.Delete(7);
-
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<CategoryViewModel>().Subject;
-        //    model.Id.Should().Be(7);
-        //    model.Description.Should().Be("Found Item");
-        //    categoryContext.VerifyGetByCalled(7);
-        //}
+        //}   
 
         //[Fact]
         //public async void Display_Edit_Not_Found_When_Id_Is_Null() {
@@ -253,18 +265,6 @@ namespace MagickyBoardGames.Tests.Controllers {
         //    viewResult.ActionName.Should().Be("Index");
         //    categoryContext.VerifyUpdateCalled(viewModel);
         //    validator.VerifyValidateCalled(viewModel);
-        //}
-
-        //[Fact]
-        //public async void Display_DeleteConfirmed_Result() {
-        //    var categoryContext = new MockContext<CategoryViewModel>();
-        //    var controller = BuildCategoryController(categoryContext);
-
-        //    var result = await controller.DeleteConfirmed(11);
-
-        //    var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-        //    redirectResult.ActionName.Should().Be("Index");
-        //    categoryContext.VerifyDeleteCalled(11);
         //}
 
         private static CategoryController BuildCategoryController(IContextLoader contextLoader = null) {

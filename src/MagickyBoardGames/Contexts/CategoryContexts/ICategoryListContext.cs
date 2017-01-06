@@ -2,7 +2,7 @@
 using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Contexts.CategoryContexts {
-    public interface ICategoryIndexContext {
-        Task<CategoryIndexViewModel> BuildViewModel();
+    public interface ICategoryListContext {
+        Task<CategoryListViewModel> BuildViewModel();
     }
 }

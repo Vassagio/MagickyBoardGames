@@ -15,7 +15,7 @@ namespace MagickyBoardGames.Controllers {
         }
 
         public async Task<IActionResult> Index() {
-            var context = _loader.LoadCategoryIndexContext();
+            var context = _loader.LoadCategoryListContext();
             return View(await context.BuildViewModel());
         }
 
@@ -23,7 +23,7 @@ namespace MagickyBoardGames.Controllers {
             if (id == null)
                 return NotFound();
 
-            var context = _loader.LoadCategoryDetailContext();
+            var context = _loader.LoadCategoryViewContext();
             var viewModel = await context.BuildViewModel(id.Value);
             if (viewModel == null)
                 return NotFound();
@@ -77,15 +77,15 @@ namespace MagickyBoardGames.Controllers {
 
         [Authorize]
         public async Task<IActionResult> Delete(int? id) {
-            //if (id == null)
-            //    return NotFound();
+            if (id == null)
+                return NotFound();
 
-            //var categoryViewModel = await _categoryContext.GetBy(id.Value);
-            //if (categoryViewModel == null)
-            //    return NotFound();
+            var context = _loader.LoadCategoryViewContext();
+            var viewModel = await context.BuildViewModel(id.Value);
+            if (viewModel == null)
+                return NotFound();
 
-            //return View(categoryViewModel);
-            return View();
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -93,9 +93,9 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id) {
-            //await _categoryContext.Delete(id);
-            //return RedirectToAction("Index");
-            return View();
+            var context = _loader.LoadCategoryViewContext();
+            await context.Delete(id);            
+            return RedirectToAction("Index");
         }   
 
         private bool IsValid(CategoryViewModel categoryViewModel) {

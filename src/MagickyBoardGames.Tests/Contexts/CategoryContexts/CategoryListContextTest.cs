@@ -10,11 +10,11 @@ using Xunit;
 
 namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
 {
-    public class CategoryIndexContextTest
+    public class CategoryListContextTest
     {
         [Fact]
-        public void Initialize_Category_Index_Context() {
-            var context = BuildCategoryIndexContext();
+        public void Initializes() {
+            var context = BuildCategoryListContext();
             context.Should().NotBeNull();
         }
 
@@ -22,11 +22,11 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
         public async void Returns_Empty_View_Model_When_Not_Found() {
             var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(null);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>();
-            var context = BuildCategoryIndexContext(categoryRepository, categoryBuilder);
+            var context = BuildCategoryListContext(categoryRepository, categoryBuilder);
 
-            var categoryIndexViewModel = await context.BuildViewModel();
+            var categoryListViewModel = await context.BuildViewModel();
 
-            categoryIndexViewModel.Should().BeOfType<CategoryIndexViewModel>();
+            categoryListViewModel.Should().BeOfType<CategoryListViewModel>();
             categoryRepository.VerifyGetAllCalled();
             categoryBuilder.VerifyBuildNotCalled();
         }
@@ -38,19 +38,19 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
             var viewModel = new CategoryViewModel();
             var repository = new MockRepository<Category>().GetAllStubbedToReturn(entities);
             var builder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(viewModel);
-            var context = BuildCategoryIndexContext(repository, builder);
+            var context = BuildCategoryListContext(repository, builder);
 
-            var categoryIndexViewModel = await context.BuildViewModel();
+            var categoryListViewModel = await context.BuildViewModel();
 
-            categoryIndexViewModel.Should().BeOfType<CategoryIndexViewModel>();
+            categoryListViewModel.Should().BeOfType<CategoryListViewModel>();
             repository.VerifyGetAllCalled();
             builder.VerifyBuildCalled(entity);
         }
 
-        private static CategoryIndexContext BuildCategoryIndexContext(IRepository<Category> repository = null, IBuilder<Category, CategoryViewModel> builder = null) {
+        private static CategoryListContext BuildCategoryListContext(IRepository<Category> repository = null, IBuilder<Category, CategoryViewModel> builder = null) {
             repository = repository ?? new MockRepository<Category>();
             builder = builder ?? new MockBuilder<Category, CategoryViewModel>();
-            return new CategoryIndexContext(repository, builder);
+            return new CategoryListContext(repository, builder);
         }
     }
 }
