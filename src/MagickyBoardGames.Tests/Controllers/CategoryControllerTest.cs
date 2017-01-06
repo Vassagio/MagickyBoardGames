@@ -128,52 +128,54 @@ namespace MagickyBoardGames.Tests.Controllers {
             context.VerifyDeleteCalled(11);
         }
 
-        //[Fact]
-        //public void Display_Create_Result() {
-        //    var controller = BuildCategoryController();
+        [Fact]
+        public void Display_Create_Result() {
+            var controller = BuildCategoryController();
 
-        //    var result = controller.Create();
+            var result = controller.Create();
 
-        //    result.Should().BeOfType<ViewResult>();
-        //}
+            result.Should().BeOfType<ViewResult>();
+        }
 
-        //[Fact]
-        //public async void Display_Create_Post_Result_Invalid() {
-        //    var viewModel = new CategoryViewModel {
-        //        Id = 9,
-        //        Description = "Another Item"
-        //    };
-        //    var categoryContext = new MockContext<CategoryViewModel>();
-        //    var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnInvalid();
-        //    var controller = BuildCategoryController(categoryContext, validator);
+        [Fact]
+        public async void Display_Create_Post_Result_Invalid() {
+            var viewModel = new CategoryViewModel {
+                Id = 9,
+                Description = "Another Item"
+            };
+            var context = new MockCategorySaveContext().ValidateStubbedToBeInvalid();
+            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var controller = BuildCategoryController(contextLoader);
 
-        //    var result = await controller.Create(viewModel);
+            var result = await controller.Create(viewModel);
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<CategoryViewModel>().Subject;
-        //    model.Id.Should().Be(9);
-        //    model.Description.Should().Be("Another Item");
-        //    categoryContext.VerifyAddNotCalled();
-        //    validator.VerifyValidateCalled(viewModel);
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeAssignableTo<CategoryViewModel>().Subject;
+            model.Id.Should().Be(9);
+            model.Description.Should().Be("Another Item");
+            contextLoader.VerifyLoadCategorySaveContextCalled();
+            context.VerifyValidateCalled(viewModel);
+            context.VerifySaveNotCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Create_Post_Result_Valid() {
-        //    var viewModel = new CategoryViewModel {
-        //        Id = 9,
-        //        Description = "Another Item"
-        //    };
-        //    var categoryContext = new MockContext<CategoryViewModel>();
-        //    var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnValid();
-        //    var controller = BuildCategoryController(categoryContext, validator);
+        [Fact]
+        public async void Display_Create_Post_Result_Valid() {
+            var viewModel = new CategoryViewModel {
+                Id = 9,
+                Description = "Another Item"
+            };
+            var context = new MockCategorySaveContext().ValidateStubbedToBeValid();
+            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var controller = BuildCategoryController(contextLoader);
 
-        //    var result = await controller.Create(viewModel);
+            var result = await controller.Create(viewModel);
 
-        //    var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-        //    var model = viewResult.ActionName.Should().Be("Index");
-        //    categoryContext.VerifyAddCalled(viewModel);
-        //    validator.VerifyValidateCalled(viewModel);
-        //}   
+            var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
+            viewResult.ActionName.Should().Be("Index");            
+            contextLoader.VerifyLoadCategorySaveContextCalled();
+            context.VerifyValidateCalled(viewModel);
+            context.VerifySaveCalled(viewModel);
+        }
 
         //[Fact]
         //public async void Display_Edit_Not_Found_When_Id_Is_Null() {

@@ -1,18 +1,16 @@
-﻿using MagickyBoardCategorys.Builders;
-using Xunit;
-using FluentAssertions;
+﻿using FluentAssertions;
+using MagickyBoardGames.Builders;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.ViewModels;
+using Xunit;
 
-namespace MagickyBoardGames.Tests.Builders
-{
-    public class CategoryBuilderTest
-    {
+namespace MagickyBoardGames.Tests.Builders {
+    public class CategoryBuilderTest {
         [Fact]
         public void View_Model_To_Category() {
             var viewModel = new CategoryViewModel {
                 Id = 4,
-                Description = "Description",
+                Description = "Description"
             };
             var builder = new CategoryBuilder();
 
@@ -26,7 +24,7 @@ namespace MagickyBoardGames.Tests.Builders
         public void Category_To_View_Model() {
             var category = new Category {
                 Id = 4,
-                Description = "Description",
+                Description = "Description"
             };
             var builder = new CategoryBuilder();
 

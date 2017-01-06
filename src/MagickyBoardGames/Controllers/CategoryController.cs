@@ -40,12 +40,13 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Description")] CategoryViewModel categoryViewModel) {
-            //if (!IsValid(categoryViewModel))
-            //    return View(categoryViewModel);
+            var context = _loader.LoadCategorySaveContext();
+            var result = context.Validate(categoryViewModel);
+            if (!result.IsValid)
+                return View(categoryViewModel);
 
-            //await _categoryContext.Add(categoryViewModel);
-            //return RedirectToAction("Index");
-            return View();
+            await context.Save(categoryViewModel);            
+            return RedirectToAction("Index");            
         }
 
         [Authorize]
@@ -94,9 +95,9 @@ namespace MagickyBoardGames.Controllers {
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id) {
             var context = _loader.LoadCategoryViewContext();
-            await context.Delete(id);            
+            await context.Delete(id);
             return RedirectToAction("Index");
-        }   
+        }
 
         private bool IsValid(CategoryViewModel categoryViewModel) {
             //var results = _validator.Validate(categoryViewModel);

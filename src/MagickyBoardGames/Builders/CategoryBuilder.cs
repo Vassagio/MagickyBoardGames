@@ -1,9 +1,8 @@
 ﻿using System;
-using MagickyBoardGames.Builders;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.ViewModels;
 
-namespace MagickyBoardCategorys.Builders
+namespace MagickyBoardGames.Builders
 {
     public class CategoryBuilder : IBuilder<Category, CategoryViewModel> {
         private int? _id;
@@ -16,14 +15,13 @@ namespace MagickyBoardCategorys.Builders
             };
         }
 
-        public Category ToEntity() {
-            if (!_id.HasValue)
-                throw new ArgumentException();
-
-            return new Category {
-                Id = _id.Value,
+        public Category ToEntity() {                        
+            var entity =  new Category {                
                 Description = _description,
             };
+            if (_id.HasValue)
+                entity.Id = _id.Value;
+            return entity;
         }
 
         public CategoryViewModel Build(Category entity) {

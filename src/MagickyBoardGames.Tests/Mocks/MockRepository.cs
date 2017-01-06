@@ -20,6 +20,10 @@ namespace MagickyBoardGames.Tests.Mocks {
             return _mock.Object.GetBy(id);
         }
 
+        public Task<T> GetBy(T entity) {
+            return _mock.Object.GetBy(entity);
+        }
+
         public Task<int> Add(T entity) {
             return _mock.Object.Add(entity);
         }
@@ -35,8 +39,9 @@ namespace MagickyBoardGames.Tests.Mocks {
             _mock.Setup(m => m.GetAll()).Returns(Task.FromResult(entities));
             return this;
         }
-        public MockRepository<T> GetByStubbedToReturn(T entities) {
-            _mock.Setup(m => m.GetBy(It.IsAny<int>())).Returns(Task.FromResult(entities));
+        public MockRepository<T> GetByStubbedToReturn(T entity) {
+            _mock.Setup(m => m.GetBy(It.IsAny<int>())).Returns(Task.FromResult(entity));
+            _mock.Setup(m => m.GetBy(It.IsAny<T>())).Returns(Task.FromResult(entity));
             return this;
         }
 
@@ -46,6 +51,10 @@ namespace MagickyBoardGames.Tests.Mocks {
 
         public void VerifyGetByCalled(int id, int times = 1) {
             _mock.Verify(m => m.GetBy(id), Times.Exactly(times));
+        }
+
+        public void VerifyGetByCalled(T entity, int times = 1) {
+            _mock.Verify(m => m.GetBy(entity), Times.Exactly(times));
         }
 
         public void VerifyGetByNotCalled() {

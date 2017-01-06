@@ -18,6 +18,10 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
             return _mock.Object.LoadCategoryViewContext();
         }
 
+        public ICategorySaveContext LoadCategorySaveContext() {
+            return _mock.Object.LoadCategorySaveContext();
+        }
+
         public MockContextLoader LoadCategoryListContextStubbedToReturn(ICategoryListContext context) {
             _mock.Setup(m => m.LoadCategoryListContext()).Returns(context);
             return this;
@@ -38,6 +42,15 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
         public MockContextLoader LoadCategoryViewContextStubbedToReturn(ICategoryViewContext context) {
             _mock.Setup(m => m.LoadCategoryViewContext()).Returns(context);
             return this;
+        }
+
+        public MockContextLoader LoadCategorySaveContextStubbedToReturn(ICategorySaveContext context) {
+            _mock.Setup(m => m.LoadCategorySaveContext()).Returns(context);
+            return this;
+        }
+
+        public void VerifyLoadCategorySaveContextCalled(int times = 1) {
+            _mock.Verify(m => m.LoadCategorySaveContext(), Times.Exactly(times));
         }
     }
 }

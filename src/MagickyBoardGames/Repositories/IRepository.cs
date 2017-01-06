@@ -12,6 +12,7 @@ namespace MagickyBoardGames.Repositories
         Task<int> Add(T entity);
         Task Delete(int id);
         Task Update(T entity);
+        Task<T> GetBy(T entity);
     }
 }
  

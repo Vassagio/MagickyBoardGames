@@ -24,6 +24,10 @@ namespace MagickyBoardGames.Repositories
             return await _context.Categories.Include(c => c.GameCategories).ThenInclude(gc => gc.Game).SingleOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<Category> GetBy(Category category) {
+            return await _context.Categories.Include(c => c.GameCategories).ThenInclude(gc => gc.Game).SingleOrDefaultAsync(c => c.Description.Equals(category.Description, StringComparison.CurrentCultureIgnoreCase));
+        }
+
         public async Task<int> Add(Category entity) {
             if (string.IsNullOrEmpty(entity.Description))
                 throw new ArgumentException();

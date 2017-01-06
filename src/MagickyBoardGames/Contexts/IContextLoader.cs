@@ -1,5 +1,4 @@
 ﻿using MagickyBoardGames.Contexts.CategoryContexts;
-using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Contexts
 {
@@ -7,5 +6,6 @@ namespace MagickyBoardGames.Contexts
     {
         ICategoryListContext LoadCategoryListContext();
         ICategoryViewContext LoadCategoryViewContext();
+        ICategorySaveContext LoadCategorySaveContext();
     }
 }

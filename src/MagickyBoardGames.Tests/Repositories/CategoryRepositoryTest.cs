@@ -132,6 +132,45 @@ namespace MagickyBoardGames.Tests.Repositories {
             categories.Count().Should().Be(2);
         }
 
+        [Fact]
+        public async void Get_By_Id() {
+            var category1 = new Category {
+                Id = 111,
+                Description = "Category 1"
+            };
+            var category2 = new Category {
+                Id = 222,
+                Description = "Category 2"
+            };
+            var context = BuildCategoryRepository();
+            await _fixture.Populate(category1, category2);
+
+            var category = await context.GetBy(222);
+
+            category.Should().Be(category2);
+        }
+
+        [Theory]
+        [InlineData("Category 1")]
+        [InlineData("category 1")]
+        [InlineData("CATEGORY 1")]
+        public async void Get_By_Unique_Key(string description) {
+            var category1 = new Category {
+                Id = 111,
+                Description = "Category 1"
+            };
+            var category2 = new Category {
+                Id = 222,
+                Description = "Category 2"
+            };
+            var context = BuildCategoryRepository();
+            await _fixture.Populate(category1, category2);
+
+            var category = await context.GetBy(new Category { Description = description });
+
+            category.Should().Be(category1);
+        }
+
         private CategoryRepository BuildCategoryRepository() {
             return new CategoryRepository(_fixture.Db);
         }

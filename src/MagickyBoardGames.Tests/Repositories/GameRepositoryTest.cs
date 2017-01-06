@@ -166,6 +166,58 @@ namespace MagickyBoardGames.Tests.Repositories {
             games.Count().Should().Be(2);
         }
 
+        [Fact]
+        public async void Get_By_Id() {
+            var game1 = new Game {
+                Id = 111,
+                Name = "Game 1",
+                Description = "Description",
+                MinPlayers = 1,
+                MaxPlayers = 10
+            };
+            var game2 = new Game {
+                Id = 222,
+                Name = "Game 2",
+                Description = "Description",
+                MinPlayers = 1,
+                MaxPlayers = 10
+            };
+            var context = BuildGameRepository();
+            await _fixture.Populate(game1, game2);
+
+            var category = await context.GetBy(222);
+
+            category.Should().Be(game2);
+        }
+
+
+        [Theory]
+        [InlineData("Game 1")]
+        [InlineData("game 1")]
+        [InlineData("GAME 1")]
+        public async void Get_By_Unique_Key(string name) {
+            var game1 = new Game {
+                Id = 111,
+                Name = "Game 1",
+                Description = "Description",
+                MinPlayers = 1,
+                MaxPlayers = 10
+            };
+            var game2 = new Game {
+                Id = 222,
+                Name = "Game 2",
+                Description = "Description",
+                MinPlayers = 1,
+                MaxPlayers = 10
+            };
+            var context = BuildGameRepository();
+            await _fixture.Populate(game1, game2);
+
+            var game = await context.GetBy(new Game { Name = name });
+
+            game.Should().Be(game1);
+        }
+
         private GameRepository BuildGameRepository() {
             return new GameRepository(_fixture.Db);
         }

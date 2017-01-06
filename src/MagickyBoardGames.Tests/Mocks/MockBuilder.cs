@@ -33,12 +33,22 @@ namespace MagickyBoardGames.Tests.Mocks
             return this;
         }
 
+        public MockBuilder<TEntity, TViewModel> BuildStubbedToReturn(TEntity entity) {
+            _mock.Setup(m => m.Build(It.IsAny<TViewModel>())).Returns(entity);
+            return this;
+        }
+
         public void VerifyBuildCalled(TEntity entity, int times = 1) {
             _mock.Verify(m => m.Build(entity), Times.Exactly(times));
         }
 
+        public void VerifyBuildCalled(TViewModel viewModel, int times = 1) {
+            _mock.Verify(m => m.Build(viewModel), Times.Exactly(times));
+        }
+
         public void VerifyBuildNotCalled() {
             _mock.Verify(m => m.Build(It.IsAny<TEntity>()), Times.Never);
+            _mock.Verify(m => m.Build(It.IsAny<TViewModel>()), Times.Never);
         }
     }
 }

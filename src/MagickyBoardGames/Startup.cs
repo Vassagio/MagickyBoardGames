@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
-using MagickyBoardCategorys.Builders;
 using MagickyBoardGames.Builders;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.CategoryContexts;
@@ -56,6 +55,7 @@ namespace MagickyBoardGames {
 
             services.AddTransient<ICategoryListContext, CategoryListContext>();
             services.AddTransient<ICategoryViewContext, CategoryViewContext>();
+            services.AddTransient<ICategorySaveContext, CategorySaveContext>();
             services.AddTransient<IContextLoader, ContextLoader>();
         }
 

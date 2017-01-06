@@ -21,6 +21,10 @@ namespace MagickyBoardGames.Repositories {
             return await _context.Games.SingleOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<Game> GetBy(Game game) {
+            return await _context.Games.SingleOrDefaultAsync(c => c.Name.Equals(game.Name, StringComparison.CurrentCultureIgnoreCase));
+        }
+
         public async Task<int> Add(Game entity) {
             if (string.IsNullOrEmpty(entity.Name))
                 throw new ArgumentException();
@@ -45,6 +49,10 @@ namespace MagickyBoardGames.Repositories {
 
             _context.Games.Update(entity);
             await _context.SaveChangesAsync();
+        }
+
+        public Task<Category> GetBy(string description) {
+            throw new NotImplementedException();
         }
 
         private async Task<bool> Exists(int id) {

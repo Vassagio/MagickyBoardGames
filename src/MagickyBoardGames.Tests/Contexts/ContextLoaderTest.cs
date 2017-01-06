@@ -35,10 +35,21 @@ namespace MagickyBoardGames.Tests.Contexts
             context.Should().Be(categoryViewContext);
         }
 
-        private static ContextLoader BuildContextLoader(ICategoryListContext categoryListContext = null, ICategoryViewContext categoryViewContext = null) {
+        [Fact]
+        public void Loads_Category_Save_Context() {
+            var categorySaveContext = new MockCategorySaveContext();
+            var contextLoader = BuildContextLoader(categorySaveContext: categorySaveContext);
+
+            var context = contextLoader.LoadCategorySaveContext();
+
+            context.Should().Be(categorySaveContext);
+        }
+
+        private static ContextLoader BuildContextLoader(ICategoryListContext categoryListContext = null, ICategoryViewContext categoryViewContext = null, ICategorySaveContext categorySaveContext = null) {
             categoryListContext = categoryListContext ?? new MockCategoryListContext();
             categoryViewContext = categoryViewContext ?? new MockCategoryViewContext();
-            return new ContextLoader(categoryListContext, categoryViewContext);
+            categorySaveContext = categorySaveContext ?? new MockCategorySaveContext();
+            return new ContextLoader(categoryListContext, categoryViewContext, categorySaveContext);
         }
     }
 }
