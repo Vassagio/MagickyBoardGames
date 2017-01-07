@@ -3,11 +3,11 @@ using MagickyBoardGames.Contexts.CategoryContexts;
 using Moq;
 
 namespace MagickyBoardGames.Tests.Mocks.MockContexts {
-    public class MockContextLoader : IContextLoader {
-        private readonly Mock<IContextLoader> _mock;
+    public class MockCategoryContextLoader : ICategoryContextLoader {
+        private readonly Mock<ICategoryContextLoader> _mock;
 
-        public MockContextLoader() {
-            _mock = new Mock<IContextLoader>();
+        public MockCategoryContextLoader() {
+            _mock = new Mock<ICategoryContextLoader>();
         }
 
         public ICategoryListContext LoadCategoryListContext() {
@@ -22,7 +22,7 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
             return _mock.Object.LoadCategorySaveContext();
         }
 
-        public MockContextLoader LoadCategoryListContextStubbedToReturn(ICategoryListContext context) {
+        public MockCategoryContextLoader LoadCategoryListContextStubbedToReturn(ICategoryListContext context) {
             _mock.Setup(m => m.LoadCategoryListContext()).Returns(context);
             return this;
         }
@@ -39,12 +39,12 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
             _mock.Verify(m => m.LoadCategoryViewContext(), Times.Exactly(times));
         }
 
-        public MockContextLoader LoadCategoryViewContextStubbedToReturn(ICategoryViewContext context) {
+        public MockCategoryContextLoader LoadCategoryViewContextStubbedToReturn(ICategoryViewContext context) {
             _mock.Setup(m => m.LoadCategoryViewContext()).Returns(context);
             return this;
         }
 
-        public MockContextLoader LoadCategorySaveContextStubbedToReturn(ICategorySaveContext context) {
+        public MockCategoryContextLoader LoadCategorySaveContextStubbedToReturn(ICategorySaveContext context) {
             _mock.Setup(m => m.LoadCategorySaveContext()).Returns(context);
             return this;
         }

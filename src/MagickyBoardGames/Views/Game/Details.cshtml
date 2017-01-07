@@ -1,4 +1,4 @@
-@model MagickyBoardGames.ViewModels.GameViewModel
+@model MagickyBoardGames.ViewModels.GameViewViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,26 +11,46 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Game.Name)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Game.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.Game.Description)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Description)
+            @Html.DisplayFor(model => model.Game.Description)
         </dd>        
         <dt>
-            @Html.DisplayNameFor(model => model.PlayerRange)
+            @Html.DisplayNameFor(model => model.Game.PlayerRange)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.PlayerRange)
+            @Html.DisplayFor(model => model.Game.PlayerRange)
         </dd>
     </dl>
 </div>
+<h4>Categories</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Categories) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Game.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

@@ -1,4 +1,4 @@
-@model IEnumerable<MagickyBoardGames.ViewModels.GameViewModel>
+@model MagickyBoardGames.ViewModels.GameListViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -13,19 +13,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                Description
             </th>
             <th class="text-center">
-                @Html.DisplayNameFor(model => model.PlayerRange)
+                Number Of Players
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Games) {
         <tr>
             <td class="col-md-2">
                 @Html.DisplayFor(modelItem => item.Name)
