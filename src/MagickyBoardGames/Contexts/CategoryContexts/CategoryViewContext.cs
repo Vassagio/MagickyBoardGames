@@ -36,7 +36,7 @@ namespace MagickyBoardGames.Contexts.CategoryContexts
         }
 
         private IEnumerable<GameViewModel> GetGames(Category category) {
-            return category.GameCategories?.Select(gameCategory => _gameBuilder.Build(gameCategory.Game)).ToList();
+            return category.GameCategories?.Select(gc => _gameBuilder.Build(gc.Game)).ToList();
         }
     }
 }

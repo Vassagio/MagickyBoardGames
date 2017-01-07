@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using MagickyBoardGames.Builders;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.CategoryContexts;
+using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.Data;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.Repositories;
@@ -56,7 +57,12 @@ namespace MagickyBoardGames {
             services.AddTransient<ICategoryListContext, CategoryListContext>();
             services.AddTransient<ICategoryViewContext, CategoryViewContext>();
             services.AddTransient<ICategorySaveContext, CategorySaveContext>();
-            services.AddTransient<IContextLoader, ContextLoader>();
+            services.AddTransient<ICategoryContextLoader, CategoryContextLoader>();
+
+            services.AddTransient<IGameListContext, GameListContext>();
+            services.AddTransient<IGameViewContext, GameViewContext>();
+            services.AddTransient<IGameSaveContext, GameSaveContext>();
+            services.AddTransient<IGameContextLoader, GameContextLoader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

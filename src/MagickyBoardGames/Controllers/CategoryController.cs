@@ -1,14 +1,15 @@
 using System.Threading.Tasks;
 using MagickyBoardGames.Contexts;
+using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagickyBoardGames.Controllers {
     public class CategoryController : Controller {
-        private readonly IContextLoader _loader;
+        private readonly ICategoryContextLoader _loader;
 
-        public CategoryController(IContextLoader loader) {
+        public CategoryController(ICategoryContextLoader loader) {
             _loader = loader;
         }
 
@@ -58,7 +59,6 @@ namespace MagickyBoardGames.Controllers {
                 return NotFound();
 
             return View(categoryViewViewModel.Category);
-
         }
 
         [HttpPost]
@@ -98,13 +98,6 @@ namespace MagickyBoardGames.Controllers {
             var context = _loader.LoadCategoryViewContext();
             await context.Delete(id);
             return RedirectToAction("Index");
-        }
-
-        private bool IsValid(CategoryViewModel categoryViewModel) {
-            //var results = _validator.Validate(categoryViewModel);
-            //results.AddToModelState(ModelState, null);
-            //return results.IsValid;
-            return true;
         }
     }
 }

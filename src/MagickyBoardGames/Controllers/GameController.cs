@@ -2,33 +2,35 @@ using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MagickyBoardGames.Contexts;
+using MagickyBoardGames.Contexts.CategoryContexts;
+using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagickyBoardGames.Controllers {
     public class GameController : Controller {
-        private readonly IContextLoader _loader;
+        private readonly IGameContextLoader _loader;
 
-        public GameController(IContextLoader loader) {
+        public GameController(IGameContextLoader loader) {
             _loader = loader;
         }
 
         public async Task<IActionResult> Index() {
-            //return View(await _gameContext.GetAll());
-            return View();
+            var context = _loader.LoadGameListContext();
+            return View(await context.BuildViewModel());
         }
 
         public async Task<IActionResult> Details(int? id) {
-            //if (id == null)
-            //    return NotFound();
+            if (id == null)
+                return NotFound();
 
-            //var gameViewModel = await _gameContext.GetBy(id.Value);
-            //if (gameViewModel == null)
-            //    return NotFound();
+            var context = _loader.LoadGameViewContext();
+            var viewModel = await context.BuildViewModel(id.Value);
+            if (viewModel == null)
+                return NotFound();
 
-            //return View(gameViewModel);
-            return View();
+            return View(viewModel);
         }
 
         [Authorize]
@@ -40,52 +42,55 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,MinPlayers,MaxPlayers")] GameViewModel gameViewModel) {
-            //if (!IsValid(gameViewModel))
-            //    return View(gameViewModel);
+            var context = _loader.LoadGameSaveContext();
+            var result = context.Validate(gameViewModel);
+            if (!result.IsValid)
+                return View(gameViewModel);
 
-            //await _gameContext.Add(gameViewModel);
-            //return RedirectToAction("Index");
-            return View();
+            await context.Save(gameViewModel);
+            return RedirectToAction("Index");
         }
 
         [Authorize]
         public async Task<IActionResult> Edit(int? id) {
-            //if (id == null)
-            //    return NotFound();
+            if (id == null)
+                return NotFound();
 
-            //var gameViewModel = await _gameContext.GetBy(id.Value);
-            //if (gameViewModel == null)
-            //    return NotFound();
-            //return View(gameViewModel);
-            return View();
+            var context = _loader.LoadGameViewContext();
+            var gameViewViewModel = await context.BuildViewModel(id.Value);
+            if (gameViewViewModel == null)
+                return NotFound();
+
+            return View(gameViewViewModel.Game);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,MinPlayers,MaxPlayers")] GameViewModel gameViewModel) {
-            //if (id != gameViewModel.Id)
-            //    return NotFound();
+            if (id != gameViewModel.Id)
+                return NotFound();
 
-            //if (!IsValid(gameViewModel))
-            //    return View(gameViewModel);
+            var context = _loader.LoadGameSaveContext();
+            var result = context.Validate(gameViewModel);
+            if (!result.IsValid)
+                return View(gameViewModel);
 
-            //await _gameContext.Update(gameViewModel);
-            //return RedirectToAction("Index");
-            return View();
+            await context.Save(gameViewModel);
+            return RedirectToAction("Index");
         }
 
         [Authorize]
         public async Task<IActionResult> Delete(int? id) {
-            //if (id == null)
-            //    return NotFound();
+            if (id == null)
+                return NotFound();
 
-            //var gameViewModel = await _gameContext.GetBy(id.Value);
-            //if (gameViewModel == null)
-            //    return NotFound();
+            var context = _loader.LoadGameViewContext();
+            var viewModel = await context.BuildViewModel(id.Value);
+            if (viewModel == null)
+                return NotFound();
 
-            //return View(gameViewModel);
-            return View();
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -93,16 +98,9 @@ namespace MagickyBoardGames.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id) {
-            //await _gameContext.Delete(id);
-            //return RedirectToAction("Index");
-            return View();
-        }
-
-        private bool IsValid(GameViewModel gameViewModel) {
-            //var results = _validator.Validate(gameViewModel);
-            //results.AddToModelState(ModelState, null);
-            //return results.IsValid;
-            return true;
+            var context = _loader.LoadGameViewContext();
+            await context.Delete(id);
+            return RedirectToAction("Index");
         }
     }
 }

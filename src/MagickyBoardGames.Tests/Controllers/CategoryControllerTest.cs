@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
-using FluentValidation;
+﻿using FluentAssertions;
 using MagickyBoardGames.Contexts;
+using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.Controllers;
-using MagickyBoardGames.Tests.Mocks;
 using MagickyBoardGames.Tests.Mocks.MockContexts;
-using MagickyBoardGames.Validations;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
@@ -22,10 +18,10 @@ namespace MagickyBoardGames.Tests.Controllers {
         }
 
         [Fact]
-        public async void Display_Index_Result() {    
+        public async void Display_Index_Result() {
             var viewModel = new CategoryListViewModel();
             var context = new MockCategoryListContext().BuildViewModelStubbedToReturn(viewModel);
-            var contextLoader = new MockContextLoader().LoadCategoryListContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryListContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Index();
@@ -39,7 +35,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Details_Not_Found_When_Id_Is_Null() {
-            var contextLoader = new MockContextLoader();
+            var contextLoader = new MockCategoryContextLoader();
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Details(null);
@@ -51,7 +47,8 @@ namespace MagickyBoardGames.Tests.Controllers {
         [Fact]
         public async void Display_Details_Not_Found_When_No_Record_Is_Found() {
             var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(null);
-            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            ;
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Details(5);
@@ -65,7 +62,8 @@ namespace MagickyBoardGames.Tests.Controllers {
         public async void Display_Details_Result() {
             var viewModel = new CategoryViewViewModel();
             var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(viewModel);
-            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            ;
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Details(7);
@@ -79,7 +77,7 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Delete_Not_Found_When_Id_Is_Null() {
-            var contextLoader = new MockContextLoader();
+            var contextLoader = new MockCategoryContextLoader();
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Delete(null);
@@ -91,7 +89,8 @@ namespace MagickyBoardGames.Tests.Controllers {
         [Fact]
         public async void Display_Delete_Not_Found_When_No_Record_Is_Found() {
             var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(null);
-            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            ;
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Delete(5);
@@ -105,7 +104,8 @@ namespace MagickyBoardGames.Tests.Controllers {
         public async void Display_Delete_Result() {
             var viewModel = new CategoryViewViewModel();
             var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(viewModel);
-            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            ;
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Delete(7);
@@ -120,7 +120,8 @@ namespace MagickyBoardGames.Tests.Controllers {
         [Fact]
         public async void Display_DeleteConfirmed_Result() {
             var context = new MockCategoryViewContext();
-            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context); ;
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            ;
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.DeleteConfirmed(11);
@@ -146,7 +147,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Another Item"
             };
             var context = new MockCategorySaveContext().ValidateStubbedToBeInvalid();
-            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategorySaveContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Create(viewModel);
@@ -167,13 +168,13 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Another Item"
             };
             var context = new MockCategorySaveContext().ValidateStubbedToBeValid();
-            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategorySaveContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Create(viewModel);
 
             var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            viewResult.ActionName.Should().Be("Index");            
+            viewResult.ActionName.Should().Be("Index");
             contextLoader.VerifyLoadCategorySaveContextCalled();
             context.VerifyValidateCalled(viewModel);
             context.VerifySaveCalled(viewModel);
@@ -182,19 +183,19 @@ namespace MagickyBoardGames.Tests.Controllers {
         [Fact]
         public async void Display_Edit_Not_Found_When_Id_Is_Null() {
             var context = new MockCategoryViewContext();
-            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryViewContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Edit(null);
 
-            result.Should().BeOfType<NotFoundResult>();            
+            result.Should().BeOfType<NotFoundResult>();
             contextLoader.VerifyLoadCategoryViewContextNotCalled();
         }
 
         [Fact]
         public async void Display_Edit_Not_Found_When_No_Record_Is_Found() {
             var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(null);
-            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryViewContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Edit(5);
@@ -213,7 +214,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 }
             };
             var context = new MockCategoryViewContext().BuildViewModelStubbedToReturn(viewModel);
-            var contextLoader = new MockContextLoader().LoadCategoryViewContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategoryViewContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Edit(7);
@@ -231,7 +232,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Found Item"
             };
             var context = new MockCategorySaveContext();
-            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategorySaveContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Edit(7, viewModel);
@@ -247,7 +248,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Description"
             };
             var context = new MockCategorySaveContext().ValidateStubbedToBeInvalid();
-            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategorySaveContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Edit(22, viewModel);
@@ -268,7 +269,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 Description = "Description"
             };
             var context = new MockCategorySaveContext().ValidateStubbedToBeValid();
-            var contextLoader = new MockContextLoader().LoadCategorySaveContextStubbedToReturn(context);
+            var contextLoader = new MockCategoryContextLoader().LoadCategorySaveContextStubbedToReturn(context);
             var controller = BuildCategoryController(contextLoader);
 
             var result = await controller.Edit(22, viewModel);
@@ -280,26 +281,8 @@ namespace MagickyBoardGames.Tests.Controllers {
             contextLoader.VerifyLoadCategorySaveContextCalled();
         }
 
-        //[Fact]
-        //public async void Display_Edit_Post_Result_Valid() {
-        //    var viewModel = new CategoryViewModel {
-        //        Id = 22,
-        //        Description = "Description"
-        //    };
-        //    var categoryContext = new MockContext<CategoryViewModel>();
-        //    var validator = new MockValidator<CategoryViewModel>().ValidateStubbedToReturnValid();
-        //    var controller = BuildCategoryController(categoryContext, validator);
-
-        //    var result = await controller.Edit(22, viewModel);
-
-        //    var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-        //    viewResult.ActionName.Should().Be("Index");
-        //    categoryContext.VerifyUpdateCalled(viewModel);
-        //    validator.VerifyValidateCalled(viewModel);
-        //}
-
-        private static CategoryController BuildCategoryController(IContextLoader contextLoader = null) {
-            contextLoader = contextLoader ?? new MockContextLoader();
+        private static CategoryController BuildCategoryController(ICategoryContextLoader contextLoader = null) {
+            contextLoader = contextLoader ?? new MockCategoryContextLoader();
             return new CategoryController(contextLoader);
         }
     }

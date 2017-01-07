@@ -1,8 +1,6 @@
-﻿using MagickyBoardGames.Contexts.CategoryContexts;
-
-namespace MagickyBoardGames.Contexts
+﻿namespace MagickyBoardGames.Contexts.CategoryContexts
 {
-    public interface IContextLoader
+    public interface ICategoryContextLoader
     {
         ICategoryListContext LoadCategoryListContext();
         ICategoryViewContext LoadCategoryViewContext();

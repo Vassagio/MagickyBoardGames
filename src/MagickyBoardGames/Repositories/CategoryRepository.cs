@@ -20,12 +20,16 @@ namespace MagickyBoardGames.Repositories
             return await _context.Categories.ToListAsync();
         }
 
+        private IQueryable<Category> Categories() {
+            return _context.Categories.Include(c => c.GameCategories).ThenInclude(gc => gc.Game);
+        }
+
         public async Task<Category> GetBy(int id) {
-            return await _context.Categories.Include(c => c.GameCategories).ThenInclude(gc => gc.Game).SingleOrDefaultAsync(c => c.Id == id);
+            return await Categories().SingleOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Category> GetBy(Category category) {
-            return await _context.Categories.Include(c => c.GameCategories).ThenInclude(gc => gc.Game).SingleOrDefaultAsync(c => c.Description.Equals(category.Description, StringComparison.CurrentCultureIgnoreCase));
+            return await Categories().SingleOrDefaultAsync(c => c.Description.Equals(category.Description, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public async Task<int> Add(Category entity) {

@@ -1,18 +1,18 @@
-﻿using MagickyBoardGames.Contexts;
-using FluentAssertions;
+﻿using FluentAssertions;
+using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.Tests.Mocks.MockContexts;
 using Xunit;
 
-namespace MagickyBoardGames.Tests.Contexts
+namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
 {
-    public class ContextLoaderTest
+    public class CategoryContextLoaderTest
     {
         [Fact]
         public void Initializes() {
             var contextLoader = BuildContextLoader();
             contextLoader.Should().NotBeNull();
-            contextLoader.Should().BeAssignableTo<IContextLoader>();
+            contextLoader.Should().BeAssignableTo<ICategoryContextLoader>();
         }
 
         [Fact]
@@ -45,11 +45,11 @@ namespace MagickyBoardGames.Tests.Contexts
             context.Should().Be(categorySaveContext);
         }
 
-        private static ContextLoader BuildContextLoader(ICategoryListContext categoryListContext = null, ICategoryViewContext categoryViewContext = null, ICategorySaveContext categorySaveContext = null) {
+        private static CategoryContextLoader BuildContextLoader(ICategoryListContext categoryListContext = null, ICategoryViewContext categoryViewContext = null, ICategorySaveContext categorySaveContext = null) {
             categoryListContext = categoryListContext ?? new MockCategoryListContext();
             categoryViewContext = categoryViewContext ?? new MockCategoryViewContext();
             categorySaveContext = categorySaveContext ?? new MockCategorySaveContext();
-            return new ContextLoader(categoryListContext, categoryViewContext, categorySaveContext);
+            return new CategoryContextLoader(categoryListContext, categoryViewContext, categorySaveContext);
         }
     }
 }

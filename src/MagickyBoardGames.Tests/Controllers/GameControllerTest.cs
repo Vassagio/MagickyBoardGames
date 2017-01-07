@@ -1,277 +1,289 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
-using FluentValidation;
+﻿using FluentAssertions;
 using MagickyBoardGames.Contexts;
+using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.Controllers;
-using MagickyBoardGames.Tests.Mocks;
-using MagickyBoardGames.Validations;
+using MagickyBoardGames.Tests.Mocks.MockContexts;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace MagickyBoardGames.Tests.Controllers {
     public class GameControllerTest {
-        //[Fact]
-        //public void Initialize_A_New_Controller() {
-        //    var controller = BuildGameController();
+        [Fact]
+        public void Initialize_A_New_Controller() {
+            var controller = BuildGameController();
 
-        //    controller.Should().NotBeNull();
-        //    controller.Should().BeAssignableTo<Controller>();
-        //}
+            controller.Should().NotBeNull();
+            controller.Should().BeAssignableTo<Controller>();
+        }
 
-        //[Fact]
-        //public async void Display_Index_Result() {
-        //    var viewModels = new List<GameViewModel> {
-        //        new GameViewModel(),
-        //        new GameViewModel()
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>().GetAllStubbedToReturn(viewModels);
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Index_Result() {
+            var viewModel = new GameListViewModel();
+            var context = new MockGameListContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameListContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Index();
+            var result = await controller.Index();
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<IEnumerable<GameViewModel>>().Subject;
-        //    model.Count().Should().Be(2);
-        //    gameContext.VerifyGetAllCalled();
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            viewResult.Model.Should().BeAssignableTo<GameListViewModel>();
+            viewResult.Model.Should().Be(viewModel);
+            context.VerifyBuildViewModelCalled();
+            contextLoader.VerifyLoadGameListContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Details_Not_Found_When_Id_Is_Null() {
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Details_Not_Found_When_Id_Is_Null() {
+            var contextLoader = new MockGameContextLoader();
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Details(null);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.Details(null);
 
-        //    gameContext.VerifyGetByNotCalled();
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            contextLoader.VerifyLoadGameViewContextNotCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Details_Not_Found_When_No_Record_Is_Found() {
-        //    var gameContext = new MockContext<GameViewModel>().GetByStubbedToReturn(null);
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Details_Not_Found_When_No_Record_Is_Found() {
+            var context = new MockGameViewContext().BuildViewModelStubbedToReturn(null);
+            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            ;
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Details(5);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.Details(5);
 
-        //    gameContext.VerifyGetByCalled(5);
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            context.VerifyBuildViewModelCalled(5);
+            contextLoader.VerifyLoadGameViewContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Details_Result() {
-        //    var foundViewModel = new GameViewModel {
-        //        Id = 7,
-        //        Description = "Found Item"
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>().GetByStubbedToReturn(foundViewModel);
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Details_Result() {
+            var viewModel = new GameViewViewModel();
+            var context = new MockGameViewContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            ;
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Details(7);
+            var result = await controller.Details(7);
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
-        //    model.Id.Should().Be(7);
-        //    model.Description.Should().Be("Found Item");
-        //    gameContext.VerifyGetByCalled(7);
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            viewResult.Model.Should().BeAssignableTo<GameViewViewModel>();
+            viewResult.Model.Should().Be(viewModel);
+            context.VerifyBuildViewModelCalled(7);
+            contextLoader.VerifyLoadGameViewContextCalled();
+        }
 
-        //[Fact]
-        //public void Display_Create_Result() {
-        //    var controller = BuildGameController();
+        [Fact]
+        public async void Display_Delete_Not_Found_When_Id_Is_Null() {
+            var contextLoader = new MockGameContextLoader();
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = controller.Create();
+            var result = await controller.Delete(null);
 
-        //    result.Should().BeOfType<ViewResult>();
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            contextLoader.VerifyLoadGameViewContextNotCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Create_Post_Result_Invalid() {
-        //    var viewModel = new GameViewModel {
-        //        Id = 9,
-        //        Description = "Another Item"
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var validator = new MockValidator<GameViewModel>().ValidateStubbedToReturnInvalid();
-        //    var controller = BuildGameController(gameContext, validator);
+        [Fact]
+        public async void Display_Delete_Not_Found_When_No_Record_Is_Found() {
+            var context = new MockGameViewContext().BuildViewModelStubbedToReturn(null);
+            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            ;
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Create(viewModel);
+            var result = await controller.Delete(5);
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
-        //    model.Id.Should().Be(9);
-        //    model.Description.Should().Be("Another Item");
-        //    gameContext.VerifyAddNotCalled();
-        //    validator.VerifyValidateCalled(viewModel);
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            context.VerifyBuildViewModelCalled(5);
+            contextLoader.VerifyLoadGameViewContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Create_Post_Result_Valid() {
-        //    var viewModel = new GameViewModel {
-        //        Id = 9,
-        //        Description = "Another Item"
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var validator = new MockValidator<GameViewModel>().ValidateStubbedToReturnValid();
-        //    var controller = BuildGameController(gameContext, validator);
+        [Fact]
+        public async void Display_Delete_Result() {
+            var viewModel = new GameViewViewModel();
+            var context = new MockGameViewContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            ;
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Create(viewModel);
+            var result = await controller.Delete(7);
 
-        //    var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-        //    var model = viewResult.ActionName.Should().Be("Index");
-        //    gameContext.VerifyAddCalled(viewModel);
-        //    validator.VerifyValidateCalled(viewModel);
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            viewResult.Model.Should().BeAssignableTo<GameViewViewModel>();
+            viewResult.Model.Should().Be(viewModel);
+            context.VerifyBuildViewModelCalled(7);
+            contextLoader.VerifyLoadGameViewContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Delete_Not_Found_When_Id_Is_Null() {
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_DeleteConfirmed_Result() {
+            var context = new MockGameViewContext();
+            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            ;
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Delete(null);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.DeleteConfirmed(11);
 
-        //    gameContext.VerifyGetByNotCalled();
-        //}
+            var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
+            redirectResult.ActionName.Should().Be("Index");
+            context.VerifyDeleteCalled(11);
+        }
 
-        //[Fact]
-        //public async void Display_Delete_Not_Found_When_No_Record_Is_Found() {
-        //    var gameContext = new MockContext<GameViewModel>().GetByStubbedToReturn(null);
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public void Display_Create_Result() {
+            var controller = BuildGameController();
 
-        //    var result = await controller.Delete(5);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = controller.Create();
 
-        //    gameContext.VerifyGetByCalled(5);
-        //}
+            result.Should().BeOfType<ViewResult>();
+        }
 
-        //[Fact]
-        //public async void Display_Delete_Result() {
-        //    var foundViewModel = new GameViewModel {
-        //        Id = 7,
-        //        Description = "Found Item"
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>().GetByStubbedToReturn(foundViewModel);
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Create_Post_Result_Invalid() {
+            var viewModel = new GameViewModel {
+                Id = 9,
+                Name = "Another Item"
+            };
+            var context = new MockGameSaveContext().ValidateStubbedToBeInvalid();
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Delete(7);
+            var result = await controller.Create(viewModel);
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
-        //    model.Id.Should().Be(7);
-        //    model.Description.Should().Be("Found Item");
-        //    gameContext.VerifyGetByCalled(7);
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
+            model.Id.Should().Be(9);
+            model.Name.Should().Be("Another Item");
+            contextLoader.VerifyLoadGameSaveContextCalled();
+            context.VerifyValidateCalled(viewModel);
+            context.VerifySaveNotCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Not_Found_When_Id_Is_Null() {
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Create_Post_Result_Valid() {
+            var viewModel = new GameViewModel {
+                Id = 9,
+                Name = "Another Item"
+            };
+            var context = new MockGameSaveContext().ValidateStubbedToBeValid();
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Edit(null);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.Create(viewModel);
 
-        //    gameContext.VerifyGetByNotCalled();
-        //}
+            var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
+            viewResult.ActionName.Should().Be("Index");
+            contextLoader.VerifyLoadGameSaveContextCalled();
+            context.VerifyValidateCalled(viewModel);
+            context.VerifySaveCalled(viewModel);
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Not_Found_When_No_Record_Is_Found() {
-        //    var gameContext = new MockContext<GameViewModel>().GetByStubbedToReturn(null);
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Edit_Not_Found_When_Id_Is_Null() {
+            var context = new MockGameViewContext();
+            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Edit(5);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.Edit(null);
 
-        //    gameContext.VerifyGetByCalled(5);
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            contextLoader.VerifyLoadGameViewContextNotCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Result() {
-        //    var foundViewModel = new GameViewModel {
-        //        Id = 7,
-        //        Description = "Found Item"
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>().GetByStubbedToReturn(foundViewModel);
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Edit_Not_Found_When_No_Record_Is_Found() {
+            var context = new MockGameViewContext().BuildViewModelStubbedToReturn(null);
+            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Edit(7);
+            var result = await controller.Edit(5);
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
-        //    model.Id.Should().Be(7);
-        //    model.Description.Should().Be("Found Item");
-        //    gameContext.VerifyGetByCalled(7);
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            context.VerifyBuildViewModelCalled(5);
+            contextLoader.VerifyLoadGameViewContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Not_Found_When_Id_Not_Equal() {
-        //    var viewModel = new GameViewModel {
-        //        Id = 22
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Edit_Result() {
+            var viewModel = new GameViewViewModel {
+                Game = new GameViewModel {
+                    Id = 7,
+                    Name = "Found Item"
+                }
+            };
+            var context = new MockGameViewContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Edit(11, viewModel);
-        //    result.Should().BeOfType<NotFoundResult>();
+            var result = await controller.Edit(7);
 
-        //    gameContext.VerifyUpdateNotCalled();
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
+            model.Should().Be(viewModel.Game);
+            context.VerifyBuildViewModelCalled(7);
+            contextLoader.VerifyLoadGameViewContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Post_Result_Invalid() {
-        //    var viewModel = new GameViewModel {
-        //        Id = 22,
-        //        Description = "Description"
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var validator = new MockValidator<GameViewModel>().ValidateStubbedToReturnInvalid();
-        //    var controller = BuildGameController(gameContext, validator);
+        [Fact]
+        public async void Display_Edit_Not_Found_When_Id_Not_Equal() {
+            var viewModel = new GameViewModel {
+                Name = "Found Item"
+            };
+            var context = new MockGameSaveContext();
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Edit(22, viewModel);
+            var result = await controller.Edit(7, viewModel);
 
-        //    var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-        //    var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
-        //    model.Id.Should().Be(22);
-        //    model.Description.Should().Be("Description");
-        //    gameContext.VerifyUpdateNotCalled();
-        //    validator.VerifyValidateCalled(viewModel);
-        //}
+            result.Should().BeOfType<NotFoundResult>();
+            contextLoader.VerifyLoadGameSaveContextNotCalled();
+        }
 
-        //[Fact]
-        //public async void Display_Edit_Post_Result_Valid() {
-        //    var viewModel = new GameViewModel {
-        //        Id = 22,
-        //        Description = "Description"
-        //    };
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var validator = new MockValidator<GameViewModel>().ValidateStubbedToReturnValid();
-        //    var controller = BuildGameController(gameContext, validator);
+        [Fact]
+        public async void Display_Edit_Post_Result_Invalid() {
+            var viewModel = new GameViewModel {
+                Id = 22,
+                Name = "Name"
+            };
+            var context = new MockGameSaveContext().ValidateStubbedToBeInvalid();
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.Edit(22, viewModel);
+            var result = await controller.Edit(22, viewModel);
 
-        //    var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-        //    viewResult.ActionName.Should().Be("Index");
-        //    gameContext.VerifyUpdateCalled(viewModel);
-        //    validator.VerifyValidateCalled(viewModel);
-        //}
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
+            model.Id.Should().Be(22);
+            model.Name.Should().Be("Name");
+            context.VerifyValidateCalled(viewModel);
+            context.VerifySaveNotCalled();
+            contextLoader.VerifyLoadGameSaveContextCalled();
+        }
 
-        //[Fact]
-        //public async void Display_DeleteConfirmed_Result() {
-        //    var gameContext = new MockContext<GameViewModel>();
-        //    var controller = BuildGameController(gameContext);
+        [Fact]
+        public async void Display_Edit_Post_Result_Valid() {
+            var viewModel = new GameViewModel {
+                Id = 22,
+                Name = "Name"
+            };
+            var context = new MockGameSaveContext().ValidateStubbedToBeValid();
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-        //    var result = await controller.DeleteConfirmed(11);
+            var result = await controller.Edit(22, viewModel);
 
-        //    var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-        //    redirectResult.ActionName.Should().Be("Index");
-        //    gameContext.VerifyDeleteCalled(11);
-        //}
+            var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
+            viewResult.ActionName.Should().Be("Index");
+            context.VerifyValidateCalled(viewModel);
+            context.VerifySaveCalled(viewModel);
+            contextLoader.VerifyLoadGameSaveContextCalled();
+        }
 
-        //private static GameController BuildGameController(IContext<GameViewModel> gameContext = null, IValidator<GameViewModel> validator = null) {
-        //    gameContext = gameContext ?? new MockContext<GameViewModel>();
-        //    validator = validator ?? new MockValidator<GameViewModel>();
-        //    return new GameController(gameContext, validator);
-        //}
+        private static GameController BuildGameController(IGameContextLoader contextLoader = null) {
+            contextLoader = contextLoader ?? new MockGameContextLoader();
+            return new GameController(contextLoader);
+        }
     }
 }

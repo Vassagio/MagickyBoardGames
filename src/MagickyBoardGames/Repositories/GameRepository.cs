@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MagickyBoardGames.Data;
 using MagickyBoardGames.Models;
@@ -17,12 +19,16 @@ namespace MagickyBoardGames.Repositories {
             return await _context.Games.ToListAsync();
         }
 
-        public async Task<Game> GetBy(int id) {
-            return await _context.Games.SingleOrDefaultAsync(c => c.Id == id);
+        private IQueryable<Game> Games() {
+            return _context.Games.Include(g => g.GameCategories).ThenInclude(gc => gc.Category);
+        }
+
+        public async Task<Game> GetBy(int id) {       
+            return await Games().SingleOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Game> GetBy(Game game) {
-            return await _context.Games.SingleOrDefaultAsync(c => c.Name.Equals(game.Name, StringComparison.CurrentCultureIgnoreCase));
+            return await Games().SingleOrDefaultAsync(c => c.Name.Equals(game.Name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public async Task<int> Add(Game entity) {
