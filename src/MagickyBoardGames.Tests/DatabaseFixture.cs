@@ -42,6 +42,15 @@ namespace MagickyBoardGames.Tests {
             await Db.SaveChangesAsync();                        
         }
 
+        public async Task Populate(params GameCategory[] gameCategories) {
+            foreach (var game in Db.GameCategories)
+                Db.GameCategories.Remove(game);
+            await Db.SaveChangesAsync();
+            foreach (var gameCategory in gameCategories)
+                await Db.GameCategories.AddAsync(gameCategory);
+            await Db.SaveChangesAsync();
+        }
+
         public void Dispose() {
             Db.Dispose();
         }
