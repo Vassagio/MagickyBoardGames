@@ -9,10 +9,10 @@ namespace MagickyBoardGames.Contexts.CategoryContexts
 {
     public class CategoryListContext : ICategoryListContext
     {
-        private readonly IRepository<Category> _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IBuilder<Category, CategoryViewModel> _categoryBuilder;
 
-        public CategoryListContext(IRepository<Category> categoryRepository, IBuilder<Category, CategoryViewModel> categoryBuilder) {
+        public CategoryListContext(ICategoryRepository categoryRepository, IBuilder<Category, CategoryViewModel> categoryBuilder) {
             _categoryRepository = categoryRepository;
             _categoryBuilder = categoryBuilder;
         }

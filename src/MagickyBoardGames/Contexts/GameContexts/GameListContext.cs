@@ -7,10 +7,10 @@ using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Contexts.GameContexts {
     public class GameListContext : IGameListContext {
-        private readonly IRepository<Game> _gameRepository;
+        private readonly IGameRepository _gameRepository;
         private readonly IBuilder<Game, GameViewModel> _gameBuilder;
 
-        public GameListContext(IRepository<Game> gameRepository, IBuilder<Game, GameViewModel> gameBuilder) {
+        public GameListContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder) {
             _gameRepository = gameRepository;
             _gameBuilder = gameBuilder;
         }

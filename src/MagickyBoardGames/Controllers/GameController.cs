@@ -41,13 +41,13 @@ namespace MagickyBoardGames.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,MinPlayers,MaxPlayers")] GameViewModel gameViewModel) {
+        public async Task<IActionResult> Create([Bind("Game,SelectedCategories")] GameSaveViewModel gameSaveViewModel) {
             var context = _loader.LoadGameSaveContext();
-            var result = context.Validate(gameViewModel);
+            var result = context.Validate(gameSaveViewModel);
             if (!result.IsValid)
-                return View(gameViewModel);
+                return View(gameSaveViewModel);
 
-            await context.Save(gameViewModel);
+            await context.Save(gameSaveViewModel);
             return RedirectToAction("Index");
         }
 
@@ -67,16 +67,16 @@ namespace MagickyBoardGames.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,MinPlayers,MaxPlayers")] GameViewModel gameViewModel) {
-            if (id != gameViewModel.Id)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,MinPlayers,MaxPlayers")] GameSaveViewModel gameSaveViewModel) {
+            if (id != gameSaveViewModel.Game.Id)
                 return NotFound();
 
             var context = _loader.LoadGameSaveContext();
-            var result = context.Validate(gameViewModel);
+            var result = context.Validate(gameSaveViewModel);
             if (!result.IsValid)
-                return View(gameViewModel);
+                return View(gameSaveViewModel);
 
-            await context.Save(gameViewModel);
+            await context.Save(gameSaveViewModel);
             return RedirectToAction("Index");
         }
 

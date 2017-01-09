@@ -83,12 +83,20 @@ namespace MagickyBoardGames.Tests.Mocks {
             _mock.Verify(m => m.Add(game), Times.Exactly(times));
         }
 
+        public void VerifyAddCalled(Game game, IEnumerable<Category> categories, int times = 1) {
+            _mock.Verify(m => m.Add(game, categories), Times.Exactly(times));
+        }
+
         public void VerifyAddNotCalled() {
             _mock.Verify(m => m.Add(It.IsAny<Game>()), Times.Never);
         }
 
         public void VerifyUpdateCalled(Game game, int times = 1) {
             _mock.Verify(m => m.Update(game), Times.Exactly(times));
+        }
+
+        public void VerifyUpdateCalled(Game game, IEnumerable<Category> categories, int times = 1) {
+            _mock.Verify(m => m.Update(game, categories), Times.Exactly(times));
         }
 
         public void VerifyUpdateNotCalled() {

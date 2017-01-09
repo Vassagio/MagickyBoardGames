@@ -25,16 +25,17 @@ namespace MagickyBoardGames.Builders
         }
 
         public Game ToEntity() {
-            if (!_id.HasValue || !_minPlayers.HasValue || !_maxPlayers.HasValue)
-                throw new ArgumentException();
-
-            return new Game {
-                Id = _id.Value,
+            var entity = new Game {
                 Name = _name,
-                Description = _description,
-                MinPlayers = _minPlayers.Value,
-                MaxPlayers = _maxPlayers.Value,
+                Description = _description                
             };
+            if (_id.HasValue)
+                entity.Id = _id.Value;
+            if (_minPlayers.HasValue)
+                entity.MinPlayers = _minPlayers.Value;
+            if (_maxPlayers.HasValue)
+                entity.MaxPlayers = _maxPlayers.Value;
+            return entity;
         }
 
         public GameViewModel Build(Game entity) {

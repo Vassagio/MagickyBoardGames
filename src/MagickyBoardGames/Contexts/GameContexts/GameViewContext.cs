@@ -9,11 +9,11 @@ using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Contexts.GameContexts {
     public class GameViewContext : IGameViewContext {
-        private readonly IRepository<Game> _gameRepository;
+        private readonly IGameRepository _gameRepository;
         private readonly IBuilder<Game, GameViewModel> _gameBuilder;
         private readonly IBuilder<Category, CategoryViewModel> _categoryBuilder;
 
-        public GameViewContext(IRepository<Game> gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IBuilder<Category, CategoryViewModel> categoryBuilder) {
+        public GameViewContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IBuilder<Category, CategoryViewModel> categoryBuilder) {
             _gameRepository = gameRepository;
             _gameBuilder = gameBuilder;
             _categoryBuilder = categoryBuilder;

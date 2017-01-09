@@ -1,4 +1,4 @@
-@model MagickyBoardGames.ViewModels.GameViewModel
+@model MagickyBoardGames.ViewModels.GameSaveViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -11,31 +11,31 @@
         <h4>Game</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Game.Id" />
         <div class="form-group">
-            <label asp-for="Name" class="col-md-3 control-label"></label>
+            <label asp-for="Game.Name" class="col-md-3 control-label"></label>
             <div class="col-md-9">
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <input asp-for="Game.Name" class="form-control" />
+                <span asp-validation-for="Game.Name" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Description" class="col-md-3 control-label"></label>
+            <label asp-for="Game.Description" class="col-md-3 control-label"></label>
             <div class="col-md-9">
-                <textarea  asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <textarea  asp-for="Game.Description" class="form-control"></textarea>
+                <span asp-validation-for="Game.Description" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="PlayerRange" class="col-md-3 control-label"></label>
+            <label asp-for="Game.PlayerRange" class="col-md-3 control-label"></label>
             <div class="col-md-1">
-                <input asp-for="MinPlayers" class="form-control" />
-                <span asp-validation-for="MinPlayers" class="text-danger"></span>
+                <input asp-for="Game.MinPlayers" class="form-control" />
+                <span asp-validation-for="Game.MinPlayers" class="text-danger"></span>
             </div>
             <div class="col-md-1 text-center">-</div>
             <div class="col-md-1">
-                <input asp-for="MaxPlayers" class="form-control" />
-                <span asp-validation-for="MaxPlayers" class="text-danger"></span>
+                <input asp-for="Game.MaxPlayers" class="form-control" />
+                <span asp-validation-for="Game.MaxPlayers" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">

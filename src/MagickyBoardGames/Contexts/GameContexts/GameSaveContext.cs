@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
 using MagickyBoardGames.Builders;
@@ -9,41 +11,48 @@ using MagickyBoardGames.ViewModels;
 namespace MagickyBoardGames.Contexts.GameContexts {
     public class GameSaveContext : IGameSaveContext {
         private readonly IGameRepository _repository;
-        private readonly IBuilder<Game, GameViewModel> _builder;
+        private readonly IBuilder<Game, GameViewModel> _gameBuilder;
         private readonly IValidator<GameViewModel> _validator;
+        private readonly IBuilder<Category, CategoryViewModel> _categoryBuilder;
 
-        public GameSaveContext(IGameRepository repository, IBuilder<Game, GameViewModel> builder, IValidator<GameViewModel> validator) {
+        public GameSaveContext(IGameRepository repository, IBuilder<Game, GameViewModel> gameBuilder,IValidator<GameViewModel> validator, IBuilder<Category, CategoryViewModel> categoryBuilder) {
             _repository = repository;
-            _builder = builder;
+            _gameBuilder = gameBuilder;
             _validator = validator;
+            _categoryBuilder = categoryBuilder;
         }
 
-        public ValidationResult Validate(GameViewModel viewModel) {
-            return _validator.Validate(viewModel);
+        public ValidationResult Validate(GameSaveViewModel viewModel) {
+            return _validator.Validate(viewModel.Game);
         }
 
-        public async Task Save(GameViewModel viewModel) {
-            var entity = _builder.Build(viewModel);
-            if (viewModel.Id.HasValue)
-                await Save(await _repository.GetBy(viewModel.Id.Value), entity);
+        public async Task Save(GameSaveViewModel viewModel) {
+            var game = _gameBuilder.Build(viewModel.Game);
+            var categories = GetCategories(viewModel.SelectedCategories);
+            if (viewModel.Game.Id.HasValue)
+                await Save(await _repository.GetBy(viewModel.Game.Id.Value), game, categories);
             else
-                await Save(await _repository.GetBy(viewModel.Name), entity);
+                await Save(await _repository.GetBy(viewModel.Game.Name), game, categories);
         }
 
-        private async Task Save(Game found, Game entity) {
+        private IEnumerable<Category> GetCategories(IEnumerable<CategoryViewModel> categoryViewModels) {
+            return categoryViewModels.Select(cvm => _categoryBuilder.Build(cvm)).ToList();
+        }
+
+        private async Task Save(Game found, Game game, IEnumerable<Category> categories) {
             if (found != null)
-                await Update(found, entity);
+                await Update(found, game, categories);
             else
-                await Insert(entity);
+                await Insert(game, categories);
         }
 
-        private async Task Update(Game found, Game entity) {
-            found.Description = entity.Description;
-            await _repository.Update(found);
+        private async Task Update(Game found, Game game, IEnumerable<Category> categories) {
+            found.Description = game.Description;
+            await _repository.Update(found, categories);
         }
 
-        private async Task Insert(Game entity) {
-            await _repository.Add(entity);
+        private async Task Insert(Game game, IEnumerable<Category> categories) {
+            await _repository.Add(game, categories);
         }
     }
 }

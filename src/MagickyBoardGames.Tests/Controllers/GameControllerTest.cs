@@ -142,9 +142,11 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Create_Post_Result_Invalid() {
-            var viewModel = new GameViewModel {
-                Id = 9,
-                Name = "Another Item"
+            var viewModel = new GameSaveViewModel {
+                Game = new GameViewModel {
+                    Id = 9,
+                    Name = "Another Item"
+                }
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeInvalid();
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
@@ -153,9 +155,9 @@ namespace MagickyBoardGames.Tests.Controllers {
             var result = await controller.Create(viewModel);
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
-            model.Id.Should().Be(9);
-            model.Name.Should().Be("Another Item");
+            var model = viewResult.Model.Should().BeAssignableTo<GameSaveViewModel>().Subject;
+            model.Game.Id.Should().Be(9);
+            model.Game.Name.Should().Be("Another Item");
             contextLoader.VerifyLoadGameSaveContextCalled();
             context.VerifyValidateCalled(viewModel);
             context.VerifySaveNotCalled();
@@ -163,9 +165,11 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Create_Post_Result_Valid() {
-            var viewModel = new GameViewModel {
-                Id = 9,
-                Name = "Another Item"
+            var viewModel = new GameSaveViewModel {
+                Game = new GameViewModel {
+                    Id = 9,
+                    Name = "Another Item"
+                }
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeValid();
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
@@ -228,8 +232,10 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Edit_Not_Found_When_Id_Not_Equal() {
-            var viewModel = new GameViewModel {
-                Name = "Found Item"
+            var viewModel = new GameSaveViewModel {
+                Game = new GameViewModel {
+                    Name = "Found Item"
+                }
             };
             var context = new MockGameSaveContext();
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
@@ -243,9 +249,11 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Edit_Post_Result_Invalid() {
-            var viewModel = new GameViewModel {
-                Id = 22,
-                Name = "Name"
+            var viewModel = new GameSaveViewModel {
+                Game = new GameViewModel {
+                    Id = 22,
+                    Name = "Name"
+                }
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeInvalid();
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
@@ -254,9 +262,9 @@ namespace MagickyBoardGames.Tests.Controllers {
             var result = await controller.Edit(22, viewModel);
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
-            model.Id.Should().Be(22);
-            model.Name.Should().Be("Name");
+            var model = viewResult.Model.Should().BeAssignableTo<GameSaveViewModel>().Subject;
+            model.Game.Id.Should().Be(22);
+            model.Game.Name.Should().Be("Name");
             context.VerifyValidateCalled(viewModel);
             context.VerifySaveNotCalled();
             contextLoader.VerifyLoadGameSaveContextCalled();
@@ -264,9 +272,11 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Edit_Post_Result_Valid() {
-            var viewModel = new GameViewModel {
-                Id = 22,
-                Name = "Name"
+            var viewModel = new GameSaveViewModel {
+                Game = new GameViewModel {
+                    Id = 22,
+                    Name = "Name"
+                }
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeValid();
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
