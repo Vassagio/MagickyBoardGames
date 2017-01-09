@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +7,7 @@ using MagickyBoardGames.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagickyBoardGames.Repositories {
-    public class GameRepository : IRepository<Game> {
+    public class GameRepository : IGameRepository {
         private readonly ApplicationDbContext _context;
 
         public GameRepository(ApplicationDbContext context) {
@@ -27,8 +26,8 @@ namespace MagickyBoardGames.Repositories {
             return await Games().SingleOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<Game> GetBy(Game game) {
-            return await Games().SingleOrDefaultAsync(c => c.Name.Equals(game.Name, StringComparison.CurrentCultureIgnoreCase));
+        public async Task<Game> GetBy(string name) {
+            return await Games().SingleOrDefaultAsync(c => c.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public async Task<int> Add(Game game) {

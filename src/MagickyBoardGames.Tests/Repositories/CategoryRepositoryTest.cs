@@ -166,7 +166,7 @@ namespace MagickyBoardGames.Tests.Repositories {
             var context = BuildCategoryRepository();
             await _fixture.Populate(category1, category2);
 
-            var category = await context.GetBy(new Category { Description = description });
+            var category = await context.GetBy(description);
 
             category.Should().Be(category1);
         }

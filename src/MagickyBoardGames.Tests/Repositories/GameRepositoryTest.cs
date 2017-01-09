@@ -376,7 +376,7 @@ namespace MagickyBoardGames.Tests.Repositories {
             var context = BuildGameRepository();
             await _fixture.Populate(game1, game2);
 
-            var game = await context.GetBy(new Game { Name = name });
+            var game = await context.GetBy(name);
 
             game.Should().Be(game1);
         }

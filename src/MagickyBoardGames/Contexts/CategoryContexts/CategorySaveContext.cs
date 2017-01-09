@@ -8,11 +8,11 @@ using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Contexts.CategoryContexts {
     public class CategorySaveContext : ICategorySaveContext {
-        private readonly IRepository<Category> _repository;
+        private readonly ICategoryRepository _repository;
         private readonly IBuilder<Category, CategoryViewModel> _builder;
         private readonly IValidator<CategoryViewModel> _validator;
 
-        public CategorySaveContext(IRepository<Category> repository, IBuilder<Category, CategoryViewModel> builder, IValidator<CategoryViewModel> validator) {
+        public CategorySaveContext(ICategoryRepository repository, IBuilder<Category, CategoryViewModel> builder, IValidator<CategoryViewModel> validator) {
             _repository = repository;
             _builder = builder;
             _validator = validator;
@@ -27,7 +27,7 @@ namespace MagickyBoardGames.Contexts.CategoryContexts {
             if (viewModel.Id.HasValue) 
                 await Save(await _repository.GetBy(viewModel.Id.Value), entity);            
             else 
-                await Save(await _repository.GetBy(entity), entity);            
+                await Save(await _repository.GetBy(viewModel.Description), entity);            
         }
 
         private async Task Save(Category found, Category entity) {

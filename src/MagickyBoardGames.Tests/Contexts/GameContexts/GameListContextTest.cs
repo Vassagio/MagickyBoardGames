@@ -18,7 +18,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
         [Fact]
         public async void Returns_Empty_View_Model_When_Not_Found() {
-            var gameRepository = new MockRepository<Game>().GetByStubbedToReturn(null);
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
             var gameBuilder = new MockBuilder<Game, GameViewModel>();
             var context = BuildGameListContext(gameRepository, gameBuilder);
 
@@ -34,7 +34,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             var entity = new Game();
             var entities = new List<Game> { entity };
             var viewModel = new GameViewModel();
-            var repository = new MockRepository<Game>().GetAllStubbedToReturn(entities);
+            var repository = new MockGameRepository().GetAllStubbedToReturn(entities);
             var builder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(viewModel);
             var context = BuildGameListContext(repository, builder);
 
@@ -45,8 +45,8 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             builder.VerifyBuildCalled(entity);
         }
 
-        private static GameListContext BuildGameListContext(IRepository<Game> repository = null, IBuilder<Game, GameViewModel> builder = null) {
-            repository = repository ?? new MockRepository<Game>();
+        private static GameListContext BuildGameListContext(IGameRepository repository = null, IBuilder<Game, GameViewModel> builder = null) {
+            repository = repository ?? new MockGameRepository();
             builder = builder ?? new MockBuilder<Game, GameViewModel>();
             return new GameListContext(repository, builder);
         }

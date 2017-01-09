@@ -19,7 +19,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
         [Fact]
         public async void Returns_Empty_View_Model_When_Not_Found() {
-            var gameRepository = new MockRepository<Game>().GetByStubbedToReturn(null);
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
             var gameBuilder = new MockBuilder<Game, GameViewModel>();
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>();
             var context = BuildGameViewContext(gameRepository, gameBuilder, categoryBuilder);
@@ -42,7 +42,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Id = 1,
                 Description = "Game"
             };
-            var gameRepository = new MockRepository<Game>().GetByStubbedToReturn(game);
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>();
             var context = BuildGameViewContext(gameRepository, gameBuilder, categoryBuilder);
@@ -61,11 +61,11 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
         public async void Returns_View_Model_With_Games() {
             var game = new Game {
                 Id = 1,
-                Name = "Game",
+                Name = "Game"
             };
             var category = new Category {
                 Id = 1,
-                Description = "Category",
+                Description = "Category"
             };
             game.GameCategories = new List<GameCategory> {
                 new GameCategory {
@@ -84,7 +84,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Id = category.Id,
                 Description = category.Description
             };
-            var gameRepository = new MockRepository<Game>().GetByStubbedToReturn(game);
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
             var context = BuildGameViewContext(gameRepository, gameBuilder, categoryBuilder);
@@ -102,7 +102,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
         [Fact]
         public async void Does_Not_Throw_Exception_When_Deleting_Nonexistant_Record() {
-            var gameRepository = new MockRepository<Game>().GetByStubbedToReturn(null);
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
             var context = BuildGameViewContext(gameRepository);
 
             await context.Delete(1000);
@@ -116,15 +116,18 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Id = 500,
                 Description = "Game"
             };
-            var gameRepository = new MockRepository<Game>().GetByStubbedToReturn(game);
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
             var context = BuildGameViewContext(gameRepository);
 
             await context.Delete(500);
 
             gameRepository.VerifyDeleteCalled(500);
         }
-        private static GameViewContext BuildGameViewContext(IRepository<Game> gameRepository = null, IBuilder<Game, GameViewModel> gameBuilder = null, IBuilder<Category, CategoryViewModel> categoryBuilder = null) {
-            gameRepository = gameRepository ?? new MockRepository<Game>();
+
+        private static GameViewContext BuildGameViewContext(IGameRepository gameRepository = null,
+                                                            IBuilder<Game, GameViewModel> gameBuilder = null,
+                                                            IBuilder<Category, CategoryViewModel> categoryBuilder = null) {
+            gameRepository = gameRepository ?? new MockGameRepository();
             gameBuilder = gameBuilder ?? new MockBuilder<Game, GameViewModel>();
             categoryBuilder = categoryBuilder ?? new MockBuilder<Category, CategoryViewModel>();
             return new GameViewContext(gameRepository, gameBuilder, categoryBuilder);

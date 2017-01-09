@@ -36,13 +36,13 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             var viewModel = new GameViewModel {
                 Description = "Game"
             };
-            var repository = new MockRepository<Game>().GetByStubbedToReturn(null);
+            var repository = new MockGameRepository().GetByStubbedToReturn(null);
             var builder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
             var context = BuildGameSaveContext(repository, builder);
 
             await context.Save(viewModel);
 
-            repository.VerifyGetByCalled(game);
+            repository.VerifyGetByCalled(game.Name);
             repository.VerifyGetByIdNotCalled();
             repository.VerifyAddCalled(game);
             builder.VerifyBuildCalled(viewModel);
@@ -56,13 +56,13 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             var viewModel = new GameViewModel {
                 Description = "Game"
             };
-            var repository = new MockRepository<Game>().GetByStubbedToReturn(game);
+            var repository = new MockGameRepository().GetByStubbedToReturn(game);
             var builder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
             var context = BuildGameSaveContext(repository, builder);
 
             await context.Save(viewModel);
 
-            repository.VerifyGetByCalled(game);
+            repository.VerifyGetByCalled(game.Name);
             repository.VerifyGetByIdNotCalled();
             repository.VerifyAddNotCalled();
             repository.VerifyUpdateCalled(game);
@@ -79,14 +79,14 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Id = 50,
                 Description = "Game"
             };
-            var repository = new MockRepository<Game>().GetByStubbedToReturn(null);
+            var repository = new MockGameRepository().GetByStubbedToReturn(null);
             var builder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
             var context = BuildGameSaveContext(repository, builder);
 
             await context.Save(viewModel);
 
             repository.VerifyGetByCalled(50);
-            repository.VerifyGetByNotCalled();
+            repository.VerifyGetByNameNotCalled();
             repository.VerifyAddCalled(game);
             builder.VerifyBuildCalled(viewModel);
         }
@@ -101,20 +101,20 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Id = 60,
                 Description = "Game"
             };
-            var repository = new MockRepository<Game>().GetByStubbedToReturn(game);
+            var repository = new MockGameRepository().GetByStubbedToReturn(game);
             var builder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
             var context = BuildGameSaveContext(repository, builder);
 
             await context.Save(viewModel);
 
             repository.VerifyGetByCalled(60);
-            repository.VerifyGetByNotCalled();
+            repository.VerifyGetByNameNotCalled();
             repository.VerifyUpdateCalled(game);
             builder.VerifyBuildCalled(viewModel);
         }
 
-        private static GameSaveContext BuildGameSaveContext(IRepository<Game> repository = null, IBuilder<Game, GameViewModel> builder = null, IValidator<GameViewModel> validator = null) {
-            repository = repository ?? new MockRepository<Game>();
+        private static GameSaveContext BuildGameSaveContext(IGameRepository repository = null, IBuilder<Game, GameViewModel> builder = null, IValidator<GameViewModel> validator = null) {
+            repository = repository ?? new MockGameRepository();
             builder = builder ?? new MockBuilder<Game, GameViewModel>();
             validator = validator ?? new MockValidator<GameViewModel>();
             return new GameSaveContext(repository, builder, validator);

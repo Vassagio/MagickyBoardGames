@@ -8,11 +8,11 @@ using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Contexts.GameContexts {
     public class GameSaveContext : IGameSaveContext {
-        private readonly IRepository<Game> _repository;
+        private readonly IGameRepository _repository;
         private readonly IBuilder<Game, GameViewModel> _builder;
         private readonly IValidator<GameViewModel> _validator;
 
-        public GameSaveContext(IRepository<Game> repository, IBuilder<Game, GameViewModel> builder, IValidator<GameViewModel> validator) {
+        public GameSaveContext(IGameRepository repository, IBuilder<Game, GameViewModel> builder, IValidator<GameViewModel> validator) {
             _repository = repository;
             _builder = builder;
             _validator = validator;
@@ -27,7 +27,7 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             if (viewModel.Id.HasValue)
                 await Save(await _repository.GetBy(viewModel.Id.Value), entity);
             else
-                await Save(await _repository.GetBy(entity), entity);
+                await Save(await _repository.GetBy(viewModel.Name), entity);
         }
 
         private async Task Save(Game found, Game entity) {

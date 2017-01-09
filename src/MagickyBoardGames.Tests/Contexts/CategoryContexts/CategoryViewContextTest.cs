@@ -19,7 +19,7 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
 
         [Fact]
         public async void Returns_Empty_View_Model_When_Not_Found() {
-            var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(null);
+            var categoryRepository = new MockCategoryRepository().GetByStubbedToReturn(null);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>();
             var gameBuilder = new MockBuilder<Game, GameViewModel>();
             var context = BuildCategoryViewContext(categoryRepository, categoryBuilder, gameBuilder);
@@ -42,7 +42,7 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
                 Id = 1,
                 Description = "Category"
             };
-            var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(category);
+            var categoryRepository = new MockCategoryRepository().GetByStubbedToReturn(category);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
             var gameBuilder = new MockBuilder<Game, GameViewModel>();
             var context = BuildCategoryViewContext(categoryRepository, categoryBuilder, gameBuilder);
@@ -84,7 +84,7 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
                 Id = game.Id,
                 Name = game.Name
             };
-            var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(category);
+            var categoryRepository = new MockCategoryRepository().GetByStubbedToReturn(category);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
             var context = BuildCategoryViewContext(categoryRepository, categoryBuilder, gameBuilder);
@@ -102,7 +102,7 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
 
         [Fact]
         public async void Does_Not_Throw_Exception_When_Deleting_Nonexistant_Record() {
-            var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(null);
+            var categoryRepository = new MockCategoryRepository().GetByStubbedToReturn(null);
             var context = BuildCategoryViewContext(categoryRepository);
 
             await context.Delete(1000);
@@ -116,15 +116,15 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts {
                 Id = 500,
                 Description = "Category"
             };
-            var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(category);
+            var categoryRepository = new MockCategoryRepository().GetByStubbedToReturn(category);
             var context = BuildCategoryViewContext(categoryRepository);
 
             await context.Delete(500);
 
             categoryRepository.VerifyDeleteCalled(500);
         }
-        private static CategoryViewContext BuildCategoryViewContext(IRepository<Category> categoryRepository = null, IBuilder<Category, CategoryViewModel> categoryBuilder = null, IBuilder<Game, GameViewModel> gameBuilder = null) {
-            categoryRepository = categoryRepository ?? new MockRepository<Category>();
+        private static CategoryViewContext BuildCategoryViewContext(ICategoryRepository categoryRepository = null, IBuilder<Category, CategoryViewModel> categoryBuilder = null, IBuilder<Game, GameViewModel> gameBuilder = null) {
+            categoryRepository = categoryRepository ?? new MockCategoryRepository();
             categoryBuilder = categoryBuilder ?? new MockBuilder<Category, CategoryViewModel>();
             gameBuilder = gameBuilder ?? new MockBuilder<Game, GameViewModel>();
             return new CategoryViewContext(categoryRepository, categoryBuilder, gameBuilder);
