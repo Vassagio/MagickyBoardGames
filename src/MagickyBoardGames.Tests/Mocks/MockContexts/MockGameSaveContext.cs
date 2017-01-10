@@ -20,6 +20,14 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
             return _mock.Object.Save(viewModel);
         }
 
+        public Task<GameSaveViewModel> BuildViewModel() {
+            return _mock.Object.BuildViewModel();
+        }
+
+        public Task<GameSaveViewModel> BuildViewModel(int id) {
+            return _mock.Object.BuildViewModel(id);
+        }
+
         public void VerifyValidateCalled(GameSaveViewModel viewModel, int times = 1) {
             _mock.Verify(m => m.Validate(viewModel), Times.Exactly(times));
         }
@@ -43,6 +51,24 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
 
         public void VerifySaveNotCalled() {
             _mock.Verify(m => m.Save(It.IsAny<GameSaveViewModel>()), Times.Never);
+        }
+
+        public void VerifyBuildViewModelCalled(int times = 1) {
+            _mock.Verify(m => m.BuildViewModel(), Times.Exactly(times));
+        }
+
+        public void VerifyBuildViewModelWithIdCalled(int id, int times = 1) {
+            _mock.Verify(m => m.BuildViewModel(id), Times.Exactly(times));
+        }
+
+        public MockGameSaveContext BuildViewModelStubbedToReturn(GameSaveViewModel viewModel) {
+            _mock.Setup(m => m.BuildViewModel()).Returns(Task.FromResult(viewModel));
+            return this;
+        }
+
+        public MockGameSaveContext BuildViewModelFromIdStubbedToReturn(GameSaveViewModel viewModel) {
+            _mock.Setup(m => m.BuildViewModel(It.IsAny<int>())).Returns(Task.FromResult(viewModel));
+            return this;
         }
     }
 }

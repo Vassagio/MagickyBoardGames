@@ -41,7 +41,7 @@ namespace MagickyBoardGames.Repositories {
         public async Task<int> Add(Game game, IEnumerable<Category> categories) {
             var id = await Add(game);
 
-            await AdjustGameCategories(id, categories);
+            await AdjustGameCategories(game.Id, categories);
             return id;
         }
 

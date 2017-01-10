@@ -47,7 +47,7 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
             builder.VerifyBuildCalled(entity);
         }
 
-        private static CategoryListContext BuildCategoryListContext(IRepository<Category> repository = null, IBuilder<Category, CategoryViewModel> builder = null) {
+        private static CategoryListContext BuildCategoryListContext(ICategoryRepository repository = null, IBuilder<Category, CategoryViewModel> builder = null) {
             repository = repository ?? new MockCategoryRepository();
             builder = builder ?? new MockBuilder<Category, CategoryViewModel>();
             return new CategoryListContext(repository, builder);

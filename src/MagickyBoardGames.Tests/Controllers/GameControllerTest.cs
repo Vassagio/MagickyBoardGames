@@ -121,23 +121,30 @@ namespace MagickyBoardGames.Tests.Controllers {
         public async void Display_DeleteConfirmed_Result() {
             var context = new MockGameViewContext();
             var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
-            ;
+            
             var controller = BuildGameController(contextLoader);
 
             var result = await controller.DeleteConfirmed(11);
 
             var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             redirectResult.ActionName.Should().Be("Index");
+            contextLoader.VerifyLoadGameViewContextCalled();
             context.VerifyDeleteCalled(11);
         }
 
         [Fact]
-        public void Display_Create_Result() {
-            var controller = BuildGameController();
+        public async void Display_Create_Result() {
+            var viewModel = new GameSaveViewModel();
+            var context = new MockGameSaveContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
 
-            var result = controller.Create();
+            var result = await controller.Create();
 
-            result.Should().BeOfType<ViewResult>();
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            viewResult.Model.Should().BeOfType<GameSaveViewModel>();
+            contextLoader.VerifyLoadGameSaveContextCalled();
+            context.VerifyBuildViewModelCalled();
         }
 
         [Fact]
@@ -185,49 +192,49 @@ namespace MagickyBoardGames.Tests.Controllers {
         }
 
         [Fact]
-        public async void Display_Edit_Not_Found_When_Id_Is_Null() {
-            var context = new MockGameViewContext();
-            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+        public async void Display_Edit_Not_Found_When_Id_Is_Null() {           
+            var context = new MockGameSaveContext();
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
             var result = await controller.Edit(null);
 
             result.Should().BeOfType<NotFoundResult>();
-            contextLoader.VerifyLoadGameViewContextNotCalled();
+            contextLoader.VerifyLoadGameSaveContextNotCalled();
         }
 
         [Fact]
         public async void Display_Edit_Not_Found_When_No_Record_Is_Found() {
-            var context = new MockGameViewContext().BuildViewModelStubbedToReturn(null);
-            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            var context = new MockGameSaveContext().BuildViewModelFromIdStubbedToReturn(null);
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
             var result = await controller.Edit(5);
 
             result.Should().BeOfType<NotFoundResult>();
-            context.VerifyBuildViewModelCalled(5);
-            contextLoader.VerifyLoadGameViewContextCalled();
+            context.VerifyBuildViewModelWithIdCalled(5);
+            contextLoader.VerifyLoadGameSaveContextCalled();
         }
 
         [Fact]
         public async void Display_Edit_Result() {
-            var viewModel = new GameViewViewModel {
+            var viewModel = new GameSaveViewModel {
                 Game = new GameViewModel {
                     Id = 7,
                     Name = "Found Item"
                 }
             };
-            var context = new MockGameViewContext().BuildViewModelStubbedToReturn(viewModel);
-            var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
+            var context = new MockGameSaveContext().BuildViewModelFromIdStubbedToReturn(viewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
             var result = await controller.Edit(7);
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeAssignableTo<GameViewModel>().Subject;
-            model.Should().Be(viewModel.Game);
-            context.VerifyBuildViewModelCalled(7);
-            contextLoader.VerifyLoadGameViewContextCalled();
+            var model = viewResult.Model.Should().BeAssignableTo<GameSaveViewModel>().Subject;
+            model.Should().Be(viewModel);
+            context.VerifyBuildViewModelWithIdCalled(7);
+            contextLoader.VerifyLoadGameSaveContextCalled();
         }
 
         [Fact]

@@ -28,13 +28,15 @@ namespace MagickyBoardGames.Tests.Mocks
             return _mock.Object.Build(viewModel);
         }
 
-        public MockBuilder<TEntity, TViewModel> BuildStubbedToReturn(TViewModel viewModel) {
-            _mock.Setup(m => m.Build(It.IsAny<TEntity>())).Returns(viewModel);
+        public MockBuilder<TEntity, TViewModel> BuildStubbedToReturn(params TViewModel[] viewModels) {
+            var queue = new Queue<TViewModel>(viewModels);
+            _mock.Setup(m => m.Build(It.IsAny<TEntity>())).Returns(queue.Dequeue);
             return this;
         }
 
-        public MockBuilder<TEntity, TViewModel> BuildStubbedToReturn(TEntity entity) {
-            _mock.Setup(m => m.Build(It.IsAny<TViewModel>())).Returns(entity);
+        public MockBuilder<TEntity, TViewModel> BuildStubbedToReturn(params TEntity[] entities) {
+            var queue = new Queue<TEntity>(entities);
+            _mock.Setup(m => m.Build(It.IsAny<TViewModel>())).Returns(queue.Dequeue);
             return this;
         }
 

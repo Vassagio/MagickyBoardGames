@@ -17,7 +17,7 @@ namespace MagickyBoardGames.Tests.Validations
         [InlineData(100)]
         public void Valid(int length) {
             var viewModel = BuildGameViewModel(new string('x', length));                
-            var validator = new GameViewModelValidator();
+            var validator = new GameSaveViewModelValidator();
 
             var results = validator.Validate(viewModel);
 
@@ -30,8 +30,8 @@ namespace MagickyBoardGames.Tests.Validations
         [InlineData("   ")]
         public void Must_Have_A_Name(string name) {
             var viewModel = BuildGameViewModel();
-            viewModel.Name = name;
-            var validator = new GameViewModelValidator();
+            viewModel.Game.Name = name;
+            var validator = new GameSaveViewModelValidator();
 
             var results = validator.Validate(viewModel);
 
@@ -43,7 +43,7 @@ namespace MagickyBoardGames.Tests.Validations
         [InlineData(1000)]
         public void Must_Be_Less_Than_Or_Equal_To_30_Characters(int length) {
             var viewModel = BuildGameViewModel(new string('x', length));
-            var validator = new GameViewModelValidator();
+            var validator = new GameSaveViewModelValidator();
 
             var results = validator.Validate(viewModel);
 
@@ -52,14 +52,16 @@ namespace MagickyBoardGames.Tests.Validations
 
         [Fact]
         public void Min_Players_Must_Be_Greater_Than_0() {
-            var viewModel = new GameViewModel {
-                Name = "Name",
-                Description = "Description",
-                MinPlayers = 0,
-                MaxPlayers = 10
+            var viewModel = new GameSaveViewModel {
+                Game = new GameViewModel {
+                    Name = "Name",
+                    Description = "Description",
+                    MinPlayers = 0,
+                    MaxPlayers = 10
+                }
             };
 
-            var validator = new GameViewModelValidator();
+            var validator = new GameSaveViewModelValidator();
 
             var results = validator.Validate(viewModel);
 
@@ -68,14 +70,16 @@ namespace MagickyBoardGames.Tests.Validations
 
         [Fact]
         public void Max_Players_Must_Be_Greater_Than_0() {
-            var viewModel = new GameViewModel {
-                Name = "Name",
-                Description = "Description",
-                MinPlayers = 1,
-                MaxPlayers = 0
+            var viewModel = new GameSaveViewModel {
+                Game = new GameViewModel {
+                    Name = "Name",
+                    Description = "Description",
+                    MinPlayers = 1,
+                    MaxPlayers = 0
+                }
             };
 
-            var validator = new GameViewModelValidator();
+            var validator = new GameSaveViewModelValidator();
 
             var results = validator.Validate(viewModel);
 
@@ -87,23 +91,25 @@ namespace MagickyBoardGames.Tests.Validations
         [InlineData(100, 12)]
         public void Must_Be_Greater_Than_MinPlayers(int minPlayers, int maxPlayers) {
             var viewModel = BuildGameViewModel(minPlayers: minPlayers, maxPlayers: maxPlayers);
-            var validator = new GameViewModelValidator();
+            var validator = new GameSaveViewModelValidator();
 
             var results = validator.Validate(viewModel);
 
             results.Errors.First().ErrorMessage.Should().Be("Must be greater than min players.");
         }
 
-        private static GameViewModel BuildGameViewModel(string name = null, string description = null, int? minPlayers = null, int? maxPlayers = null) {
+        private static GameSaveViewModel BuildGameViewModel(string name = null, string description = null, int? minPlayers = null, int? maxPlayers = null) {
             name = name ?? "Name";
             description = description?? "Description";
             minPlayers = minPlayers ?? 1;
             maxPlayers = maxPlayers ?? 10;
-            return new GameViewModel {
-                Name = name,
-                Description = description,
-                MinPlayers = minPlayers.Value,
-                MaxPlayers = maxPlayers.Value
+            return new GameSaveViewModel {
+                Game = new GameViewModel {
+                    Name = name,
+                    Description = description,
+                    MinPlayers = minPlayers.Value,
+                    MaxPlayers = maxPlayers.Value
+                }
             };            
         }
     }

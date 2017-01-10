@@ -52,7 +52,7 @@ namespace MagickyBoardGames {
             services.AddTransient<IGameRepository, GameRepository>();
 
             services.AddTransient<IValidator<CategoryViewModel>, CategoryViewModelValidator>();
-            services.AddTransient<IValidator<GameViewModel>, GameViewModelValidator>();
+            services.AddTransient<IValidator<GameSaveViewModel>, GameSaveViewModelValidator>();
 
             services.AddTransient<ICategoryListContext, CategoryListContext>();
             services.AddTransient<ICategoryViewContext, CategoryViewContext>();

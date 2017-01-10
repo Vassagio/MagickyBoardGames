@@ -9,6 +9,7 @@ using Xunit;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
+using MagickyBoardGames.Validations;
 
 namespace MagickyBoardGames.Tests.Contexts.GameContexts {
     public class GameSaveContextTest {
@@ -21,12 +22,121 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
         [Fact]
         public void Validates() {
             var viewModel = new GameSaveViewModel();
-            var validator = new MockValidator<GameViewModel>().ValidateStubbedToReturnValid();
+            var validator = new MockValidator<GameSaveViewModel>().ValidateStubbedToReturnValid();
             var context = BuildGameSaveContext(validator: validator);
 
             var results = context.Validate(viewModel);
 
             results.Should().BeOfType<ValidationResult>();
+        }
+
+        [Fact]
+        public async void Builds_A_View_Model() {
+            var category = new Category {
+                Id = 1,
+                Description = "Category"
+            };
+            var categories = new List<Category> {
+                category
+            };
+            var categoryViewModel = new CategoryViewModel {
+                Id = 1,
+                Description = "Category"
+            };
+            var categoryRepository = new MockCategoryRepository().GetAllStubbedToReturn(categories);
+            var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
+            var context = BuildGameSaveContext(categoryRepository: categoryRepository, categoryBuilder: categoryBuilder);
+
+            var viewModel = await context.BuildViewModel();
+
+            viewModel.Should().BeOfType<GameSaveViewModel>();
+            viewModel.AvailableCategories.Should().BeEquivalentTo(new List<CategoryViewModel> {categoryViewModel});
+            categoryRepository.VerifyGetAllCalled();
+            categoryBuilder.VerifyBuildCalled(category);
+        }
+
+        [Fact]
+        public async void Builds_A_View_Model_With_Id_That_Doesnt_Exist() {
+            var category = new Category {
+                Id = 1,
+                Description = "Category"
+            };
+            var categories = new List<Category> {
+                category
+            };
+            var categoryViewModel = new CategoryViewModel {
+                Id = 1,
+                Description = "Category"
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>();
+            var categoryRepository = new MockCategoryRepository().GetAllStubbedToReturn(categories);
+            var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder, categoryRepository: categoryRepository, categoryBuilder: categoryBuilder);
+
+            var viewModel = await context.BuildViewModel(33);
+
+            viewModel.Should().BeOfType<GameSaveViewModel>();
+            viewModel.AvailableCategories.Should().BeEquivalentTo(new List<CategoryViewModel> { categoryViewModel });
+            gameRepository.VerifyGetByCalled(33);
+            gameBuilder.VerifyBuildNotCalled();
+            categoryRepository.VerifyGetAllCalled();
+            categoryBuilder.VerifyBuildCalled(category);
+        }
+
+        [Fact]
+        public async void Builds_A_View_Model_With_Id() {
+            var category1 = new Category {
+                Id = 1,
+                Description = "Category 1"
+            };
+            var category2 = new Category {
+                Id = 2,
+                Description = "Category 2"
+            };
+            var game = new Game {
+                Id = 33,
+                Name = "Game",
+                GameCategories = new List<GameCategory> {
+                    new GameCategory {
+                        Id = 1, 
+                        GameId = 33,
+                        CategoryId = 2
+                    }
+                }
+            };
+            var gameViewModel = new GameViewModel {
+                Id = 33,
+                Name = "Game"
+            };
+            var categories = new List<Category> {
+                category1,
+                category2
+            };
+            var categoryViewModel1 = new CategoryViewModel {
+                Id = 1,
+                Description = "Category 1"
+            };
+            var categoryViewModel2 = new CategoryViewModel {
+                Id = 2,
+                Description = "Category 2"
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
+            var categoryRepository = new MockCategoryRepository().GetAllStubbedToReturn(categories);
+            var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel1, categoryViewModel2);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder, categoryRepository: categoryRepository, categoryBuilder: categoryBuilder);
+
+            var viewModel = await context.BuildViewModel(33);
+
+            viewModel.Should().BeOfType<GameSaveViewModel>();
+            viewModel.AvailableCategories.Should().BeEquivalentTo(new List<CategoryViewModel> { categoryViewModel1, categoryViewModel2 });
+            viewModel.CategoryIds.Should().BeEquivalentTo(new[] { 2 });
+            gameRepository.VerifyGetByCalled(33);
+            gameBuilder.VerifyBuildCalled(game);
+            categoryRepository.VerifyGetAllCalled();
+            categoryBuilder.VerifyBuildCalled(category1);
+            categoryBuilder.VerifyBuildCalled(category2);
         }
 
         [Fact]
@@ -45,7 +155,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>();
             var context = BuildGameSaveContext(repository, gameBuilder, categoryBuilder: categoryBuilder);
 
-            await context.Save(viewModel);
+            await context.Save(viewModel);            
 
             repository.VerifyGetByCalled(game.Name);
             repository.VerifyGetByIdNotCalled();
@@ -65,28 +175,24 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             var gameViewModel = new GameViewModel {
                 Name = "Game"
             };
-            var categoryViewModel = new CategoryViewModel {
-                Id = 1,
-                Description = "Category 1"
-            };
             var gameSaveViewModel = new GameSaveViewModel {
                 Game = gameViewModel,
-                SelectedCategories = new List<CategoryViewModel> {
-                    categoryViewModel
+                CategoryIds = new[] {
+                    1
                 }
             };
-            var repository = new MockGameRepository().GetByStubbedToReturn(null);
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
+            var categoryRepository = new MockCategoryRepository().GetByStubbedToReturn(category);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
-            var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(category);
-            var context = BuildGameSaveContext(repository, gameBuilder, categoryBuilder: categoryBuilder);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder, categoryRepository: categoryRepository);
 
             await context.Save(gameSaveViewModel);
 
-            repository.VerifyGetByCalled(game.Name);
-            repository.VerifyGetByIdNotCalled();
-            repository.VerifyAddCalled(game, new List<Category> { category });
+            gameRepository.VerifyGetByCalled(game.Name);
+            gameRepository.VerifyGetByIdNotCalled();
+            gameRepository.VerifyAddCalled(game, new List<Category> { category });
             gameBuilder.VerifyBuildCalled(gameViewModel);
-            categoryBuilder.VerifyBuildCalled(categoryViewModel);
+            categoryRepository.VerifyGetByCalled(1);
         }
 
         [Fact]
@@ -178,36 +284,33 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Id = 60,
                 Description = "Game"
             };
-            var categoryViewModel = new CategoryViewModel {
-                Id = 1,
-                Description = "Category 1"
-            };
             var viewModel = new GameSaveViewModel {
                 Game = gameViewModel,
-                SelectedCategories = new List<CategoryViewModel> {
-                    categoryViewModel
+                CategoryIds = new[] {
+                    1
                 }
             };
-            var repository = new MockGameRepository().GetByStubbedToReturn(game);
-            var builder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
-            var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(category);
-            var context = BuildGameSaveContext(repository, builder, categoryBuilder: categoryBuilder);
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
+            var categoryRepository = new MockCategoryRepository().GetByStubbedToReturn(category);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder, categoryRepository: categoryRepository);
 
             await context.Save(viewModel);
 
-            repository.VerifyGetByCalled(60);
-            repository.VerifyGetByNameNotCalled();
-            repository.VerifyUpdateCalled(game, new List<Category> { category});
-            builder.VerifyBuildCalled(gameViewModel);
-            categoryBuilder.VerifyBuildCalled(categoryViewModel);
+            gameRepository.VerifyGetByCalled(60);
+            gameRepository.VerifyGetByNameNotCalled();
+            gameRepository.VerifyUpdateCalled(game, new List<Category> { category});
+            gameBuilder.VerifyBuildCalled(gameViewModel);
+            categoryRepository.VerifyGetByCalled(1);
         }
 
-        private static GameSaveContext BuildGameSaveContext(IGameRepository repository = null, IBuilder<Game, GameViewModel> gameBuilder = null, IValidator<GameViewModel> validator = null, IBuilder<Category, CategoryViewModel> categoryBuilder = null) {
-            repository = repository ?? new MockGameRepository();
+        private static GameSaveContext BuildGameSaveContext(IGameRepository gameRepository = null, IBuilder<Game, GameViewModel> gameBuilder = null, IValidator<GameSaveViewModel> validator = null, ICategoryRepository categoryRepository = null, IBuilder < Category, CategoryViewModel> categoryBuilder = null) {
+            gameRepository = gameRepository ?? new MockGameRepository();
             gameBuilder = gameBuilder ?? new MockBuilder<Game, GameViewModel>();
-            validator = validator ?? new MockValidator<GameViewModel>();
+            validator = validator ?? new MockValidator<GameSaveViewModel>();
+            categoryRepository = categoryRepository ?? new MockCategoryRepository();
             categoryBuilder = categoryBuilder ?? new MockBuilder<Category, CategoryViewModel>();
-            return new GameSaveContext(repository, gameBuilder, validator, categoryBuilder);
+            return new GameSaveContext(gameRepository, gameBuilder, validator, categoryRepository, categoryBuilder);
         }
     }
 }
