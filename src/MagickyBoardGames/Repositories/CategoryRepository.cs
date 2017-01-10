@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagickyBoardGames.Repositories
 {
-    public class CategoryRepository: IRepository<Category>
+    public class CategoryRepository: ICategoryRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -28,8 +28,8 @@ namespace MagickyBoardGames.Repositories
             return await Categories().SingleOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<Category> GetBy(Category category) {
-            return await Categories().SingleOrDefaultAsync(c => c.Description.Equals(category.Description, StringComparison.CurrentCultureIgnoreCase));
+        public async Task<Category> GetBy(string description) {
+            return await Categories().SingleOrDefaultAsync(c => c.Description.Equals(description, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public async Task<int> Add(Category entity) {

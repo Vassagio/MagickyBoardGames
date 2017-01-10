@@ -20,7 +20,7 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
 
         [Fact]
         public async void Returns_Empty_View_Model_When_Not_Found() {
-            var categoryRepository = new MockRepository<Category>().GetByStubbedToReturn(null);
+            var categoryRepository = new MockCategoryRepository().GetByStubbedToReturn(null);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>();
             var context = BuildCategoryListContext(categoryRepository, categoryBuilder);
 
@@ -36,7 +36,7 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
             var entity = new Category();
             var entities = new List<Category> {entity};
             var viewModel = new CategoryViewModel();
-            var repository = new MockRepository<Category>().GetAllStubbedToReturn(entities);
+            var repository = new MockCategoryRepository().GetAllStubbedToReturn(entities);
             var builder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(viewModel);
             var context = BuildCategoryListContext(repository, builder);
 
@@ -47,8 +47,8 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
             builder.VerifyBuildCalled(entity);
         }
 
-        private static CategoryListContext BuildCategoryListContext(IRepository<Category> repository = null, IBuilder<Category, CategoryViewModel> builder = null) {
-            repository = repository ?? new MockRepository<Category>();
+        private static CategoryListContext BuildCategoryListContext(ICategoryRepository repository = null, IBuilder<Category, CategoryViewModel> builder = null) {
+            repository = repository ?? new MockCategoryRepository();
             builder = builder ?? new MockBuilder<Category, CategoryViewModel>();
             return new CategoryListContext(repository, builder);
         }

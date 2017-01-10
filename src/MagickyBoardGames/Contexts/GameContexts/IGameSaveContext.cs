@@ -4,7 +4,9 @@ using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Contexts.GameContexts {
     public interface IGameSaveContext {
-        ValidationResult Validate(GameViewModel viewModel);
-        Task Save(GameViewModel viewModel);
+        ValidationResult Validate(GameSaveViewModel viewModel);
+        Task Save(GameSaveViewModel viewModel);
+        Task<GameSaveViewModel> BuildViewModel();
+        Task<GameSaveViewModel> BuildViewModel(int id);
     }
 }

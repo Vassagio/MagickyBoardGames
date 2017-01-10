@@ -38,13 +38,13 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
             var viewModel = new CategoryViewModel {
                 Description = "Category"
             };
-            var repository = new MockRepository<Category>().GetByStubbedToReturn(null);
+            var repository = new MockCategoryRepository().GetByStubbedToReturn(null);
             var builder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(category);
             var context = BuildCategorySaveContext(repository, builder);
 
             await context.Save(viewModel);
 
-            repository.VerifyGetByCalled(category);
+            repository.VerifyGetByCalled(category.Description);
             repository.VerifyGetByIdNotCalled();
             repository.VerifyAddCalled(category);
             builder.VerifyBuildCalled(viewModel);
@@ -58,13 +58,13 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
             var viewModel = new CategoryViewModel {
                 Description = "Category"
             };
-            var repository = new MockRepository<Category>().GetByStubbedToReturn(category);
+            var repository = new MockCategoryRepository().GetByStubbedToReturn(category);
             var builder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(category);
             var context = BuildCategorySaveContext(repository, builder);
 
             await context.Save(viewModel);
 
-            repository.VerifyGetByCalled(category);
+            repository.VerifyGetByCalled(category.Description);
             repository.VerifyGetByIdNotCalled();
             repository.VerifyAddNotCalled();
             repository.VerifyUpdateCalled(category);
@@ -81,14 +81,14 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
                 Id = 50,
                 Description = "Category"
             };
-            var repository = new MockRepository<Category>().GetByStubbedToReturn(null);
+            var repository = new MockCategoryRepository().GetByStubbedToReturn(null);
             var builder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(category);
             var context = BuildCategorySaveContext(repository, builder);
 
             await context.Save(viewModel);
 
             repository.VerifyGetByCalled(50);
-            repository.VerifyGetByNotCalled();
+            repository.VerifyGetByDescriptionNotCalled();
             repository.VerifyAddCalled(category);
             builder.VerifyBuildCalled(viewModel);
         }
@@ -103,20 +103,20 @@ namespace MagickyBoardGames.Tests.Contexts.CategoryContexts
                 Id = 60,
                 Description = "Category"
             };
-            var repository = new MockRepository<Category>().GetByStubbedToReturn(category);
+            var repository = new MockCategoryRepository().GetByStubbedToReturn(category);
             var builder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(category);
             var context = BuildCategorySaveContext(repository, builder);
 
             await context.Save(viewModel);
 
             repository.VerifyGetByCalled(60);
-            repository.VerifyGetByNotCalled();
+            repository.VerifyGetByDescriptionNotCalled();
             repository.VerifyUpdateCalled(category);
             builder.VerifyBuildCalled(viewModel);
         }
 
-        private static CategorySaveContext BuildCategorySaveContext(IRepository<Category> repository = null, IBuilder<Category, CategoryViewModel> builder = null, IValidator<CategoryViewModel> validator = null) {
-            repository = repository ?? new MockRepository<Category>();
+        private static CategorySaveContext BuildCategorySaveContext(ICategoryRepository repository = null, IBuilder<Category, CategoryViewModel> builder = null, IValidator<CategoryViewModel> validator = null) {
+            repository = repository ?? new MockCategoryRepository();
             builder = builder ?? new MockBuilder<Category, CategoryViewModel>();
             validator = validator ?? new MockValidator<CategoryViewModel>();
             return new CategorySaveContext(repository, builder, validator);
