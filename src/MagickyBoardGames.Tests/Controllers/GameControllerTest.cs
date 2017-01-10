@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.Controllers;
@@ -149,13 +150,15 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Create_Post_Result_Invalid() {
+            var categoryViewModels = new List<CategoryViewModel>();
             var viewModel = new GameSaveViewModel {
                 Game = new GameViewModel {
                     Id = 9,
                     Name = "Another Item"
-                }
+                },
+                AvailableCategories = categoryViewModels
             };
-            var context = new MockGameSaveContext().ValidateStubbedToBeInvalid();
+            var context = new MockGameSaveContext().ValidateStubbedToBeInvalid().BuildViewModelStubbedToReturn(viewModel);
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
@@ -165,9 +168,11 @@ namespace MagickyBoardGames.Tests.Controllers {
             var model = viewResult.Model.Should().BeAssignableTo<GameSaveViewModel>().Subject;
             model.Game.Id.Should().Be(9);
             model.Game.Name.Should().Be("Another Item");
+            model.AvailableCategories.Should().BeEquivalentTo(categoryViewModels);
             contextLoader.VerifyLoadGameSaveContextCalled();
             context.VerifyValidateCalled(viewModel);
             context.VerifySaveNotCalled();
+            context.VerifyBuildViewModelCalled();
         }
 
         [Fact]
@@ -256,13 +261,15 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Edit_Post_Result_Invalid() {
+            var categoryViewModels = new List<CategoryViewModel>();
             var viewModel = new GameSaveViewModel {
                 Game = new GameViewModel {
                     Id = 22,
                     Name = "Name"
-                }
+                },
+                AvailableCategories = categoryViewModels
             };
-            var context = new MockGameSaveContext().ValidateStubbedToBeInvalid();
+            var context = new MockGameSaveContext().ValidateStubbedToBeInvalid().BuildViewModelStubbedToReturn(viewModel); ;
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
@@ -272,8 +279,10 @@ namespace MagickyBoardGames.Tests.Controllers {
             var model = viewResult.Model.Should().BeAssignableTo<GameSaveViewModel>().Subject;
             model.Game.Id.Should().Be(22);
             model.Game.Name.Should().Be("Name");
+            model.AvailableCategories.Should().BeEquivalentTo(categoryViewModels);
             context.VerifyValidateCalled(viewModel);
             context.VerifySaveNotCalled();
+            context.VerifyBuildViewModelCalled();
             contextLoader.VerifyLoadGameSaveContextCalled();
         }
 

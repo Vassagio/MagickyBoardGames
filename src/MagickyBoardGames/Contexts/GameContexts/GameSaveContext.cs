@@ -69,7 +69,7 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             var categories = await _categoryRepository.GetAll();
             var categoryViewModels = categories.Select(category => _categoryBuilder.Build(category)).ToList();
             return new GameSaveViewModel {
-                AvailableCategories = categoryViewModels
+                AvailableCategories = categoryViewModels.ToArray()
             };
         }
 

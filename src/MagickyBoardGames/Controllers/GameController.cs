@@ -46,8 +46,11 @@ namespace MagickyBoardGames.Controllers {
         public async Task<IActionResult> Create([Bind("Game,CategoryIds,AvailableCategories")] GameSaveViewModel gameSaveViewModel) {
             var context = _loader.LoadGameSaveContext();
             var result = context.Validate(gameSaveViewModel);
-            if (!result.IsValid)
+            if (!result.IsValid) {
+                var viewModel = await context.BuildViewModel();
+                gameSaveViewModel.AvailableCategories = viewModel.AvailableCategories;
                 return View(gameSaveViewModel);
+            }
 
             await context.Save(gameSaveViewModel);
             return RedirectToAction("Index");
@@ -75,8 +78,11 @@ namespace MagickyBoardGames.Controllers {
 
             var context = _loader.LoadGameSaveContext();
             var result = context.Validate(gameSaveViewModel);
-            if (!result.IsValid)
+            if (!result.IsValid) {
+                var viewModel = await context.BuildViewModel();
+                gameSaveViewModel.AvailableCategories = viewModel.AvailableCategories;
                 return View(gameSaveViewModel);
+            }
 
             await context.Save(gameSaveViewModel);
             return RedirectToAction("Index");
