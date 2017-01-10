@@ -11,5 +11,6 @@ namespace MagickyBoardGames.Models
         public int MaxPlayers { get; set; }
 
         public virtual ICollection<GameCategory> GameCategories { get; set; }
+        public virtual ICollection<GameOwner> GameOwners { get; set; }
     }
 }
