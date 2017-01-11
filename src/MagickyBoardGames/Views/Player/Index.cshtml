@@ -1,0 +1,36 @@
+@model MagickyBoardGames.ViewModels.PlayerListViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Players</h2>
+
+<table class="table">
+    <thead>
+        <tr>           
+            <th>
+                Name
+            </th>            
+            <th>
+                Email
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Players) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>         
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>                
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

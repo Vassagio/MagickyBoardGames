@@ -4,6 +4,7 @@ using MagickyBoardGames.Builders;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.Contexts.GameContexts;
+using MagickyBoardGames.Contexts.PlayerContexts;
 using MagickyBoardGames.Data;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.Repositories;
@@ -48,6 +49,7 @@ namespace MagickyBoardGames {
             services.AddTransient<IBuilder<Category, CategoryViewModel>, CategoryBuilder>();
             services.AddTransient<IBuilder<Game, GameViewModel>, GameBuilder>();
             services.AddTransient<IBuilder<ApplicationUser, OwnerViewModel>, OwnerBuilder>();
+            services.AddTransient<IBuilder<ApplicationUser, PlayerViewModel>, PlayerBuilder>();
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IGameRepository, GameRepository>();
@@ -67,6 +69,10 @@ namespace MagickyBoardGames {
             services.AddTransient<IGameViewContext, GameViewContext>();
             services.AddTransient<IGameSaveContext, GameSaveContext>();
             services.AddTransient<IGameContextLoader, GameContextLoader>();
+
+            services.AddTransient<IPlayerListContext, PlayerListContext>();
+            services.AddTransient<IPlayerViewContext, PlayerViewContext>();
+            services.AddTransient<IPlayerContextLoader, PlayerContextLoader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

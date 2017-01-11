@@ -160,7 +160,11 @@ namespace MagickyBoardGames.Tests.Repositories {
             var gameCategoryRepository = new MockGameCategoryRepository();
             var gameOwnerRepository = new MockGameOwnerRepository();
             var context = BuildGameRepository(gameCategoryRepository, gameOwnerRepository);
-            await _fixture.Populate();
+            await _fixture.Populate(game);
+            game.Name = "Updated Game";
+            game.Description = "We are updated";
+            game.MinPlayers = 2;
+            game.MaxPlayers = 8;
 
             await context.Update(game, categories, owners);
 
