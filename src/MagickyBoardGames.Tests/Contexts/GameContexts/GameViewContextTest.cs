@@ -58,6 +58,31 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
         }
 
         [Fact]
+        public async void Returns_View_Model_With_No_Associated_Users() {
+            var game = new Game {
+                Id = 1,
+                Description = "Game"
+            };
+            var gameViewModel = new GameViewModel {
+                Id = 1,
+                Description = "Game"
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
+            var ownerBuilder = new MockBuilder<ApplicationUser, OwnerViewModel>();
+            var context = BuildGameViewContext(gameRepository, gameBuilder, ownerBuilder: ownerBuilder);
+
+            var gameViewViewModel = await context.BuildViewModel(game.Id);
+
+            gameViewViewModel.Should().BeOfType<GameViewViewModel>();
+            gameViewViewModel.Game.Should().Be(gameViewModel);
+            gameViewViewModel.Owners.Should().BeEmpty();
+            gameRepository.VerifyGetByCalled(game.Id);
+            gameBuilder.VerifyBuildCalled(game);
+            ownerBuilder.VerifyBuildNotCalled();
+        }
+
+        [Fact]
         public async void Returns_View_Model_With_Games() {
             var game = new Game {
                 Id = 1,
@@ -101,6 +126,50 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
         }
 
         [Fact]
+        public async void Returns_View_Model_With_Owners() {
+            var game = new Game {
+                Id = 1,
+                Name = "Game"
+            };
+            var owner = new ApplicationUser{
+                Id = "1",
+                UserName = "User Name"
+            };
+            game.GameOwners = new List<GameOwner> {
+                new GameOwner{
+                    Id = 1,
+                    GameId = game.Id,
+                    Game = game,
+                    OwnerId = owner.Id,
+                    Owner = owner
+                }
+            };
+            var gameViewModel = new GameViewModel {
+                Id = game.Id,
+                Name = game.Name
+            };
+            var ownerViewModel = new OwnerViewModel {
+                Id = owner.Id,
+                Name = owner.UserName
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
+            var ownerBuilder = new MockBuilder<ApplicationUser, OwnerViewModel>().BuildStubbedToReturn(ownerViewModel);
+            var context = BuildGameViewContext(gameRepository, gameBuilder, ownerBuilder: ownerBuilder);
+
+            var gameViewViewModel = await context.BuildViewModel(game.Id);
+
+            gameViewViewModel.Should().BeOfType<GameViewViewModel>();
+            gameViewViewModel.Game.Should().Be(gameViewModel);
+            gameViewViewModel.Owners.Count().Should().Be(1);
+            gameViewViewModel.Owners.Should().Contain(ownerViewModel);
+            gameRepository.VerifyGetByCalled(game.Id);
+            gameBuilder.VerifyBuildCalled(game);
+            ownerBuilder.VerifyBuildCalled(owner);
+        }
+
+
+        [Fact]
         public async void Does_Not_Throw_Exception_When_Deleting_Nonexistant_Record() {
             var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
             var context = BuildGameViewContext(gameRepository);
@@ -126,11 +195,13 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
         private static GameViewContext BuildGameViewContext(IGameRepository gameRepository = null,
                                                             IBuilder<Game, GameViewModel> gameBuilder = null,
-                                                            IBuilder<Category, CategoryViewModel> categoryBuilder = null) {
+                                                            IBuilder<Category, CategoryViewModel> categoryBuilder = null,
+                                                            IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder = null) {
             gameRepository = gameRepository ?? new MockGameRepository();
             gameBuilder = gameBuilder ?? new MockBuilder<Game, GameViewModel>();
             categoryBuilder = categoryBuilder ?? new MockBuilder<Category, CategoryViewModel>();
-            return new GameViewContext(gameRepository, gameBuilder, categoryBuilder);
+            ownerBuilder = ownerBuilder ?? new MockBuilder<ApplicationUser, OwnerViewModel>();
+            return new GameViewContext(gameRepository, gameBuilder, categoryBuilder, ownerBuilder);
         }
     }
 }

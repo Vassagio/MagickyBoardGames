@@ -47,9 +47,13 @@ namespace MagickyBoardGames {
 
             services.AddTransient<IBuilder<Category, CategoryViewModel>, CategoryBuilder>();
             services.AddTransient<IBuilder<Game, GameViewModel>, GameBuilder>();
+            services.AddTransient<IBuilder<ApplicationUser, OwnerViewModel>, OwnerBuilder>();
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IGameRepository, GameRepository>();
+            services.AddTransient<IGameCategoryRepository, GameCategoryRepository>();
+            services.AddTransient<IGameOwnerRepository, GameOwnerRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<IValidator<CategoryViewModel>, CategoryViewModelValidator>();
             services.AddTransient<IValidator<GameSaveViewModel>, GameSaveViewModelValidator>();

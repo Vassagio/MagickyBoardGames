@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.Repositories;
+using MagickyBoardGames.Tests.Mocks;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -31,7 +32,7 @@ namespace MagickyBoardGames.Tests.Repositories {
                 Description = "Description",
                 MinPlayers = 1,
                 MaxPlayers = 10
-            };
+            };          
             var context = BuildGameRepository();
             await _fixture.Populate();
 
@@ -41,61 +42,38 @@ namespace MagickyBoardGames.Tests.Repositories {
             expected.Name.Should().Be("Added Game");
             expected.Description.Should().Be("Description");
             expected.MinPlayers.Should().Be(1);
-            expected.MaxPlayers.Should().Be(10);
+            expected.MaxPlayers.Should().Be(10);           
         }
 
         [Fact]
-        public async void Adds_A_Record_With_No_Categories() {
+        public async void Adds_A_Record_With_Children() {
             var game = new Game {
                 Name = "Added Game",
                 Description = "Description",
                 MinPlayers = 1,
                 MaxPlayers = 10
-            };
-            var context = BuildGameRepository();
-            await _fixture.Populate();
-
-            var id = await context.Add(game, new List<Category>());
-
-            var expected = await _fixture.Db.Games.Include(g => g.GameCategories).SingleOrDefaultAsync(g => g.Id == id);
-            expected.Name.Should().Be("Added Game");
-            expected.Description.Should().Be("Description");
-            expected.MinPlayers.Should().Be(1);
-            expected.MaxPlayers.Should().Be(10);
-            expected.GameCategories.Should().BeEmpty();
-        }
-
-        [Fact]
-        public async void Adds_A_Record_With_Categories() {
-            var game = new Game {
-                Name = "Added Game",
-                Description = "Description",
-                MinPlayers = 1,
-                MaxPlayers = 10
-            };
-            var category1 = new Category {
-                Id = 1,
-                Description = "Category 1"
-            };
-            var category2 = new Category {
-                Id = 2,
-                Description = "Category 2"
             };
             var categories = new List<Category> {
-                category1,
-                category2
+                new Category()
             };
-            var context = BuildGameRepository();
-            await _fixture.Populate(category1, category2);
+            var owners = new List<ApplicationUser> {
+                new ApplicationUser(),
+                new ApplicationUser()
+            };
+            var gameCategoryRepository = new MockGameCategoryRepository();
+            var gameOwnerRepository = new MockGameOwnerRepository();
+            var context = BuildGameRepository(gameCategoryRepository, gameOwnerRepository);
+            await _fixture.Populate();
+            
+            var id = await context.Add(game, categories, owners);
 
-            var id = await context.Add(game, categories);
-
-            var expected = await _fixture.Db.Games.Include(g => g.GameCategories).SingleOrDefaultAsync(g => g.Id == id);
+            var expected = await _fixture.Db.Games.SingleOrDefaultAsync(g => g.Id == id);
             expected.Name.Should().Be("Added Game");
             expected.Description.Should().Be("Description");
             expected.MinPlayers.Should().Be(1);
-            expected.MaxPlayers.Should().Be(10);
-            expected.GameCategories.Count().Should().Be(2);            
+            expected.MaxPlayers.Should().Be(10);          
+            gameCategoryRepository.VerifyAdjustCalled(id, categories);
+            gameOwnerRepository.VerifyAdjustCalled(id, owners);
         }
 
         [Fact]
@@ -163,111 +141,36 @@ namespace MagickyBoardGames.Tests.Repositories {
         }
 
         [Fact]
-        public async void Updates_A_Record_With_No_Categories() {
+        public async void Updates_A_Record_With_Children() {
             var game = new Game {
                 Id = 999,
                 Name = "Original Game",
                 Description = "Description",
                 MinPlayers = 1,
                 MaxPlayers = 10
-            };
-            var context = BuildGameRepository();
-            await _fixture.Populate(game);
-            game.Name = "Updated Game";
-            game.Description = "We are updated";
-            game.MinPlayers = 2;
-            game.MaxPlayers = 8;
-
-            await context.Update(game, new List<Category>());
-
-            var expected = await _fixture.Db.Games.Include(g => g.GameCategories).SingleOrDefaultAsync(g => g.Id == 999);
-            expected.Name.Should().Be("Updated Game");
-            expected.Description.Should().Be("We are updated");
-            expected.MinPlayers.Should().Be(2);
-            expected.MaxPlayers.Should().Be(8);
-            expected.GameCategories.Should().BeEmpty();
-        }
-
-        [Fact]
-        public async void Updates_A_Record_With_Categories_When_Category_Already_Exists() {
-            var game = new Game {
-                Id = 999,
-                Name = "Original Game",
-                Description = "Description",
-                MinPlayers = 1,
-                MaxPlayers = 10
-            };
-            var category1 = new Category {
-                Id = 1,
-                Description = "Category 1"
-            };
-            var category2 = new Category {
-                Id = 2,
-                Description = "Category 2"
             };
             var categories = new List<Category> {
-                category1,
-                category2
+                new Category(),
+                new Category(),
+                new Category()
             };
-            var context = BuildGameRepository();
-            await _fixture.Populate(game);
-            await _fixture.Populate(category1, category2);
-            await _fixture.Populate(new GameCategory { Id = 500, GameId = 999, CategoryId = 1 });
-            game.Name = "Updated Game";
-            game.Description = "We are updated";
-            game.MinPlayers = 2;
-            game.MaxPlayers = 8;
+            var owners = new List<ApplicationUser> {
+                new ApplicationUser(),                
+            };
+            var gameCategoryRepository = new MockGameCategoryRepository();
+            var gameOwnerRepository = new MockGameOwnerRepository();
+            var context = BuildGameRepository(gameCategoryRepository, gameOwnerRepository);
+            await _fixture.Populate();
 
-            await context.Update(game, categories);
+            await context.Update(game, categories, owners);
 
-            var expected = await _fixture.Db.Games.Include(g => g.GameCategories).SingleOrDefaultAsync(g => g.Id == 999);
+            var expected = await _fixture.Db.Games.SingleOrDefaultAsync(g => g.Id == 999);
             expected.Name.Should().Be("Updated Game");
             expected.Description.Should().Be("We are updated");
             expected.MinPlayers.Should().Be(2);
             expected.MaxPlayers.Should().Be(8);
-            expected.GameCategories.Count.Should().Be(2);
-        }
-
-        [Fact]
-        public async void Updates_A_Record_With_Adding_And_Removing_Categories() {
-            var game = new Game {
-                Id = 999,
-                Name = "Original Game",
-                Description = "Description",
-                MinPlayers = 1,
-                MaxPlayers = 10
-            };
-            var category1 = new Category {
-                Id = 1,
-                Description = "Category 1"
-            };
-            var category2 = new Category {
-                Id = 2,
-                Description = "Category 2"
-            };
-            var gameCategory1 = new GameCategory {
-                Id = 300,
-                GameId = 999,
-                CategoryId = 1
-            };   
-            var context = BuildGameRepository();
-            await _fixture.Populate(game);
-            await _fixture.Populate(category1, category2);
-            await _fixture.Populate(gameCategory1);
-            game.Name = "Updated Game";
-            game.Description = "We are updated";
-            game.MinPlayers = 2;
-            game.MaxPlayers = 8;
-
-            await context.Update(game, new List<Category> {category2});
-
-            var expected = await _fixture.Db.Games.Include(g => g.GameCategories).SingleOrDefaultAsync(g => g.Id == 999);
-            expected.Name.Should().Be("Updated Game");
-            expected.Description.Should().Be("We are updated");
-            expected.MinPlayers.Should().Be(2);
-            expected.MaxPlayers.Should().Be(8);
-            expected.GameCategories.Count.Should().Be(1);
-            expected.GameCategories.First().CategoryId.Should().Be(2);
+            gameCategoryRepository.VerifyAdjustCalled(999, categories);
+            gameOwnerRepository.VerifyAdjustCalled(999, owners);
         }
 
         [Fact]        
@@ -381,8 +284,10 @@ namespace MagickyBoardGames.Tests.Repositories {
             game.Should().Be(game1);
         }
 
-        private GameRepository BuildGameRepository() {
-            return new GameRepository(_fixture.Db);
+        private GameRepository BuildGameRepository(IGameCategoryRepository gameCategoryRepository = null, IGameOwnerRepository gameOwnerRepository = null) {
+            gameCategoryRepository = gameCategoryRepository ?? new MockGameCategoryRepository();
+            gameOwnerRepository = gameOwnerRepository ?? new MockGameOwnerRepository();
+            return new GameRepository(_fixture.Db, gameCategoryRepository, gameOwnerRepository);
         }
     }
 }

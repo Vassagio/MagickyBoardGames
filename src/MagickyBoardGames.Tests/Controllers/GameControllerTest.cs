@@ -150,13 +150,19 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Create_Post_Result_Invalid() {
-            var categoryViewModels = new List<CategoryViewModel>();
+            var categoryViewModels = new List<CategoryViewModel> {
+                new CategoryViewModel()
+            };
+            var ownerViewModels = new List<OwnerViewModel> {
+                new OwnerViewModel()
+            };
             var viewModel = new GameSaveViewModel {
                 Game = new GameViewModel {
                     Id = 9,
                     Name = "Another Item"
                 },
-                AvailableCategories = categoryViewModels
+                AvailableCategories = categoryViewModels,
+                AvailableOwners = ownerViewModels
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeInvalid().BuildViewModelStubbedToReturn(viewModel);
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
@@ -169,6 +175,7 @@ namespace MagickyBoardGames.Tests.Controllers {
             model.Game.Id.Should().Be(9);
             model.Game.Name.Should().Be("Another Item");
             model.AvailableCategories.Should().BeEquivalentTo(categoryViewModels);
+            model.AvailableOwners.Should().BeEquivalentTo(ownerViewModels);
             contextLoader.VerifyLoadGameSaveContextCalled();
             context.VerifyValidateCalled(viewModel);
             context.VerifySaveNotCalled();

@@ -43,12 +43,13 @@ namespace MagickyBoardGames.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Game,CategoryIds,AvailableCategories")] GameSaveViewModel gameSaveViewModel) {
+        public async Task<IActionResult> Create([Bind("Game,CategoryIds,AvailableCategories,OwnerIds,AvailableOwners")] GameSaveViewModel gameSaveViewModel) {
             var context = _loader.LoadGameSaveContext();
             var result = context.Validate(gameSaveViewModel);
             if (!result.IsValid) {
                 var viewModel = await context.BuildViewModel();
                 gameSaveViewModel.AvailableCategories = viewModel.AvailableCategories;
+                gameSaveViewModel.AvailableOwners = viewModel.AvailableOwners;
                 return View(gameSaveViewModel);
             }
 
@@ -72,7 +73,7 @@ namespace MagickyBoardGames.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Game,CategoryIds,AvailableCategories")] GameSaveViewModel gameSaveViewModel) {
+        public async Task<IActionResult> Edit(int id, [Bind("Game,CategoryIds,AvailableCategories,OwnerIds,AvailableOwners")] GameSaveViewModel gameSaveViewModel) {
             if (id != gameSaveViewModel.Game.Id)
                 return NotFound();
 
@@ -81,6 +82,7 @@ namespace MagickyBoardGames.Controllers {
             if (!result.IsValid) {
                 var viewModel = await context.BuildViewModel();
                 gameSaveViewModel.AvailableCategories = viewModel.AvailableCategories;
+                gameSaveViewModel.AvailableOwners = viewModel.AvailableOwners;
                 return View(gameSaveViewModel);
             }
 

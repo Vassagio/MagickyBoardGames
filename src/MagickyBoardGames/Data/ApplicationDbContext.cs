@@ -13,6 +13,7 @@ namespace MagickyBoardGames.Data {
         public DbSet<Category> Categories { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<GameCategory> GameCategories { get; set; }
+        public DbSet<GameOwner> GameOwners { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder builder) {
@@ -21,6 +22,7 @@ namespace MagickyBoardGames.Data {
             new GameModelBuilder(builder).Build();
             new CategoryModelBuilder(builder).Build();
             new GameCategoryModelBuilder(builder).Build();
+            new GameOwnerModelBuilder(builder).Build();
         }
     }
 }

@@ -12,11 +12,13 @@ namespace MagickyBoardGames.Contexts.GameContexts {
         private readonly IGameRepository _gameRepository;
         private readonly IBuilder<Game, GameViewModel> _gameBuilder;
         private readonly IBuilder<Category, CategoryViewModel> _categoryBuilder;
+        private readonly IBuilder<ApplicationUser, OwnerViewModel> _ownerBuilder;
 
-        public GameViewContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IBuilder<Category, CategoryViewModel> categoryBuilder) {
+        public GameViewContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IBuilder<Category, CategoryViewModel> categoryBuilder, IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder) {
             _gameRepository = gameRepository;
             _gameBuilder = gameBuilder;
             _categoryBuilder = categoryBuilder;
+            _ownerBuilder = ownerBuilder;
         }
 
         public async Task<GameViewViewModel> BuildViewModel(int id) {
@@ -26,7 +28,8 @@ namespace MagickyBoardGames.Contexts.GameContexts {
 
             return new GameViewViewModel {
                 Game = _gameBuilder.Build(game),
-                Categories = GetCategories(game) ?? new List<CategoryViewModel>()
+                Categories = GetCategories(game) ?? new List<CategoryViewModel>(),
+                Owners = GetOwners(game) ?? new List<OwnerViewModel>()
             };
         }
 
@@ -36,6 +39,9 @@ namespace MagickyBoardGames.Contexts.GameContexts {
 
         private IEnumerable<CategoryViewModel> GetCategories(Game game) {
             return game.GameCategories?.Select(gc => _categoryBuilder.Build(gc.Category)).ToList();
+        }
+        private IEnumerable<OwnerViewModel> GetOwners(Game game) {
+            return game.GameOwners?.Select(gc => _ownerBuilder.Build(gc.Owner)).ToList();
         }
     }
 }

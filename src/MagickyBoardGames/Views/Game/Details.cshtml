@@ -21,7 +21,7 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Game.Description)
-        </dd>        
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Game.PlayerRange)
         </dt>
@@ -32,19 +32,23 @@
 </div>
 <h4>Categories</h4>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th></th>
-        </tr>
-    </thead>
     <tbody>
-        @foreach (var item in Model.Categories) {
+    @foreach (var item in Model.Categories) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<h4>Owners</h4>
+<table class="table">
+    <tbody>
+        @foreach (var item in Model.Owners) {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @Html.DisplayFor(modelItem => item.Name)
                 </td>
             </tr>
         }

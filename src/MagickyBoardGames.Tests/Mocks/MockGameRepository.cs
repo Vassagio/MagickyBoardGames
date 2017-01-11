@@ -28,8 +28,8 @@ namespace MagickyBoardGames.Tests.Mocks {
             return _mock.Object.Add(game);
         }
 
-        public Task<int> Add(Game game, IEnumerable<Category> categories) {
-            return _mock.Object.Add(game, categories);
+        public Task<int> Add(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
+            return _mock.Object.Add(game, categories, owners);
         }
 
         public Task Delete(int id) {
@@ -40,8 +40,8 @@ namespace MagickyBoardGames.Tests.Mocks {
             return _mock.Object.Update(game);
         }
 
-        public Task Update(Game game, IEnumerable<Category> categories) {
-            return _mock.Object.Update(game, categories);
+        public Task Update(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
+            return _mock.Object.Update(game, categories, owners);
         }
 
         public MockGameRepository GetAllStubbedToReturn(IEnumerable<Game> entities) {
@@ -83,8 +83,8 @@ namespace MagickyBoardGames.Tests.Mocks {
             _mock.Verify(m => m.Add(game), Times.Exactly(times));
         }
 
-        public void VerifyAddCalled(Game game, IEnumerable<Category> categories, int times = 1) {
-            _mock.Verify(m => m.Add(game, categories), Times.Exactly(times));
+        public void VerifyAddCalled(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int times = 1) {
+            _mock.Verify(m => m.Add(game, categories, owners), Times.Exactly(times));
         }
 
         public void VerifyAddNotCalled() {
@@ -95,8 +95,8 @@ namespace MagickyBoardGames.Tests.Mocks {
             _mock.Verify(m => m.Update(game), Times.Exactly(times));
         }
 
-        public void VerifyUpdateCalled(Game game, IEnumerable<Category> categories, int times = 1) {
-            _mock.Verify(m => m.Update(game, categories), Times.Exactly(times));
+        public void VerifyUpdateCalled(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int times = 1) {
+            _mock.Verify(m => m.Update(game, categories, owners), Times.Exactly(times));
         }
 
         public void VerifyUpdateNotCalled() {
