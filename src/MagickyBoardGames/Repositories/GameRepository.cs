@@ -75,6 +75,7 @@ namespace MagickyBoardGames.Repositories {
         public async Task Update(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
             await Update(game);
             await _gameCategoryRepository.Adjust(game.Id, categories);
+            await _gameOwnerRespository.Adjust(game.Id, owners);
         }
 
         private async Task<bool> Exists(int id) {

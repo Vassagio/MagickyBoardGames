@@ -1,0 +1,49 @@
+@model MagickyBoardGames.ViewModels.PlayerViewViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Player</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Player.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Player.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Player.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Player.Email)
+        </dd>
+    </dl>
+</div>
+<h4>Games Owned</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Games) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

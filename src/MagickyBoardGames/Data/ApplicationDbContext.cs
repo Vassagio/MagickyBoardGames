@@ -24,5 +24,7 @@ namespace MagickyBoardGames.Data {
             new GameCategoryModelBuilder(builder).Build();
             new GameOwnerModelBuilder(builder).Build();
         }
+
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
     }
 }
