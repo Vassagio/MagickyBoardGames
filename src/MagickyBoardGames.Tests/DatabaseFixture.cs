@@ -22,6 +22,15 @@ namespace MagickyBoardGames.Tests {
             foreach (var game in Db.Games)
                 Db.Games.Remove(game);
             await Db.SaveChangesAsync();
+            foreach (var user in Db.Users)
+                Db.Users.Remove(user);
+            await Db.SaveChangesAsync();
+            foreach (var gameCategory in Db.GameCategories)
+                Db.GameCategories.Remove(gameCategory);
+            await Db.SaveChangesAsync();
+            foreach (var gameOwner in Db.GameOwners)
+                Db.GameOwners.Remove(gameOwner);
+            await Db.SaveChangesAsync();
         }
 
         public async Task Populate(params Category[] categories) {
@@ -30,6 +39,15 @@ namespace MagickyBoardGames.Tests {
             await Db.SaveChangesAsync();
             foreach (var category in categories)
                 await Db.Categories.AddAsync(category);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task Populate(params ApplicationUser[] users) {
+            foreach (var user in Db.Users)
+                Db.Users.Remove(user);
+            await Db.SaveChangesAsync();
+            foreach (var user in users)
+                await Db.Users.AddAsync(user);
             await Db.SaveChangesAsync();
         }
 
@@ -43,11 +61,20 @@ namespace MagickyBoardGames.Tests {
         }
 
         public async Task Populate(params GameCategory[] gameCategories) {
-            foreach (var game in Db.GameCategories)
-                Db.GameCategories.Remove(game);
+            foreach (var gameCategory in Db.GameCategories)
+                Db.GameCategories.Remove(gameCategory);
             await Db.SaveChangesAsync();
             foreach (var gameCategory in gameCategories)
                 await Db.GameCategories.AddAsync(gameCategory);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task Populate(params GameOwner[] gameOwners) {
+            foreach (var gameOwner in Db.GameOwners)
+                Db.GameOwners.Remove(gameOwner);
+            await Db.SaveChangesAsync();
+            foreach (var gameOwner in gameOwners)
+                await Db.GameOwners.AddAsync(gameOwner);
             await Db.SaveChangesAsync();
         }
 
