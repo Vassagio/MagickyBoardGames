@@ -12,5 +12,6 @@ namespace MagickyBoardGames.Models
 
         public virtual ICollection<GameCategory> GameCategories { get; set; }
         public virtual ICollection<GameOwner> GameOwners { get; set; }
+        public virtual ICollection<GamePlayerRating> GamePlayerRatings { get; set; }
     }
 }
