@@ -3,15 +3,19 @@ using System.Threading.Tasks;
 using MagickyBoardGames.Data;
 using MagickyBoardGames.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MagickyBoardGames.Tests {
     public class DatabaseFixture : IDisposable {
         public ApplicationDbContext Db { get; }
 
         public DatabaseFixture() {
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()   
+                .BuildServiceProvider();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-            optionsBuilder.UseInMemoryDatabase();
+            optionsBuilder.UseInMemoryDatabase().UseInternalServiceProvider(serviceProvider);
             Db = new ApplicationDbContext(optionsBuilder.Options);
         }
 

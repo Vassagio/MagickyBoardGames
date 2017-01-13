@@ -28,6 +28,7 @@ namespace MagickyBoardGames.Tests.Repositories {
         [Fact]
         public async void Adds_A_Record() {
             var game = new Game {
+                Id = 1,
                 Name = "Added Game",
                 Description = "Description",
                 MinPlayers = 1,
