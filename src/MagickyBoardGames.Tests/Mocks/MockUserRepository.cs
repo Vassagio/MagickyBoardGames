@@ -48,7 +48,7 @@ namespace MagickyBoardGames.Tests.Mocks {
         }
 
         public void VerifyGetByCalled(string name, int times = 1) {
-            _mock.Verify(m => m.GetById(name), Times.Exactly(times));
+            _mock.Verify(m => m.GetBy(name), Times.Exactly(times));
         }
     }
 }

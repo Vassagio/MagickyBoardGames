@@ -14,8 +14,10 @@ namespace MagickyBoardGames.Data.ModelBuilders {
             }).IsUnique().ForSqlServerIsClustered();
             Builder.Entity<GamePlayerRating>().Property(gc => gc.GameId).IsRequired();
             Builder.Entity<GamePlayerRating>().Property(gc => gc.PlayerId).IsRequired();
+            Builder.Entity<GamePlayerRating>().Property(gc => gc.RatingId).IsRequired();
             Builder.Entity<GamePlayerRating>().HasOne(gc => gc.Game).WithMany(g => g.GamePlayerRatings).HasForeignKey(gc => gc.GameId);
             Builder.Entity<GamePlayerRating>().HasOne(gc => gc.Player).WithMany(c => c.GamePlayerRatings).HasForeignKey(gc => gc.PlayerId);
+            Builder.Entity<GamePlayerRating>().HasOne(gc => gc.Rating).WithMany(c => c.GamePlayerRatings).HasForeignKey(gc => gc.RatingId);
         }
     }
 }

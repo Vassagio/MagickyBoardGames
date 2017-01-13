@@ -17,8 +17,13 @@ namespace MagickyBoardGames.Contexts.GameContexts {
         private readonly IBuilder<Category, CategoryViewModel> _categoryBuilder;
         private readonly IUserRepository _userRepository;
         private readonly IBuilder<ApplicationUser, OwnerViewModel> _ownerBuilder;
+        private readonly IRatingRepository _ratingRepository;
+        private readonly IBuilder<Rating, RatingViewModel> _ratingBuilder;
 
-        public GameSaveContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IValidator<GameSaveViewModel> validator, ICategoryRepository categoryRepository, IBuilder<Category, CategoryViewModel> categoryBuilder, IUserRepository userRepository, IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder) {
+        public GameSaveContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IValidator<GameSaveViewModel> validator, 
+                               ICategoryRepository categoryRepository, IBuilder<Category, CategoryViewModel> categoryBuilder, 
+                               IUserRepository userRepository, IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder,
+                               IRatingRepository ratingRepository, IBuilder<Rating, RatingViewModel> ratingBuilder) {
             _gameRepository = gameRepository;
             _gameBuilder = gameBuilder;
             _validator = validator;
@@ -26,6 +31,8 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             _categoryBuilder = categoryBuilder;
             _userRepository = userRepository;
             _ownerBuilder = ownerBuilder;
+            _ratingRepository = ratingRepository;
+            _ratingBuilder = ratingBuilder;
         }
 
         public ValidationResult Validate(GameSaveViewModel viewModel) {
@@ -80,15 +87,27 @@ namespace MagickyBoardGames.Contexts.GameContexts {
         }
 
         public async Task<GameSaveViewModel> BuildViewModel() {
-            var categories = await _categoryRepository.GetAll();
-            var categoryViewModels = categories.Select(category => _categoryBuilder.Build(category)).ToList();
-            var owners = await _userRepository.GetAll();
-            var ownerViewModels = owners.Select(owner => _ownerBuilder.Build(owner)).ToList();
             return new GameSaveViewModel {
-                AvailableCategories = categoryViewModels,
-                AvailableOwners = ownerViewModels
+                AvailableCategories = await BuildCategoryViewModels(),
+                AvailableOwners = await BuildOwnerViewModels(),
+                AvailableRatings = await BuildRatingViewModels()
             };
         }
+        private async Task<IEnumerable<CategoryViewModel>> BuildCategoryViewModels() {
+            var categories = await _categoryRepository.GetAll();
+            return categories.Select(c => _categoryBuilder.Build(c)).ToList();
+        }
+
+        private async Task<IEnumerable<OwnerViewModel>> BuildOwnerViewModels() {
+            var owners = await _userRepository.GetAll();
+            return owners.Select(o => _ownerBuilder.Build(o)).ToList();
+        }
+
+        private async Task<IEnumerable<RatingViewModel>> BuildRatingViewModels() {
+            var ratings = await _ratingRepository.GetAll();
+            return ratings.Select(r => _ratingBuilder.Build(r)).ToList();
+        }
+
 
         public async Task<GameSaveViewModel> BuildViewModel(int id) {
             var viewModel = await BuildViewModel();
@@ -97,17 +116,22 @@ namespace MagickyBoardGames.Contexts.GameContexts {
                 return viewModel;
 
             viewModel.Game = _gameBuilder.Build(game);
-            viewModel.CategoryIds = BuildCategoryIds(game).ToArray();
-            viewModel.OwnerIds = BuildOwnerIds(game).ToArray();
+            viewModel.CategoryIds = BuildCategoryIds(game.GameCategories);
+            viewModel.OwnerIds = BuildOwnerIds(game.GameOwners);
+            viewModel.RatingIds = BuildRatingIds(game.GamePlayerRatings);
             return viewModel;
         }
 
-        private static IEnumerable<int> BuildCategoryIds(Game game) {
-            return game.GameCategories.Select(gc => gc.CategoryId).ToList();
+        private static int[] BuildCategoryIds(IEnumerable<GameCategory> gameCategories) {
+            return gameCategories.Select(gc => gc.CategoryId).ToArray();
         }
 
-        private static IEnumerable<string> BuildOwnerIds(Game game) {
-            return game.GameOwners.Select(go => go.OwnerId).ToList();
+        private static string[] BuildOwnerIds(IEnumerable<GameOwner> gameOwners) {
+            return gameOwners.Select(go => go.OwnerId).ToArray();
+        }
+
+        private static int[] BuildRatingIds(IEnumerable<GamePlayerRating> gamePlayerRatings) {
+            return gamePlayerRatings.Select(gc => gc.RatingId).ToArray();
         }
     }
 }

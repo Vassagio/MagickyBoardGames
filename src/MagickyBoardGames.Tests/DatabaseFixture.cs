@@ -22,6 +22,9 @@ namespace MagickyBoardGames.Tests {
             foreach (var game in Db.Games)
                 Db.Games.Remove(game);
             await Db.SaveChangesAsync();
+            foreach (var rating in Db.Ratings)
+                Db.Ratings.Remove(rating);
+            await Db.SaveChangesAsync();
             foreach (var user in Db.Users)
                 Db.Users.Remove(user);
             await Db.SaveChangesAsync();
@@ -31,9 +34,9 @@ namespace MagickyBoardGames.Tests {
             foreach (var gameOwner in Db.GameOwners)
                 Db.GameOwners.Remove(gameOwner);
             await Db.SaveChangesAsync();
-            foreach(var gamePlayerRating in Db.GamePlayerRatings)
-                Db.GamePlayerRatings.Remove(gamePlayerRating);
-            await Db.SaveChangesAsync();
+            //foreach (var gamePlayerRating in Db.GamePlayerRatings)
+            //    Db.GamePlayerRatings.Remove(gamePlayerRating);
+            //await Db.SaveChangesAsync();
         }
 
         public async Task Populate(params Category[] categories) {
@@ -63,6 +66,16 @@ namespace MagickyBoardGames.Tests {
             await Db.SaveChangesAsync();                        
         }
 
+
+        public async Task Populate(params Rating[] ratings) {
+            foreach (var rating in Db.Ratings)
+                Db.Ratings.Remove(rating);
+            await Db.SaveChangesAsync();
+            foreach (var rating in ratings)
+                await Db.Ratings.AddAsync(rating);
+            await Db.SaveChangesAsync();
+        }
+
         public async Task Populate(params GameCategory[] gameCategories) {
             foreach (var gameCategory in Db.GameCategories)
                 Db.GameCategories.Remove(gameCategory);
@@ -80,14 +93,13 @@ namespace MagickyBoardGames.Tests {
                 await Db.GameOwners.AddAsync(gameOwner);
             await Db.SaveChangesAsync();
         }
-
         public async Task Populate(params GamePlayerRating[] gamePlayerRatings) {
-            foreach (var gamePlayerRating in Db.GamePlayerRatings)
-                Db.GamePlayerRatings.Remove(gamePlayerRating);
-            await Db.SaveChangesAsync();
-            foreach (var gamePlayerRating in gamePlayerRatings)
-                await Db.GamePlayerRatings.AddAsync(gamePlayerRating);
-            await Db.SaveChangesAsync();
+            //foreach (var gamePlayerRating in Db.GamePlayerRatings)
+            //    Db.GamePlayerRatings.Remove(gamePlayerRating);
+            //await Db.SaveChangesAsync();
+            //foreach (var gamePlayerRating in gamePlayerRatings)
+            //    await Db.GamePlayerRatings.AddAsync(gamePlayerRating);
+            //await Db.SaveChangesAsync();
         }
 
         public void Dispose() {

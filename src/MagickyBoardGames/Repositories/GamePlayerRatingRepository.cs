@@ -11,22 +11,22 @@ namespace MagickyBoardGames.Repositories {
             _context = context;
         }
 
-        public async Task Save(int gameId, string playerId, int rating) {
+        public async Task Save(int gameId, string playerId, int ratingId) {
             var gamePlayerRating = await _context.GamePlayerRatings.SingleOrDefaultAsync(gpr => gpr.GameId == gameId);
             if (gamePlayerRating == null)
-                await Add(gameId, playerId, rating);
+                await Add(gameId, playerId, ratingId);
             else
-                Update(gamePlayerRating, rating);
+                Update(gamePlayerRating, ratingId);
             await _context.SaveChangesAsync();
         }
 
-        private async Task Add(int gameId, string playerId, int rating) {
-            var gamePlayerRating = new GamePlayerRating { GameId = gameId, PlayerId = playerId, Rating = rating };
-            await _context.GamePlayerRatings.AddAsync(gamePlayerRating);            
+        private async Task Add(int gameId, string playerId, int ratingId) {
+            var gamePlayerRating = new GamePlayerRating { GameId = gameId, PlayerId = playerId, RatingId = ratingId };
+            await _context.GamePlayerRatings.AddAsync(gamePlayerRating);
         }
 
-        private void Update(GamePlayerRating gamePlayerRating, int rating) {
-            gamePlayerRating.Rating = rating;
+        private void Update(GamePlayerRating gamePlayerRating, int ratingId) {
+            gamePlayerRating.RatingId = ratingId;
             _context.GamePlayerRatings.Update(gamePlayerRating);
         }
     }

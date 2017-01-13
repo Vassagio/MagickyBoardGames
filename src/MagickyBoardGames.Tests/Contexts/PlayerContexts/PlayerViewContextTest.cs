@@ -27,7 +27,7 @@ namespace MagickyBoardGames.Tests.Contexts.PlayerContexts {
             var playerViewViewModel = await context.BuildViewModel("1000");
 
             playerViewViewModel.Should().BeOfType<PlayerViewViewModel>();
-            userRepository.VerifyGetByCalled("1000");
+            userRepository.VerifyGetByIdCalled("1000");
             playerBuilder.VerifyBuildNotCalled();
             gameBuilder.VerifyBuildNotCalled();
         }
