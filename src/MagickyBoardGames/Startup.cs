@@ -45,16 +45,21 @@ namespace MagickyBoardGames {
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<IApplicationUserManager, ApplicationUserManager>();
 
             services.AddTransient<IBuilder<Category, CategoryViewModel>, CategoryBuilder>();
             services.AddTransient<IBuilder<Game, GameViewModel>, GameBuilder>();
             services.AddTransient<IBuilder<ApplicationUser, OwnerViewModel>, OwnerBuilder>();
             services.AddTransient<IBuilder<ApplicationUser, PlayerViewModel>, PlayerBuilder>();
+            services.AddTransient<IBuilder<Rating, RatingViewModel>, RatingBuilder>();
+            services.AddTransient<IBuilder<GamePlayerRating, PlayerRatingViewModel>, PlayerRatingBuilder>();
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IGameRepository, GameRepository>();
+            services.AddTransient<IRatingRepository, RatingRepository>();
             services.AddTransient<IGameCategoryRepository, GameCategoryRepository>();
             services.AddTransient<IGameOwnerRepository, GameOwnerRepository>();
+            services.AddTransient<IGamePlayerRatingRepository, GamePlayerRatingRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<IValidator<CategoryViewModel>, CategoryViewModelValidator>();
@@ -68,6 +73,7 @@ namespace MagickyBoardGames {
             services.AddTransient<IGameListContext, GameListContext>();
             services.AddTransient<IGameViewContext, GameViewContext>();
             services.AddTransient<IGameSaveContext, GameSaveContext>();
+            services.AddTransient<IGameRateContext, GameRateContext>();
             services.AddTransient<IGameContextLoader, GameContextLoader>();
 
             services.AddTransient<IPlayerListContext, PlayerListContext>();

@@ -42,20 +42,31 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 owner
             };
             var ownerViewModel = new OwnerViewModel();
+            var rating = new Rating();
+            var ratings = new List<Rating> {
+                rating
+            };
+            var ratingViewModel = new RatingViewModel();
             var categoryRepository = new MockCategoryRepository().GetAllStubbedToReturn(categories);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
             var userRepository = new MockUserRepository().GetAllStubbedToReturn(owners);
             var ownerBuilder = new MockBuilder<ApplicationUser, OwnerViewModel>().BuildStubbedToReturn(ownerViewModel);
-            var context = BuildGameSaveContext(categoryRepository: categoryRepository, categoryBuilder: categoryBuilder, userRepository: userRepository, ownerBuilder: ownerBuilder);
+            var ratingRepository = new MockRatingRepository().GetAllStubbedToReturn(ratings);
+            var ratingBuilder = new MockBuilder<Rating, RatingViewModel>().BuildStubbedToReturn(ratingViewModel);
+            var context = BuildGameSaveContext(categoryRepository: categoryRepository, categoryBuilder: categoryBuilder, userRepository: userRepository, ownerBuilder: ownerBuilder, ratingRepository: ratingRepository, ratingBuilder: ratingBuilder);
 
             var viewModel = await context.BuildViewModel();
 
             viewModel.Should().BeOfType<GameSaveViewModel>();
             viewModel.AvailableCategories.Should().BeEquivalentTo(new List<CategoryViewModel> {categoryViewModel});
+            viewModel.AvailableOwners.Should().BeEquivalentTo(new List<OwnerViewModel> { ownerViewModel });
+            viewModel.AvailableRatings.Should().BeEquivalentTo(new List<RatingViewModel> { ratingViewModel });
             categoryRepository.VerifyGetAllCalled();
             categoryBuilder.VerifyBuildCalled(category);
             userRepository.VerifyGetAllCalled();
             ownerBuilder.VerifyBuildCalled(owner);
+            ratingRepository.VerifyGetAllCalled();
+            ratingBuilder.VerifyBuildCalled(rating);
         }
 
         [Fact]
@@ -70,24 +81,35 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 owner
             };
             var ownerViewModel = new OwnerViewModel();
+            var rating = new Rating();
+            var ratings = new List<Rating> {
+                rating
+            };
+            var ratingViewModel = new RatingViewModel();
             var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
             var gameBuilder = new MockBuilder<Game, GameViewModel>();
             var categoryRepository = new MockCategoryRepository().GetAllStubbedToReturn(categories);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel);
             var userRepository = new MockUserRepository().GetAllStubbedToReturn(owners);
             var ownerBuilder = new MockBuilder<ApplicationUser, OwnerViewModel>().BuildStubbedToReturn(ownerViewModel);
-            var context = BuildGameSaveContext(gameRepository, gameBuilder, categoryRepository: categoryRepository, categoryBuilder: categoryBuilder, userRepository: userRepository, ownerBuilder: ownerBuilder);
+            var ratingRepository = new MockRatingRepository().GetAllStubbedToReturn(ratings);
+            var ratingBuilder = new MockBuilder<Rating, RatingViewModel>().BuildStubbedToReturn(ratingViewModel);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder, categoryRepository: categoryRepository, categoryBuilder: categoryBuilder, userRepository: userRepository, ownerBuilder: ownerBuilder, ratingRepository: ratingRepository, ratingBuilder: ratingBuilder);
 
-            var viewModel = await context.BuildViewModel(33);
+            var viewModel = await context.BuildViewModel(33, "1");
 
             viewModel.Should().BeOfType<GameSaveViewModel>();
             viewModel.AvailableCategories.Should().BeEquivalentTo(new List<CategoryViewModel> { categoryViewModel });
+            viewModel.AvailableOwners.Should().BeEquivalentTo(new List<OwnerViewModel> { ownerViewModel });
+            viewModel.AvailableRatings.Should().BeEquivalentTo(new List<RatingViewModel> { ratingViewModel });
             gameRepository.VerifyGetByCalled(33);
             gameBuilder.VerifyBuildNotCalled();
             categoryRepository.VerifyGetAllCalled();
             categoryBuilder.VerifyBuildCalled(category);
             userRepository.VerifyGetAllCalled();
             ownerBuilder.VerifyBuildCalled(owner);
+            ratingRepository.VerifyGetAllCalled();
+            ratingBuilder.VerifyBuildCalled(rating);
         }
 
         [Fact]
@@ -121,6 +143,28 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 owner2,
                 owner3
             };
+            var rating1 = new Rating {
+                Id = 1,
+                Rate = 1,
+                ShortDescription = "Rate 1",
+                Description = "Rating 1"
+            };
+            var rating2 = new Rating {
+                Id = 2,
+                Rate = 2,
+                ShortDescription = "Rate 2",
+                Description = "Rating 2"
+            };
+            var ratings = new List<Rating> {
+                rating1,
+                rating2
+            };
+            var gamePlayerRating = new GamePlayerRating {
+                Id = 1,
+                GameId = 33,
+                PlayerId = "3",
+                RatingId = 1
+            };
             var game = new Game {
                 Id = 33,
                 Name = "Game",
@@ -137,6 +181,9 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                         GameId = 33,
                         OwnerId = "3"
                     }
+                },
+                GamePlayerRatings = new List<GamePlayerRating> {
+                    gamePlayerRating
                 }
             };
             var gameViewModel = new GameViewModel {
@@ -163,21 +210,34 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Id = "3",
                 Name = "User Name 3"
             };
+            var ratingViewModel1 = new RatingViewModel {
+                Id = 1,
+                Description = "1 - Rate 1 - Rating 1"
+            };
+            var ratingViewModel2 = new RatingViewModel {
+                Id = 2,
+                Description = "2 - Rate 2 - Rating 2"
+            };            
             var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
             var categoryRepository = new MockCategoryRepository().GetAllStubbedToReturn(categories);
             var categoryBuilder = new MockBuilder<Category, CategoryViewModel>().BuildStubbedToReturn(categoryViewModel1, categoryViewModel2);
             var userRepository = new MockUserRepository().GetAllStubbedToReturn(owners);
             var ownerBuilder = new MockBuilder<ApplicationUser, OwnerViewModel>().BuildStubbedToReturn(ownerViewModel1, ownerViewModel2, ownerViewModel3);
-            var context = BuildGameSaveContext(gameRepository, gameBuilder, categoryRepository: categoryRepository, categoryBuilder: categoryBuilder, userRepository: userRepository, ownerBuilder: ownerBuilder);
+            var ratingRepository = new MockRatingRepository().GetAllStubbedToReturn(ratings);
+            var ratingBuilder = new MockBuilder<Rating, RatingViewModel>().BuildStubbedToReturn(ratingViewModel1, ratingViewModel2);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder, categoryRepository: categoryRepository, categoryBuilder: categoryBuilder, userRepository: userRepository, ownerBuilder: ownerBuilder, ratingRepository: ratingRepository, ratingBuilder: ratingBuilder);
 
-            var viewModel = await context.BuildViewModel(33);
+            var viewModel = await context.BuildViewModel(33, "3");
 
             viewModel.Should().BeOfType<GameSaveViewModel>();
             viewModel.AvailableCategories.Should().BeEquivalentTo(new List<CategoryViewModel> { categoryViewModel1, categoryViewModel2 });
             viewModel.AvailableOwners.Should().BeEquivalentTo(new List<OwnerViewModel> { ownerViewModel1, ownerViewModel2, ownerViewModel3 });
+            viewModel.AvailableRatings.Should().BeEquivalentTo(new List<RatingViewModel> { ratingViewModel1, ratingViewModel2 });
             viewModel.CategoryIds.Should().BeEquivalentTo(new[] { 2 });
-            viewModel.OwnerIds.Should().BeEquivalentTo(new[] { "3" });
+            viewModel.OwnerIds.Should().BeEquivalentTo("3");
+            viewModel.RatingId.Should().Be(1);
+            viewModel.UserId.Should().Be("3");
             gameRepository.VerifyGetByCalled(33);
             gameBuilder.VerifyBuildCalled(game);
             categoryRepository.VerifyGetAllCalled();
@@ -186,8 +246,12 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             userRepository.VerifyGetAllCalled();
             ownerBuilder.VerifyBuildCalled(owner1);
             ownerBuilder.VerifyBuildCalled(owner2);
+            ownerBuilder.VerifyBuildCalled(owner3);
+            ratingRepository.VerifyGetAllCalled();
+            ratingBuilder.VerifyBuildCalled(rating1);
+            ratingBuilder.VerifyBuildCalled(rating2);
         }
-
+    
         [Fact]
         public async void Saves_A_New_Record_Without_Categories() {
             var game = new Game {
@@ -197,7 +261,9 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Name = "Game"
             };
             var viewModel = new GameSaveViewModel {
-                Game = gameViewModel
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0
             };
             var repository = new MockGameRepository().GetByStubbedToReturn(null);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
@@ -208,7 +274,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
             repository.VerifyGetByCalled(game.Name);
             repository.VerifyGetByIdNotCalled();
-            repository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser>());
+            repository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser>(), 0, "1" );
             gameBuilder.VerifyBuildCalled(gameViewModel);
             categoryBuilder.VerifyBuildNotCalled();
         }
@@ -222,7 +288,9 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Name = "Game"
             };
             var viewModel = new GameSaveViewModel {
-                Game = gameViewModel
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0
             };
             var repository = new MockGameRepository().GetByStubbedToReturn(null);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
@@ -233,9 +301,36 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
             repository.VerifyGetByCalled(game.Name);
             repository.VerifyGetByIdNotCalled();
-            repository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser>());
+            repository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser>(), 0, "1");
             gameBuilder.VerifyBuildCalled(gameViewModel);
             ownerBuilder.VerifyBuildNotCalled();
+        }
+
+        [Fact]
+        public async void Saves_A_New_Record_Without_Ratings() {
+            var game = new Game {
+                Name = "Game"
+            };
+            var gameViewModel = new GameViewModel {
+                Name = "Game"
+            };
+            var viewModel = new GameSaveViewModel {
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0
+            };
+            var repository = new MockGameRepository().GetByStubbedToReturn(null);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
+            var ratingBuilder = new MockBuilder<Rating, RatingViewModel>();
+            var context = BuildGameSaveContext(repository, gameBuilder, ratingBuilder: ratingBuilder);
+
+            await context.Save(viewModel);
+
+            repository.VerifyGetByCalled(game.Name);
+            repository.VerifyGetByIdNotCalled();
+            repository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser>(), 0, "1");
+            gameBuilder.VerifyBuildCalled(gameViewModel);
+            ratingBuilder.VerifyBuildNotCalled();
         }
 
         [Fact]
@@ -251,6 +346,8 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             };
             var gameSaveViewModel = new GameSaveViewModel {
                 Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0,
                 CategoryIds = new[] {
                     1
                 }
@@ -264,9 +361,67 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
             gameRepository.VerifyGetByCalled(game.Name);
             gameRepository.VerifyGetByIdNotCalled();
-            gameRepository.VerifyAddCalled(game, new List<Category> { category }, new List<ApplicationUser>());
+            gameRepository.VerifyAddCalled(game, new List<Category> { category }, new List<ApplicationUser>(), 0, "1");
             gameBuilder.VerifyBuildCalled(gameViewModel);
             categoryRepository.VerifyGetByCalled(1);
+        }
+
+        [Fact]
+        public async void Saves_A_New_Record_With_Owners() {
+            var game = new Game {
+                Name = "Game"
+            };
+            var owner = new ApplicationUser {
+                UserName = "User Name"
+            };
+            var gameViewModel = new GameViewModel {
+                Name = "Game"
+            };
+            var gameSaveViewModel = new GameSaveViewModel {
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0,
+                OwnerIds = new[] {
+                    "1"
+                }
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
+            var userRepository = new MockUserRepository().GetByIdStubbedToReturn(owner);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder, userRepository: userRepository);
+
+            await context.Save(gameSaveViewModel);
+
+            gameRepository.VerifyGetByCalled(game.Name);
+            gameRepository.VerifyGetByIdNotCalled();
+            gameRepository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser> {owner}, 0, "1");
+            gameBuilder.VerifyBuildCalled(gameViewModel);
+            userRepository.VerifyGetByIdCalled("1");
+        }
+
+        [Fact]
+        public async void Saves_A_New_Record_With_Ratings() {
+            var game = new Game {
+                Name = "Game"
+            };
+            var gameViewModel = new GameViewModel {
+                Name = "Game"
+            };
+            var gameSaveViewModel = new GameSaveViewModel {
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 1
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(null);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder);
+
+            await context.Save(gameSaveViewModel);
+
+            gameRepository.VerifyGetByCalled(game.Name);
+            gameRepository.VerifyGetByIdNotCalled();
+            gameRepository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser>(), 1, "1");
+            gameBuilder.VerifyBuildCalled(gameViewModel);
         }
 
         [Fact]
@@ -278,7 +433,9 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Name = "Game"
             };
             var viewModel = new GameSaveViewModel {
-                Game = gameViewModel
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0
             };
             var repository = new MockGameRepository().GetByStubbedToReturn(game);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
@@ -289,7 +446,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             repository.VerifyGetByCalled(game.Name);
             repository.VerifyGetByIdNotCalled();
             repository.VerifyAddNotCalled();
-            repository.VerifyUpdateCalled(game, new List<Category>(), new List<ApplicationUser>());
+            repository.VerifyUpdateCalled(game, new List<Category>(), new List<ApplicationUser>(), 0, "1");
             gameBuilder.VerifyBuildCalled(gameViewModel);
         }
 
@@ -304,7 +461,9 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Name = "Game"
             };
             var viewModel = new GameSaveViewModel {
-                Game = gameViewModel
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0
             };
             var repository = new MockGameRepository().GetByStubbedToReturn(null);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
@@ -314,7 +473,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
             repository.VerifyGetByCalled(50);
             repository.VerifyGetByNameNotCalled();
-            repository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser>());
+            repository.VerifyAddCalled(game, new List<Category>(), new List<ApplicationUser>(), 0 ,"1");
             gameBuilder.VerifyBuildCalled(gameViewModel);
         }
 
@@ -329,7 +488,9 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 Description = "Game"
             };
             var viewModel = new GameSaveViewModel {
-                Game = gameViewModel
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0
             };
             var repository = new MockGameRepository().GetByStubbedToReturn(game);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
@@ -341,7 +502,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
             repository.VerifyGetByCalled(60);
             repository.VerifyGetByNameNotCalled();
-            repository.VerifyUpdateCalled(game, new List<Category>(), new List<ApplicationUser>());
+            repository.VerifyUpdateCalled(game, new List<Category>(), new List<ApplicationUser>(), 0, "1");
             gameBuilder.VerifyBuildCalled(gameViewModel);
             categoryBuilder.VerifyBuildNotCalled();
             ownerBuilder.VerifyBuildNotCalled();
@@ -362,6 +523,8 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             };
             var viewModel = new GameSaveViewModel {
                 Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0,
                 CategoryIds = new[] {
                     1
                 }
@@ -375,7 +538,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
             gameRepository.VerifyGetByCalled(60);
             gameRepository.VerifyGetByNameNotCalled();
-            gameRepository.VerifyUpdateCalled(game, new List<Category> { category}, new List<ApplicationUser>());
+            gameRepository.VerifyUpdateCalled(game, new List<Category> { category}, new List<ApplicationUser>(), 0, "1");
             gameBuilder.VerifyBuildCalled(gameViewModel);
             categoryRepository.VerifyGetByCalled(1);
         }
@@ -395,6 +558,8 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             };
             var viewModel = new GameSaveViewModel {
                 Game = gameViewModel,
+                UserId = "1",
+                RatingId = 0,
                 OwnerIds = new[] {
                     "1"
                 }
@@ -408,9 +573,36 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
 
             gameRepository.VerifyGetByCalled(60);
             gameRepository.VerifyGetByNameNotCalled();
-            gameRepository.VerifyUpdateCalled(game, new List<Category>(), new List<ApplicationUser> {owner});
+            gameRepository.VerifyUpdateCalled(game, new List<Category>(), new List<ApplicationUser> {owner}, 0, "1");
             gameBuilder.VerifyBuildCalled(gameViewModel);
             userRepository.VerifyGetByIdCalled("1");
+        }
+
+        [Fact]
+        public async void Saves_A_Record_When_Record_Found_With_Rating() {
+            var game = new Game {
+                Id = 60,
+                Description = "Game"
+            };            
+            var gameViewModel = new GameViewModel {
+                Id = 60,
+                Description = "Game"
+            };
+            var viewModel = new GameSaveViewModel {
+                Game = gameViewModel,
+                UserId = "1",
+                RatingId = 1                
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(game);
+            var context = BuildGameSaveContext(gameRepository, gameBuilder);
+
+            await context.Save(viewModel);
+
+            gameRepository.VerifyGetByCalled(60);
+            gameRepository.VerifyGetByNameNotCalled();
+            gameRepository.VerifyUpdateCalled(game, new List<Category>(), new List<ApplicationUser>(), 1, "1");
+            gameBuilder.VerifyBuildCalled(gameViewModel);
         }
 
         private static GameSaveContext BuildGameSaveContext(IGameRepository gameRepository = null, 
@@ -419,7 +611,9 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                                                             ICategoryRepository categoryRepository = null, 
                                                             IBuilder < Category, CategoryViewModel> categoryBuilder = null,
                                                             IUserRepository userRepository = null,
-                                                            IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder = null) {
+                                                            IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder = null,
+                                                            IRatingRepository ratingRepository = null,
+                                                            IBuilder<Rating, RatingViewModel> ratingBuilder = null) {
             gameRepository = gameRepository ?? new MockGameRepository();
             gameBuilder = gameBuilder ?? new MockBuilder<Game, GameViewModel>();
             validator = validator ?? new MockValidator<GameSaveViewModel>();
@@ -427,7 +621,9 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             categoryBuilder = categoryBuilder ?? new MockBuilder<Category, CategoryViewModel>();
             userRepository = userRepository ?? new MockUserRepository();
             ownerBuilder = ownerBuilder ?? new MockBuilder<ApplicationUser, OwnerViewModel>();
-            return new GameSaveContext(gameRepository, gameBuilder, validator, categoryRepository, categoryBuilder, userRepository, ownerBuilder);
+            ratingRepository = ratingRepository ?? new MockRatingRepository();
+            ratingBuilder = ratingBuilder ?? new MockBuilder<Rating, RatingViewModel>();
+            return new GameSaveContext(gameRepository, gameBuilder, validator, categoryRepository, categoryBuilder, userRepository, ownerBuilder, ratingRepository, ratingBuilder);
         }
     }
 }

@@ -17,8 +17,13 @@ namespace MagickyBoardGames.Contexts.GameContexts {
         private readonly IBuilder<Category, CategoryViewModel> _categoryBuilder;
         private readonly IUserRepository _userRepository;
         private readonly IBuilder<ApplicationUser, OwnerViewModel> _ownerBuilder;
+        private readonly IRatingRepository _ratingRepository;
+        private readonly IBuilder<Rating, RatingViewModel> _ratingBuilder;
 
-        public GameSaveContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IValidator<GameSaveViewModel> validator, ICategoryRepository categoryRepository, IBuilder<Category, CategoryViewModel> categoryBuilder, IUserRepository userRepository, IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder) {
+        public GameSaveContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IValidator<GameSaveViewModel> validator, 
+                               ICategoryRepository categoryRepository, IBuilder<Category, CategoryViewModel> categoryBuilder, 
+                               IUserRepository userRepository, IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder,
+                               IRatingRepository ratingRepository, IBuilder<Rating, RatingViewModel> ratingBuilder) {
             _gameRepository = gameRepository;
             _gameBuilder = gameBuilder;
             _validator = validator;
@@ -26,6 +31,8 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             _categoryBuilder = categoryBuilder;
             _userRepository = userRepository;
             _ownerBuilder = ownerBuilder;
+            _ratingRepository = ratingRepository;
+            _ratingBuilder = ratingBuilder;
         }
 
         public ValidationResult Validate(GameSaveViewModel viewModel) {
@@ -37,9 +44,9 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             var categories = await GetCategories(viewModel.CategoryIds);
             var owners = await GetOwners(viewModel.OwnerIds);
             if (viewModel.Game.Id.HasValue)
-                await Save(await _gameRepository.GetBy(viewModel.Game.Id.Value), game, categories, owners);
+                await Save(await _gameRepository.GetBy(viewModel.Game.Id.Value), game, categories, owners, viewModel.RatingId, viewModel.UserId);
             else
-                await Save(await _gameRepository.GetBy(viewModel.Game.Name), game, categories, owners);
+                await Save(await _gameRepository.GetBy(viewModel.Game.Name), game, categories, owners, viewModel.RatingId, viewModel.UserId);
         }
 
         private async Task<IEnumerable<Category>> GetCategories(IEnumerable<int> categoryIds) {
@@ -60,54 +67,72 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             return owners;
         }
 
-        private async Task Save(Game found, Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
+        private async Task Save(Game found, Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int ratingId, string playerId) {
             if (found != null)
-                await Update(found, game, categories, owners);
+                await Update(found, game, categories, owners, ratingId, playerId);
             else
-                await Insert(game, categories, owners);
+                await Insert(game, categories, owners, ratingId, playerId);
         }
 
-        private async Task Update(Game found, Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
+        private async Task Update(Game found, Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int ratingId, string playerId) {
             found.Name = game.Name;
             found.Description = game.Description;
             found.MinPlayers = game.MinPlayers;
             found.MaxPlayers = game.MaxPlayers;
-            await _gameRepository.Update(found, categories, owners);
+            await _gameRepository.Update(found, categories, owners, ratingId, playerId);
         }
 
-        private async Task Insert(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
-            await _gameRepository.Add(game, categories, owners);
+        private async Task Insert(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int ratingId, string playerId) {
+            await _gameRepository.Add(game, categories, owners, ratingId, playerId);
         }
 
         public async Task<GameSaveViewModel> BuildViewModel() {
-            var categories = await _categoryRepository.GetAll();
-            var categoryViewModels = categories.Select(category => _categoryBuilder.Build(category)).ToList();
-            var owners = await _userRepository.GetAll();
-            var ownerViewModels = owners.Select(owner => _ownerBuilder.Build(owner)).ToList();
             return new GameSaveViewModel {
-                AvailableCategories = categoryViewModels,
-                AvailableOwners = ownerViewModels
+                AvailableCategories = await BuildCategoryViewModels(),
+                AvailableOwners = await BuildOwnerViewModels(),
+                AvailableRatings = await BuildRatingViewModels()
             };
         }
+        private async Task<IEnumerable<CategoryViewModel>> BuildCategoryViewModels() {
+            var categories = await _categoryRepository.GetAll();
+            return categories.Select(c => _categoryBuilder.Build(c)).ToList();
+        }
 
-        public async Task<GameSaveViewModel> BuildViewModel(int id) {
+        private async Task<IEnumerable<OwnerViewModel>> BuildOwnerViewModels() {
+            var owners = await _userRepository.GetAll();
+            return owners.Select(o => _ownerBuilder.Build(o)).ToList();
+        }
+
+        private async Task<IEnumerable<RatingViewModel>> BuildRatingViewModels() {
+            var ratings = await _ratingRepository.GetAll();
+            return ratings.Select(r => _ratingBuilder.Build(r)).ToList();
+        }
+
+        public async Task<GameSaveViewModel> BuildViewModel(int id, string playerId) {
             var viewModel = await BuildViewModel();
             var game = await _gameRepository.GetBy(id);
             if (game == null)
                 return viewModel;
 
             viewModel.Game = _gameBuilder.Build(game);
-            viewModel.CategoryIds = BuildCategoryIds(game).ToArray();
-            viewModel.OwnerIds = BuildOwnerIds(game).ToArray();
+            viewModel.CategoryIds = BuildCategoryIds(game.GameCategories);
+            viewModel.OwnerIds = BuildOwnerIds(game.GameOwners);
+            viewModel.RatingId = BuildRatingId(game.GamePlayerRatings, playerId);
+            viewModel.UserId = playerId;
             return viewModel;
         }
 
-        private static IEnumerable<int> BuildCategoryIds(Game game) {
-            return game.GameCategories.Select(gc => gc.CategoryId).ToList();
+        private static int[] BuildCategoryIds(IEnumerable<GameCategory> gameCategories) {
+            return gameCategories.Select(gc => gc.CategoryId).ToArray();
         }
 
-        private static IEnumerable<string> BuildOwnerIds(Game game) {
-            return game.GameOwners.Select(go => go.OwnerId).ToList();
+        private static string[] BuildOwnerIds(IEnumerable<GameOwner> gameOwners) {
+            return gameOwners.Select(go => go.OwnerId).ToArray();
+        }
+
+        private static int BuildRatingId(IEnumerable<GamePlayerRating> gamePlayerRatings, string playerId) {
+            var gamePlayerRating = gamePlayerRatings.FirstOrDefault(gpr => gpr.PlayerId == playerId);
+            return gamePlayerRating?.RatingId ?? 0;
         }
     }
 }

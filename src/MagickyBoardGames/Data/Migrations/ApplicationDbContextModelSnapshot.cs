@@ -157,6 +157,61 @@ namespace MagickyBoardGames.Data.Migrations
                     b.ToTable("GameOwners");
                 });
 
+            modelBuilder.Entity("MagickyBoardGames.Models.GamePlayerRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("GameId");
+
+                    b.Property<string>("PlayerId")
+                        .IsRequired();
+
+                    b.Property<int>("RatingId");
+
+                    b.HasKey("Id")
+                        .HasAnnotation("SqlServer:Clustered", false);
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("RatingId");
+
+                    b.HasIndex("GameId", "PlayerId")
+                        .IsUnique()
+                        .HasAnnotation("SqlServer:Clustered", true);
+
+                    b.ToTable("GamePlayerRatings");
+                });
+
+            modelBuilder.Entity("MagickyBoardGames.Models.Rating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<int>("Rate");
+
+                    b.Property<string>("ShortDescription")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 30);
+
+                    b.HasKey("Id")
+                        .HasAnnotation("SqlServer:Clustered", false);
+
+                    b.HasIndex("Rate")
+                        .IsUnique()
+                        .HasAnnotation("SqlServer:Clustered", true);
+
+                    b.HasIndex("ShortDescription")
+                        .IsUnique();
+
+                    b.ToTable("Ratings");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -286,6 +341,24 @@ namespace MagickyBoardGames.Data.Migrations
                     b.HasOne("MagickyBoardGames.Models.ApplicationUser", "Owner")
                         .WithMany("GameOwners")
                         .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("MagickyBoardGames.Models.GamePlayerRating", b =>
+                {
+                    b.HasOne("MagickyBoardGames.Models.Game", "Game")
+                        .WithMany("GamePlayerRatings")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MagickyBoardGames.Models.ApplicationUser", "Player")
+                        .WithMany("GamePlayerRatings")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MagickyBoardGames.Models.Rating", "Rating")
+                        .WithMany("GamePlayerRatings")
+                        .HasForeignKey("RatingId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

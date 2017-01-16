@@ -13,12 +13,18 @@ namespace MagickyBoardGames.Contexts.GameContexts {
         private readonly IBuilder<Game, GameViewModel> _gameBuilder;
         private readonly IBuilder<Category, CategoryViewModel> _categoryBuilder;
         private readonly IBuilder<ApplicationUser, OwnerViewModel> _ownerBuilder;
+        private readonly IBuilder<GamePlayerRating, PlayerRatingViewModel> _playerRatingBuilder;
 
-        public GameViewContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IBuilder<Category, CategoryViewModel> categoryBuilder, IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder) {
+        public GameViewContext(IGameRepository gameRepository, 
+                               IBuilder<Game, GameViewModel> gameBuilder, 
+                               IBuilder<Category, CategoryViewModel> categoryBuilder, 
+                               IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder,
+                               IBuilder<GamePlayerRating, PlayerRatingViewModel> playerRatingBuilder) {
             _gameRepository = gameRepository;
             _gameBuilder = gameBuilder;
             _categoryBuilder = categoryBuilder;
             _ownerBuilder = ownerBuilder;
+            _playerRatingBuilder = playerRatingBuilder;
         }
 
         public async Task<GameViewViewModel> BuildViewModel(int id) {
@@ -29,7 +35,8 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             return new GameViewViewModel {
                 Game = _gameBuilder.Build(game),
                 Categories = GetCategories(game) ?? new List<CategoryViewModel>(),
-                Owners = GetOwners(game) ?? new List<OwnerViewModel>()
+                Owners = GetOwners(game) ?? new List<OwnerViewModel>(),
+                PlayerRatings = GetPlayerRatings(game) ?? new List<PlayerRatingViewModel>()
             };
         }
 
@@ -42,6 +49,9 @@ namespace MagickyBoardGames.Contexts.GameContexts {
         }
         private IEnumerable<OwnerViewModel> GetOwners(Game game) {
             return game.GameOwners?.Select(gc => _ownerBuilder.Build(gc.Owner)).ToList();
+        }
+        private IEnumerable<PlayerRatingViewModel> GetPlayerRatings(Game game) {
+            return game.GamePlayerRatings?.Select(gamePlayerRating => _playerRatingBuilder.Build(gamePlayerRating)).ToList();
         }
     }
 }

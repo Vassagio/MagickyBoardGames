@@ -11,11 +11,13 @@ namespace MagickyBoardGames.Repositories {
         private readonly ApplicationDbContext _context;
         private readonly IGameCategoryRepository _gameCategoryRepository;
         private readonly IGameOwnerRepository _gameOwnerRespository;
+        private readonly IGamePlayerRatingRepository _gamePlayerRatingRepository;
 
-        public GameRepository(ApplicationDbContext context, IGameCategoryRepository gameCategoryRepository, IGameOwnerRepository gameOwnerRespository) {
+        public GameRepository(ApplicationDbContext context, IGameCategoryRepository gameCategoryRepository, IGameOwnerRepository gameOwnerRespository, IGamePlayerRatingRepository gamePlayerRatingRepository) {
             _context = context;
             _gameCategoryRepository = gameCategoryRepository;
             _gameOwnerRespository = gameOwnerRespository;
+            _gamePlayerRatingRepository = gamePlayerRatingRepository;
         }
 
         public async Task<IEnumerable<Game>> GetAll() {
@@ -25,7 +27,8 @@ namespace MagickyBoardGames.Repositories {
         private IQueryable<Game> Games() {
             return _context.Games
                 .Include(g => g.GameCategories).ThenInclude(gc => gc.Category)
-                .Include(g => g.GameOwners).ThenInclude(go => go.Owner);
+                .Include(g => g.GameOwners).ThenInclude(go => go.Owner)
+                .Include(g => g.GamePlayerRatings).ThenInclude(gpr => gpr.Rating);
         }
 
         public async Task<Game> GetBy(int id) {       
@@ -44,11 +47,12 @@ namespace MagickyBoardGames.Repositories {
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<int> Add(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
+        public async Task<int> Add(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int ratingId, string playerId) {
             var id = await Add(game);
 
             await _gameCategoryRepository.Adjust(game.Id, categories);
             await _gameOwnerRespository.Adjust(game.Id, owners);
+            await _gamePlayerRatingRepository.Save(game.Id, playerId, ratingId);
             return id;
         }
 
@@ -72,10 +76,11 @@ namespace MagickyBoardGames.Repositories {
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
+        public async Task Update(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int ratingId, string playerId) {
             await Update(game);
             await _gameCategoryRepository.Adjust(game.Id, categories);
             await _gameOwnerRespository.Adjust(game.Id, owners);
+            await _gamePlayerRatingRepository.Save(game.Id, playerId, ratingId);
         }
 
         private async Task<bool> Exists(int id) {

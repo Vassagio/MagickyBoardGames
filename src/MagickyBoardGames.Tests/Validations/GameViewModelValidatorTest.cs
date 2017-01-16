@@ -87,7 +87,6 @@ namespace MagickyBoardGames.Tests.Validations
         }
 
         [Theory]
-        [InlineData(7, 7)]
         [InlineData(100, 12)]
         public void Must_Be_Greater_Than_MinPlayers(int minPlayers, int maxPlayers) {
             var viewModel = BuildGameViewModel(minPlayers: minPlayers, maxPlayers: maxPlayers);
@@ -95,7 +94,7 @@ namespace MagickyBoardGames.Tests.Validations
 
             var results = validator.Validate(viewModel);
 
-            results.Errors.First().ErrorMessage.Should().Be("Must be greater than min players.");
+            results.Errors.First().ErrorMessage.Should().Be("Must be greater than or equal to min players.");
         }
 
         private static GameSaveViewModel BuildGameViewModel(string name = null, string description = null, int? minPlayers = null, int? maxPlayers = null) {

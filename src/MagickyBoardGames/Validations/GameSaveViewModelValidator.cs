@@ -11,7 +11,7 @@ namespace MagickyBoardGames.Validations {
                 .GreaterThan(0).WithMessage("Min Players must be greater than 0.");
             RuleFor(x => x.Game.MaxPlayers)
                 .GreaterThan(0).WithMessage("Max Players must be greater than 0.")
-                .GreaterThan(x => x.Game.MinPlayers).WithMessage("Must be greater than min players.");
+                .GreaterThanOrEqualTo(x => x.Game.MinPlayers).WithMessage("Must be greater than or equal to min players.");
         }
     }
 }

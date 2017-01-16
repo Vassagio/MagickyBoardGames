@@ -83,7 +83,30 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
         }
 
         [Fact]
-        public async void Returns_View_Model_With_Games() {
+        public async void Returns_View_Model_With_No_Associated_Ratings() {
+            var game = new Game {
+                Id = 1,
+                Description = "Game"
+            };
+            var gameViewModel = new GameViewModel {
+                Id = 1,
+                Description = "Game"
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);            
+            var context = BuildGameViewContext(gameRepository, gameBuilder);
+
+            var gameViewViewModel = await context.BuildViewModel(game.Id);
+
+            gameViewViewModel.Should().BeOfType<GameViewViewModel>();
+            gameViewViewModel.Game.Should().Be(gameViewModel);
+            gameViewViewModel.PlayerRatings.Should().BeEmpty();
+            gameRepository.VerifyGetByCalled(game.Id);
+            gameBuilder.VerifyBuildCalled(game);
+        }
+
+        [Fact]
+        public async void Returns_View_Model_With_Categories() {
             var game = new Game {
                 Id = 1,
                 Name = "Game"
@@ -168,6 +191,60 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             ownerBuilder.VerifyBuildCalled(owner);
         }
 
+        [Fact]
+        public async void Returns_View_Model_With_Ratings() {
+            var game = new Game {
+                Id = 1,
+                Name = "Game"
+            };
+            var rating = new Rating {
+                Id = 1,
+                Description = "Rating"
+            };
+            var player = new ApplicationUser {
+                Id = "1",
+                UserName = "User"
+            };
+            var gamePlayerRating = new GamePlayerRating{
+                Id = 1,
+                GameId = game.Id,
+                Game = game,
+                PlayerId = player.Id,
+                Player = player,
+                RatingId = rating.Id,
+                Rating = rating
+            };
+            game.GamePlayerRatings = new List<GamePlayerRating> {
+                gamePlayerRating
+            };
+            var gameViewModel = new GameViewModel {
+                Id = game.Id,
+                Name = game.Name
+            };
+            var ratingViewModel = new RatingViewModel {
+                Id = rating.Id,
+                Description = rating.Description
+            };
+            var playerRatingViewModel = new PlayerRatingViewModel {
+                PlayerName = player.UserName,
+                Rating = ratingViewModel
+            };
+            var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
+            var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
+            var playerRatingBuilder = new MockBuilder<GamePlayerRating, PlayerRatingViewModel>().BuildStubbedToReturn(playerRatingViewModel);
+            var context = BuildGameViewContext(gameRepository, gameBuilder, playerRatingBuilder: playerRatingBuilder);
+
+            var gameViewViewModel = await context.BuildViewModel(game.Id);
+
+            gameViewViewModel.Should().BeOfType<GameViewViewModel>();
+            gameViewViewModel.Game.Should().Be(gameViewModel);
+            gameViewViewModel.PlayerRatings.Count().Should().Be(1);
+            gameViewViewModel.PlayerRatings.First().PlayerName.Should().Be(player.UserName);
+            gameViewViewModel.PlayerRatings.First().Rating.Should().Be(ratingViewModel);
+            gameRepository.VerifyGetByCalled(game.Id);
+            gameBuilder.VerifyBuildCalled(game);
+            playerRatingBuilder.VerifyBuildCalled(gamePlayerRating);
+        }
 
         [Fact]
         public async void Does_Not_Throw_Exception_When_Deleting_Nonexistant_Record() {
@@ -196,12 +273,15 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
         private static GameViewContext BuildGameViewContext(IGameRepository gameRepository = null,
                                                             IBuilder<Game, GameViewModel> gameBuilder = null,
                                                             IBuilder<Category, CategoryViewModel> categoryBuilder = null,
-                                                            IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder = null) {
+                                                            IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder = null,
+                                                            IBuilder<GamePlayerRating, PlayerRatingViewModel> playerRatingBuilder = null
+                                                            ) {
             gameRepository = gameRepository ?? new MockGameRepository();
             gameBuilder = gameBuilder ?? new MockBuilder<Game, GameViewModel>();
             categoryBuilder = categoryBuilder ?? new MockBuilder<Category, CategoryViewModel>();
             ownerBuilder = ownerBuilder ?? new MockBuilder<ApplicationUser, OwnerViewModel>();
-            return new GameViewContext(gameRepository, gameBuilder, categoryBuilder, ownerBuilder);
+            playerRatingBuilder = playerRatingBuilder ?? new MockBuilder<GamePlayerRating, PlayerRatingViewModel>();
+            return new GameViewContext(gameRepository, gameBuilder, categoryBuilder, ownerBuilder, playerRatingBuilder);
         }
     }
 }

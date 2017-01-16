@@ -7,5 +7,6 @@ namespace MagickyBoardGames.ViewModels
         public GameViewModel Game { get; set; }
         public IEnumerable<CategoryViewModel> Categories { get; set; } = new List<CategoryViewModel>();
         public IEnumerable<OwnerViewModel> Owners { get; set; } = new List<OwnerViewModel>();
+        public IEnumerable<PlayerRatingViewModel> PlayerRatings { get; set; } = new List<PlayerRatingViewModel>();
     }
 }
