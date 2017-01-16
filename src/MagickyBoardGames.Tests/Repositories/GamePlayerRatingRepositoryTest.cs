@@ -21,6 +21,46 @@ namespace MagickyBoardGames.Tests.Repositories
         }
 
         [Fact]
+        public async void Get_By_Game_Id_And_Player_Id() {
+            var gamePlayerRating1 = new GamePlayerRating {
+                GameId = 1,
+                PlayerId = "1",
+                RatingId = 1
+            };
+            var gamePlayerRating2 = new GamePlayerRating {
+                GameId = 2,
+                PlayerId = "2",
+                RatingId = 2
+            };
+            var context = BuildGamePlayerRatingRepository();
+            await _fixture.Populate(gamePlayerRating1, gamePlayerRating2);
+
+            var gamePlayerRating = await context.GetBy(1, "1");
+
+            gamePlayerRating.Should().Be(gamePlayerRating1);
+        }
+
+        [Fact]
+        public async void Get_By_Returns_Null_When_Game_Id_And_Player_Id_Doesnt_Exits() {
+            var gamePlayerRating1 = new GamePlayerRating {
+                GameId = 1,
+                PlayerId = "1",
+                RatingId = 1
+            };
+            var gamePlayerRating2 = new GamePlayerRating {
+                GameId = 2,
+                PlayerId = "2",
+                RatingId = 2
+            };
+            var context = BuildGamePlayerRatingRepository();
+            await _fixture.Populate(gamePlayerRating1, gamePlayerRating2);
+
+            var gamePlayerRating = await context.GetBy(3, "3");
+
+            gamePlayerRating.Should().BeNull();
+        }
+
+        [Fact]
         public async void Save_A_New_Rating() {
             var game = new Game { Id = 1 };
             var player = new ApplicationUser { Id = "1" };

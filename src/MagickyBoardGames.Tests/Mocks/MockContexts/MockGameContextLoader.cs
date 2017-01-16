@@ -21,6 +21,10 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
             return _mock.Object.LoadGameSaveContext();
         }
 
+        public IGameRateContext LoadGameRateContext() {
+            return _mock.Object.LoadGameRateContext();
+        }
+
         public MockGameContextLoader LoadGameListContextStubbedToReturn(IGameListContext context) {
             _mock.Setup(m => m.LoadGameListContext()).Returns(context);
             return this;
@@ -48,12 +52,25 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts {
             return this;
         }
 
+        public MockGameContextLoader LoadGameRateContextStubbedToReturn(IGameRateContext context) {
+            _mock.Setup(m => m.LoadGameRateContext()).Returns(context);
+            return this;
+        }
+
         public void VerifyLoadGameSaveContextCalled(int times = 1) {
             _mock.Verify(m => m.LoadGameSaveContext(), Times.Exactly(times));
         }
 
         public void VerifyLoadGameSaveContextNotCalled() {
             _mock.Verify(m => m.LoadGameSaveContext(), Times.Never);
+        }
+
+        public void VerifyLoadGameRateContextCalled(int times = 1) {
+            _mock.Verify(m => m.LoadGameRateContext(), Times.Exactly(times));
+        }
+
+        public void VerifyLoadGameRateContextNotCalled() {
+            _mock.Verify(m => m.LoadGameRateContext(), Times.Never);
         }
     }
 }

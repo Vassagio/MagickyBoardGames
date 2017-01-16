@@ -108,7 +108,6 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             return ratings.Select(r => _ratingBuilder.Build(r)).ToList();
         }
 
-
         public async Task<GameSaveViewModel> BuildViewModel(int id, string playerId) {
             var viewModel = await BuildViewModel();
             var game = await _gameRepository.GetBy(id);
@@ -133,9 +132,7 @@ namespace MagickyBoardGames.Contexts.GameContexts {
 
         private static int BuildRatingId(IEnumerable<GamePlayerRating> gamePlayerRatings, string playerId) {
             var gamePlayerRating = gamePlayerRatings.FirstOrDefault(gpr => gpr.PlayerId == playerId);
-            if (gamePlayerRating == null)
-                return 0;
-            return gamePlayerRating.RatingId;
+            return gamePlayerRating?.RatingId ?? 0;
         }
     }
 }

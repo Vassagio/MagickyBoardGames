@@ -3,5 +3,6 @@
         IGameListContext LoadGameListContext();
         IGameViewContext LoadGameViewContext();
         IGameSaveContext LoadGameSaveContext();
+        IGameRateContext LoadGameRateContext();
     }
 }

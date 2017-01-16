@@ -348,15 +348,106 @@ namespace MagickyBoardGames.Tests.Controllers {
             contextLoader.VerifyLoadGameSaveContextCalled();
         }
 
+
+        [Fact]
+        public async void Display_Rate_Not_Found_When_Id_Is_Null() {
+            var context = new MockGameRateContext();
+            var contextLoader = new MockGameContextLoader().LoadGameRateContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
+
+            var result = await controller.Rate(null);
+
+            result.Should().BeOfType<NotFoundResult>();
+            contextLoader.VerifyLoadGameRateContextNotCalled();
+        }
+
+        [Fact]
+        public async void Display_Rate_Not_Found_When_No_Record_Is_Found() {
+            const string USER_ID = "1";
+            var context = new MockGameRateContext().BuildViewModelStubbedToReturn(null);
+            var contextLoader = new MockGameContextLoader().LoadGameRateContextStubbedToReturn(context);
+            var applicationUserManager = new MockApplicationUserManager().GetUserIdStubbedToReturn(USER_ID);
+            var controller = BuildGameController(contextLoader, applicationUserManager);
+
+            var result = await controller.Rate(5);
+
+            result.Should().BeOfType<NotFoundResult>();
+            context.VerifyBuildViewModelCalled(5, USER_ID);
+            contextLoader.VerifyLoadGameRateContextCalled();
+        }
+
+        [Fact]
+        public async void Display_Rate_Result() {
+            const string USER_ID = "1";
+            var viewModel = new GameRateViewModel {
+                Game = new GameViewModel {
+                    Id = 7,
+                    Name = "Found Item"
+                }
+            };
+            var context = new MockGameRateContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameRateContextStubbedToReturn(context);
+            var applicationUserManager = new MockApplicationUserManager().GetUserIdStubbedToReturn(USER_ID);
+            var controller = BuildGameController(contextLoader, applicationUserManager);
+
+            var result = await controller.Rate(7);
+
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeAssignableTo<GameRateViewModel>().Subject;
+            model.Should().Be(viewModel);
+            context.VerifyBuildViewModelCalled(7, USER_ID);
+            contextLoader.VerifyLoadGameRateContextCalled();
+        }
+
+        [Fact]
+        public async void Display_Rate_Not_Found_When_Id_Not_Equal() {
+            var viewModel = new GameRateViewModel {
+                Game = new GameViewModel {
+                    Name = "Found Item"
+                }
+            };
+            var context = new MockGameRateContext();
+            var contextLoader = new MockGameContextLoader().LoadGameRateContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
+
+            var result = await controller.Rate(7, viewModel);
+
+            result.Should().BeOfType<NotFoundResult>();
+            contextLoader.VerifyLoadGameRateContextNotCalled();
+        }
+
+        [Fact]
+        public async void Display_Rate_Post_Result_Valid() {
+            var viewModel = new GameRateViewModel {
+                Game = new GameViewModel {
+                    Id = 22,
+                    Name = "Name"
+                }
+            };
+            var context = new MockGameRateContext();
+            var contextLoader = new MockGameContextLoader().LoadGameRateContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
+
+            var result = await controller.Rate(22, viewModel);
+
+            var viewResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
+            viewResult.ActionName.Should().Be("Index");
+            context.VerifySaveCalled(viewModel);
+            contextLoader.VerifyLoadGameRateContextCalled();
+        }
+
         private static GameController BuildGameController(IGameContextLoader contextLoader = null, IApplicationUserManager applicationUserManager = null, ClaimsPrincipal claimsPrincipal = null) {
             contextLoader = contextLoader ?? new MockGameContextLoader();
             applicationUserManager = applicationUserManager ?? new MockApplicationUserManager();
             claimsPrincipal = claimsPrincipal ?? new ClaimsPrincipal();
-            var controller = new GameController(contextLoader, applicationUserManager);
-
-            controller.ControllerContext = new ControllerContext {
-                HttpContext = new DefaultHttpContext() { User = claimsPrincipal }
+            var controller = new GameController(contextLoader, applicationUserManager) {
+                ControllerContext = new ControllerContext {
+                    HttpContext = new DefaultHttpContext() {
+                        User = claimsPrincipal
+                    }
+                }
             };
+
             return controller;
         }
     }

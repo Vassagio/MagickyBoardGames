@@ -1,4 +1,4 @@
-@model MagickyBoardGames.ViewModels.GameSaveViewModel
+@model MagickyBoardGames.ViewModels.GameRateViewModel
 
 @{
     ViewData["Title"] = "Rate";
@@ -33,9 +33,8 @@
         <h4>Game</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Game.Id" />
-        <input type="hidden" asp-for="UserId" />
-        
+        <input type="hidden" asp-for="Game.Id" />        
+        <input type="hidden" asp-for="UserId" /> 
         <div class="form-group">
             <label asp-for="RatingId" class="col-md-3 control-label"></label>
             <div class="col-md-9">

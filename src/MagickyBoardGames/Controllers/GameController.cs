@@ -1,14 +1,8 @@
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using MagickyBoardGames.Contexts;
-using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.Contexts.GameContexts;
-using MagickyBoardGames.Models;
 using MagickyBoardGames.Services;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagickyBoardGames.Controllers {
@@ -52,7 +46,7 @@ namespace MagickyBoardGames.Controllers {
         [Authorize]
         public async Task<IActionResult> Create([Bind("Game,UserId,CategoryIds,OwnerIds,RatingId")] GameSaveViewModel gameSaveViewModel) {
             var context = _loader.LoadGameSaveContext();
-            var result = context.Validate(gameSaveViewModel);            
+            var result = context.Validate(gameSaveViewModel);
             if (!result.IsValid) {
                 var viewModel = await context.BuildViewModel();
                 gameSaveViewModel.AvailableCategories = viewModel.AvailableCategories;
@@ -97,6 +91,32 @@ namespace MagickyBoardGames.Controllers {
             }
 
             await context.Save(gameSaveViewModel);
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Rate(int? id) {
+            if (id == null)
+                return NotFound();
+
+            var context = _loader.LoadGameRateContext();
+            var userId = _applicationUserManager.GetUserId(HttpContext.User);
+            var viewModel = await context.BuildViewModel(id.Value, userId);
+            if (viewModel == null)
+                return NotFound();
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Rate(int id, [Bind("Game,UserId,RatingId")] GameRateViewModel gameRateViewModel) {
+            if (id != gameRateViewModel.Game.Id)
+                return NotFound();
+
+            var context = _loader.LoadGameRateContext();            
+            await context.Save(gameRateViewModel);
             return RedirectToAction("Index");
         }
 

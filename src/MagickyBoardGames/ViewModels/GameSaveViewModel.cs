@@ -13,8 +13,6 @@ namespace MagickyBoardGames.ViewModels {
         public IEnumerable<OwnerViewModel> AvailableOwners { get; set; } = new List<OwnerViewModel>();
         [Display(Name = "Rating")]
         public int RatingId { get; set; }
-        public IEnumerable<RatingViewModel> AvailableRatings { get; set; } = new List<RatingViewModel>();
-        [Display(Name = "Player Ratings")]
-        public IEnumerable<PlayerRatingViewModel> PlayerRatings { get; set; } = new List<PlayerRatingViewModel>();
+        public IEnumerable<RatingViewModel> AvailableRatings { get; set; } = new List<RatingViewModel>();        
     }
 }

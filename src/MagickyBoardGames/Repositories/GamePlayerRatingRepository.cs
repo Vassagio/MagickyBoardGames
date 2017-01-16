@@ -29,5 +29,9 @@ namespace MagickyBoardGames.Repositories {
             gamePlayerRating.RatingId = ratingId;
             _context.GamePlayerRatings.Update(gamePlayerRating);
         }
+
+        public async Task<GamePlayerRating> GetBy(int gameId, string playerId) {
+            return await _context.GamePlayerRatings.SingleOrDefaultAsync(gpr => gpr.GameId == gameId && gpr.PlayerId == playerId);
+        }
     }
 }

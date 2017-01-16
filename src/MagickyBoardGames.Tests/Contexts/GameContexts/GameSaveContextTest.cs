@@ -159,6 +159,12 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                 rating1,
                 rating2
             };
+            var gamePlayerRating = new GamePlayerRating {
+                Id = 1,
+                GameId = 33,
+                PlayerId = "3",
+                RatingId = 1
+            };
             var game = new Game {
                 Id = 33,
                 Name = "Game",
@@ -177,12 +183,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                     }
                 },
                 GamePlayerRatings = new List<GamePlayerRating> {
-                    new GamePlayerRating {
-                        Id = 1,
-                        GameId = 33,
-                        PlayerId = "3",
-                        RatingId = 1
-                    }
+                    gamePlayerRating
                 }
             };
             var gameViewModel = new GameViewModel {
@@ -216,7 +217,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             var ratingViewModel2 = new RatingViewModel {
                 Id = 2,
                 Description = "2 - Rate 2 - Rating 2"
-            };
+            };            
             var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);
             var categoryRepository = new MockCategoryRepository().GetAllStubbedToReturn(categories);

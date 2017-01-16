@@ -73,6 +73,7 @@ namespace MagickyBoardGames {
             services.AddTransient<IGameListContext, GameListContext>();
             services.AddTransient<IGameViewContext, GameViewContext>();
             services.AddTransient<IGameSaveContext, GameSaveContext>();
+            services.AddTransient<IGameRateContext, GameRateContext>();
             services.AddTransient<IGameContextLoader, GameContextLoader>();
 
             services.AddTransient<IPlayerListContext, PlayerListContext>();
