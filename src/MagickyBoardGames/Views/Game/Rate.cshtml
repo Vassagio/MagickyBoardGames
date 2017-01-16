@@ -1,0 +1,74 @@
+@model MagickyBoardGames.ViewModels.GameSaveViewModel
+
+@{
+    ViewData["Title"] = "Rate";
+}
+
+<div>
+    <h4>Game</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Game.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Game.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Game.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Game.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Game.PlayerRange)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Game.PlayerRange)
+        </dd>
+    </dl>
+</div>
+<form asp-action="Rate">
+    <div class="form-horizontal">
+        <h4>Game</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Game.Id" />
+        <input type="hidden" asp-for="UserId" />
+        
+        <div class="form-group">
+            <label asp-for="RatingId" class="col-md-3 control-label"></label>
+            <div class="col-md-9">
+                <select asp-for="RatingId" class="form-control" asp-items="@(new SelectList(Model.AvailableRatings,"Id","Description"))"></select>
+            </div>
+            <span asp-validation-for="RatingId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+<h4>Player Ratings</h4>
+<table class="table">
+    <tbody>
+        @foreach (var item in Model.PlayerRatings) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PlayerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating.Description)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
