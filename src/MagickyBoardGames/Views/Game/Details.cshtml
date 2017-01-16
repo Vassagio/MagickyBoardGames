@@ -45,10 +45,25 @@
 <h4>Owners</h4>
 <table class="table">
     <tbody>
-        @foreach (var item in Model.Owners) {
+    @foreach (var item in Model.Owners) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<h4>Player Ratings</h4>
+<table class="table">
+    <tbody>
+        @foreach (var item in Model.PlayerRatings) {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.PlayerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating.Description)
                 </td>
             </tr>
         }

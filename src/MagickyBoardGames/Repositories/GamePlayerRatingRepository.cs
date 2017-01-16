@@ -12,7 +12,7 @@ namespace MagickyBoardGames.Repositories {
         }
 
         public async Task Save(int gameId, string playerId, int ratingId) {
-            var gamePlayerRating = await _context.GamePlayerRatings.SingleOrDefaultAsync(gpr => gpr.GameId == gameId);
+            var gamePlayerRating = await _context.GamePlayerRatings.SingleOrDefaultAsync(gpr => gpr.GameId == gameId && gpr.PlayerId == playerId);
             if (gamePlayerRating == null)
                 await Add(gameId, playerId, ratingId);
             else

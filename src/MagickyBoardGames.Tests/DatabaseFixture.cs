@@ -38,9 +38,9 @@ namespace MagickyBoardGames.Tests {
             foreach (var gameOwner in Db.GameOwners)
                 Db.GameOwners.Remove(gameOwner);
             await Db.SaveChangesAsync();
-            //foreach (var gamePlayerRating in Db.GamePlayerRatings)
-            //    Db.GamePlayerRatings.Remove(gamePlayerRating);
-            //await Db.SaveChangesAsync();
+            foreach (var gamePlayerRating in Db.GamePlayerRatings)
+                Db.GamePlayerRatings.Remove(gamePlayerRating);
+            await Db.SaveChangesAsync();
         }
 
         public async Task Populate(params Category[] categories) {
@@ -98,12 +98,12 @@ namespace MagickyBoardGames.Tests {
             await Db.SaveChangesAsync();
         }
         public async Task Populate(params GamePlayerRating[] gamePlayerRatings) {
-            //foreach (var gamePlayerRating in Db.GamePlayerRatings)
-            //    Db.GamePlayerRatings.Remove(gamePlayerRating);
-            //await Db.SaveChangesAsync();
-            //foreach (var gamePlayerRating in gamePlayerRatings)
-            //    await Db.GamePlayerRatings.AddAsync(gamePlayerRating);
-            //await Db.SaveChangesAsync();
+            foreach (var gamePlayerRating in Db.GamePlayerRatings)
+                Db.GamePlayerRatings.Remove(gamePlayerRating);
+            await Db.SaveChangesAsync();
+            foreach (var gamePlayerRating in gamePlayerRatings)
+                await Db.GamePlayerRatings.AddAsync(gamePlayerRating);
+            await Db.SaveChangesAsync();
         }
 
         public void Dispose() {

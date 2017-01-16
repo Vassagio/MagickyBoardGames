@@ -119,6 +119,7 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             viewModel.CategoryIds = BuildCategoryIds(game.GameCategories);
             viewModel.OwnerIds = BuildOwnerIds(game.GameOwners);
             viewModel.RatingId = BuildRatingId(game.GamePlayerRatings, playerId);
+            viewModel.UserId = playerId;
             return viewModel;
         }
 

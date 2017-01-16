@@ -236,6 +236,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             viewModel.CategoryIds.Should().BeEquivalentTo(new[] { 2 });
             viewModel.OwnerIds.Should().BeEquivalentTo("3");
             viewModel.RatingId.Should().Be(1);
+            viewModel.UserId.Should().Be("3");
             gameRepository.VerifyGetByCalled(33);
             gameBuilder.VerifyBuildCalled(game);
             categoryRepository.VerifyGetAllCalled();

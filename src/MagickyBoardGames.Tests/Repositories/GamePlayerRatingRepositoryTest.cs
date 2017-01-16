@@ -38,6 +38,34 @@ namespace MagickyBoardGames.Tests.Repositories
         }
 
         [Fact]
+        public async void Save_A_New_Rating_For_A_Different_Player() {
+            var game = new Game { Id = 1 };
+            var player1 = new ApplicationUser { Id = "1" };
+            var player2 = new ApplicationUser { Id = "2" };
+            var rating2 = new Rating { Id = 2 };
+            var rating3 = new Rating { Id = 3 };
+            var gamePlayerRating = new GamePlayerRating {
+                GameId = game.Id,
+                PlayerId = player1.Id,
+                RatingId = rating2.Id
+            };
+            await _fixture.Populate(game);
+            await _fixture.Populate(player1, player2);
+            await _fixture.Populate(rating2, rating3);
+            await _fixture.Populate(gamePlayerRating);
+            var repository = BuildGamePlayerRatingRepository();
+
+            await repository.Save(game.Id, player2.Id, rating3.Id);
+
+            var actual1 = _fixture.Db.GamePlayerRatings.SingleOrDefault(gpr => gpr.GameId == 1 && gpr.PlayerId == "1");
+            var actual2 = _fixture.Db.GamePlayerRatings.SingleOrDefault(gpr => gpr.GameId == 1 && gpr.PlayerId == "2");
+            actual1.Should().NotBeNull();
+            actual1.Rating.Id.Should().Be(2);
+            actual2.Should().NotBeNull();
+            actual2.Rating.Id.Should().Be(3);
+        }
+
+        [Fact]
         public async void Save_Over_An_Existing_Rating() {
             var game = new Game { Id = 1 };
             var player = new ApplicationUser { Id = "1" };

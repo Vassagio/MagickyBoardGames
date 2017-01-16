@@ -33,13 +33,13 @@ namespace MagickyBoardGames.Tests.Mocks {
             _mock.Verify(m => m.GetAll(), Times.Exactly(times));
         }
 
-        public MockRatingRepository GetByStubbedToReturn(Rating user) {
-            _mock.Setup(m => m.GetBy(It.IsAny<string>())).Returns(Task.FromResult(user));
+        public MockRatingRepository GetByStubbedToReturn(Rating rating) {
+            _mock.Setup(m => m.GetBy(It.IsAny<string>())).Returns(Task.FromResult(rating));
             return this;
         }
 
-        public MockRatingRepository GetByIdStubbedToReturn(Rating user) {
-            _mock.Setup(m => m.GetBy(It.IsAny<int>())).Returns(Task.FromResult(user));
+        public MockRatingRepository GetByIdStubbedToReturn(Rating rating) {
+            _mock.Setup(m => m.GetBy(It.IsAny<int>())).Returns(Task.FromResult(rating));
             return this;
         }
 
