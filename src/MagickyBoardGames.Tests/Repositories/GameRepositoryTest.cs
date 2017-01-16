@@ -43,7 +43,7 @@ namespace MagickyBoardGames.Tests.Repositories {
             expected.Name.Should().Be("Added Game");
             expected.Description.Should().Be("Description");
             expected.MinPlayers.Should().Be(1);
-            expected.MaxPlayers.Should().Be(10);           
+            expected.MaxPlayers.Should().Be(10);
         }
 
         [Fact]
@@ -61,12 +61,15 @@ namespace MagickyBoardGames.Tests.Repositories {
                 new ApplicationUser(),
                 new ApplicationUser()
             };
+            const int RATING_ID = 1;
+            const string PLAYER_ID = "1"; 
             var gameCategoryRepository = new MockGameCategoryRepository();
             var gameOwnerRepository = new MockGameOwnerRepository();
-            var context = BuildGameRepository(gameCategoryRepository, gameOwnerRepository);
+            var gamePlayerRatingRepository = new MockGamePlayerRatingRepository();
+            var context = BuildGameRepository(gameCategoryRepository, gameOwnerRepository, gamePlayerRatingRepository);
             await _fixture.Populate();
             
-            var id = await context.Add(game, categories, owners);
+            var id = await context.Add(game, categories, owners, RATING_ID, PLAYER_ID);
 
             var expected = await _fixture.Db.Games.SingleOrDefaultAsync(g => g.Id == id);
             expected.Name.Should().Be("Added Game");
@@ -75,6 +78,7 @@ namespace MagickyBoardGames.Tests.Repositories {
             expected.MaxPlayers.Should().Be(10);          
             gameCategoryRepository.VerifyAdjustCalled(id, categories);
             gameOwnerRepository.VerifyAdjustCalled(id, owners);
+            gamePlayerRatingRepository.VerifySaveCalled(id, PLAYER_ID, RATING_ID);
         }
 
         [Fact]
@@ -158,16 +162,19 @@ namespace MagickyBoardGames.Tests.Repositories {
             var owners = new List<ApplicationUser> {
                 new ApplicationUser(),                
             };
+            const int RATING_ID = 1;
+            const string PLAYER_ID = "1";
             var gameCategoryRepository = new MockGameCategoryRepository();
             var gameOwnerRepository = new MockGameOwnerRepository();
-            var context = BuildGameRepository(gameCategoryRepository, gameOwnerRepository);
+            var gamePlayerRatingRepository = new MockGamePlayerRatingRepository();
+            var context = BuildGameRepository(gameCategoryRepository, gameOwnerRepository, gamePlayerRatingRepository);
             await _fixture.Populate(game);
             game.Name = "Updated Game";
             game.Description = "We are updated";
             game.MinPlayers = 2;
             game.MaxPlayers = 8;
 
-            await context.Update(game, categories, owners);
+            await context.Update(game, categories, owners, RATING_ID, PLAYER_ID);
 
             var expected = await _fixture.Db.Games.SingleOrDefaultAsync(g => g.Id == 999);
             expected.Name.Should().Be("Updated Game");
@@ -176,6 +183,7 @@ namespace MagickyBoardGames.Tests.Repositories {
             expected.MaxPlayers.Should().Be(8);
             gameCategoryRepository.VerifyAdjustCalled(999, categories);
             gameOwnerRepository.VerifyAdjustCalled(999, owners);
+            gamePlayerRatingRepository.VerifySaveCalled(999, PLAYER_ID, RATING_ID);
         }
 
         [Fact]        
@@ -289,10 +297,11 @@ namespace MagickyBoardGames.Tests.Repositories {
             game.Should().Be(game1);
         }
 
-        private GameRepository BuildGameRepository(IGameCategoryRepository gameCategoryRepository = null, IGameOwnerRepository gameOwnerRepository = null) {
+        private GameRepository BuildGameRepository(IGameCategoryRepository gameCategoryRepository = null, IGameOwnerRepository gameOwnerRepository = null, IGamePlayerRatingRepository gamePlayerRatingRepository = null) {
             gameCategoryRepository = gameCategoryRepository ?? new MockGameCategoryRepository();
             gameOwnerRepository = gameOwnerRepository ?? new MockGameOwnerRepository();
-            return new GameRepository(_fixture.Db, gameCategoryRepository, gameOwnerRepository);
+            gamePlayerRatingRepository = gamePlayerRatingRepository ?? new MockGamePlayerRatingRepository();
+            return new GameRepository(_fixture.Db, gameCategoryRepository, gameOwnerRepository, gamePlayerRatingRepository);
         }
     }
 }

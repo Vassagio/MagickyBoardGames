@@ -44,9 +44,9 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             var categories = await GetCategories(viewModel.CategoryIds);
             var owners = await GetOwners(viewModel.OwnerIds);
             if (viewModel.Game.Id.HasValue)
-                await Save(await _gameRepository.GetBy(viewModel.Game.Id.Value), game, categories, owners);
+                await Save(await _gameRepository.GetBy(viewModel.Game.Id.Value), game, categories, owners, viewModel.RatingId, viewModel.UserId);
             else
-                await Save(await _gameRepository.GetBy(viewModel.Game.Name), game, categories, owners);
+                await Save(await _gameRepository.GetBy(viewModel.Game.Name), game, categories, owners, viewModel.RatingId, viewModel.UserId);
         }
 
         private async Task<IEnumerable<Category>> GetCategories(IEnumerable<int> categoryIds) {
@@ -67,23 +67,23 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             return owners;
         }
 
-        private async Task Save(Game found, Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
+        private async Task Save(Game found, Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int ratingId, string playerId) {
             if (found != null)
-                await Update(found, game, categories, owners);
+                await Update(found, game, categories, owners, ratingId, playerId);
             else
-                await Insert(game, categories, owners);
+                await Insert(game, categories, owners, ratingId, playerId);
         }
 
-        private async Task Update(Game found, Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
+        private async Task Update(Game found, Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int ratingId, string playerId) {
             found.Name = game.Name;
             found.Description = game.Description;
             found.MinPlayers = game.MinPlayers;
             found.MaxPlayers = game.MaxPlayers;
-            await _gameRepository.Update(found, categories, owners);
+            await _gameRepository.Update(found, categories, owners, ratingId, playerId);
         }
 
-        private async Task Insert(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners) {
-            await _gameRepository.Add(game, categories, owners);
+        private async Task Insert(Game game, IEnumerable<Category> categories, IEnumerable<ApplicationUser> owners, int ratingId, string playerId) {
+            await _gameRepository.Add(game, categories, owners, ratingId, playerId);
         }
 
         public async Task<GameSaveViewModel> BuildViewModel() {
@@ -109,7 +109,7 @@ namespace MagickyBoardGames.Contexts.GameContexts {
         }
 
 
-        public async Task<GameSaveViewModel> BuildViewModel(int id) {
+        public async Task<GameSaveViewModel> BuildViewModel(int id, string playerId) {
             var viewModel = await BuildViewModel();
             var game = await _gameRepository.GetBy(id);
             if (game == null)
@@ -118,7 +118,7 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             viewModel.Game = _gameBuilder.Build(game);
             viewModel.CategoryIds = BuildCategoryIds(game.GameCategories);
             viewModel.OwnerIds = BuildOwnerIds(game.GameOwners);
-            viewModel.RatingIds = BuildRatingIds(game.GamePlayerRatings);
+            viewModel.RatingId = BuildRatingId(game.GamePlayerRatings, playerId);
             return viewModel;
         }
 
@@ -130,8 +130,11 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             return gameOwners.Select(go => go.OwnerId).ToArray();
         }
 
-        private static int[] BuildRatingIds(IEnumerable<GamePlayerRating> gamePlayerRatings) {
-            return gamePlayerRatings.Select(gc => gc.RatingId).ToArray();
+        private static int BuildRatingId(IEnumerable<GamePlayerRating> gamePlayerRatings, string playerId) {
+            var gamePlayerRating = gamePlayerRatings.FirstOrDefault(gpr => gpr.PlayerId == playerId);
+            if (gamePlayerRating == null)
+                return 0;
+            return gamePlayerRating.RatingId;
         }
     }
 }

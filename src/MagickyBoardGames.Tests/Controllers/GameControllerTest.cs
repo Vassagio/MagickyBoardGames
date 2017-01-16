@@ -1,11 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.Security.Claims;
 using FluentAssertions;
 using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.Controllers;
+using MagickyBoardGames.Models;
+using MagickyBoardGames.Services;
+using MagickyBoardGames.Tests.Mocks;
 using MagickyBoardGames.Tests.Mocks.MockContexts;
 using MagickyBoardGames.ViewModels;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace MagickyBoardGames.Tests.Controllers {
@@ -135,17 +143,22 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Create_Result() {
+            const string USER_ID = "1";
             var viewModel = new GameSaveViewModel();
             var context = new MockGameSaveContext().BuildViewModelStubbedToReturn(viewModel);
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
-            var controller = BuildGameController(contextLoader);
-
+            var applicationUserManager = new MockApplicationUserManager().GetUserIdStubbedToReturn(USER_ID);
+            var claimsPrincipal = new ClaimsPrincipal();
+            var controller = BuildGameController(contextLoader, applicationUserManager, claimsPrincipal);
+            
             var result = await controller.Create();
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            viewResult.Model.Should().BeOfType<GameSaveViewModel>();
+            var model = viewResult.Model.Should().BeOfType<GameSaveViewModel>().Subject;
+            model.UserId.Should().Be(USER_ID);
             contextLoader.VerifyLoadGameSaveContextCalled();
             context.VerifyBuildViewModelCalled();
+            applicationUserManager.VerifyGetUserIdCalled(claimsPrincipal);
         }
 
         [Fact]
@@ -156,13 +169,17 @@ namespace MagickyBoardGames.Tests.Controllers {
             var ownerViewModels = new List<OwnerViewModel> {
                 new OwnerViewModel()
             };
+            var ratingViewModels = new List<RatingViewModel> {
+                new RatingViewModel()
+            };
             var viewModel = new GameSaveViewModel {
                 Game = new GameViewModel {
                     Id = 9,
                     Name = "Another Item"
                 },
                 AvailableCategories = categoryViewModels,
-                AvailableOwners = ownerViewModels
+                AvailableOwners = ownerViewModels,
+                AvailableRatings = ratingViewModels
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeInvalid().BuildViewModelStubbedToReturn(viewModel);
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
@@ -174,8 +191,9 @@ namespace MagickyBoardGames.Tests.Controllers {
             var model = viewResult.Model.Should().BeAssignableTo<GameSaveViewModel>().Subject;
             model.Game.Id.Should().Be(9);
             model.Game.Name.Should().Be("Another Item");
-            model.AvailableCategories.Should().BeEquivalentTo(categoryViewModels);
-            model.AvailableOwners.Should().BeEquivalentTo(ownerViewModels);
+            model.AvailableCategories.ShouldBeEquivalentTo(categoryViewModels);
+            model.AvailableOwners.ShouldBeEquivalentTo(ownerViewModels);
+            model.AvailableRatings.ShouldBeEquivalentTo(ratingViewModels);
             contextLoader.VerifyLoadGameSaveContextCalled();
             context.VerifyValidateCalled(viewModel);
             context.VerifySaveNotCalled();
@@ -191,7 +209,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 }
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeValid();
-            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);            
             var controller = BuildGameController(contextLoader);
 
             var result = await controller.Create(viewModel);
@@ -200,7 +218,7 @@ namespace MagickyBoardGames.Tests.Controllers {
             viewResult.ActionName.Should().Be("Index");
             contextLoader.VerifyLoadGameSaveContextCalled();
             context.VerifyValidateCalled(viewModel);
-            context.VerifySaveCalled(viewModel);
+            context.VerifySaveCalled(viewModel);            
         }
 
         [Fact]
@@ -217,19 +235,22 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Edit_Not_Found_When_No_Record_Is_Found() {
+            const string USER_ID = "1";
             var context = new MockGameSaveContext().BuildViewModelFromIdStubbedToReturn(null);
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
-            var controller = BuildGameController(contextLoader);
+            var applicationUserManager = new MockApplicationUserManager().GetUserIdStubbedToReturn(USER_ID);
+            var controller = BuildGameController(contextLoader, applicationUserManager);
 
             var result = await controller.Edit(5);
 
             result.Should().BeOfType<NotFoundResult>();
-            context.VerifyBuildViewModelWithIdCalled(5);
+            context.VerifyBuildViewModelCalled(5, USER_ID);
             contextLoader.VerifyLoadGameSaveContextCalled();
         }
 
         [Fact]
         public async void Display_Edit_Result() {
+            const string USER_ID = "1";
             var viewModel = new GameSaveViewModel {
                 Game = new GameViewModel {
                     Id = 7,
@@ -238,14 +259,15 @@ namespace MagickyBoardGames.Tests.Controllers {
             };
             var context = new MockGameSaveContext().BuildViewModelFromIdStubbedToReturn(viewModel);
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
-            var controller = BuildGameController(contextLoader);
+            var applicationUserManager = new MockApplicationUserManager().GetUserIdStubbedToReturn(USER_ID);
+            var controller = BuildGameController(contextLoader, applicationUserManager);
 
             var result = await controller.Edit(7);
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
             var model = viewResult.Model.Should().BeAssignableTo<GameSaveViewModel>().Subject;
             model.Should().Be(viewModel);
-            context.VerifyBuildViewModelWithIdCalled(7);
+            context.VerifyBuildViewModelCalled(7, USER_ID);
             contextLoader.VerifyLoadGameSaveContextCalled();
         }
 
@@ -268,25 +290,37 @@ namespace MagickyBoardGames.Tests.Controllers {
 
         [Fact]
         public async void Display_Edit_Post_Result_Invalid() {
-            var categoryViewModels = new List<CategoryViewModel>();
+            var categoryViewModels = new List<CategoryViewModel> {
+                new CategoryViewModel()
+            };
+            var ownerViewModels = new List<OwnerViewModel> {
+                new OwnerViewModel()
+            };
+            var ratingViewModels = new List<RatingViewModel> {
+                new RatingViewModel()
+            };
             var viewModel = new GameSaveViewModel {
                 Game = new GameViewModel {
-                    Id = 22,
+                    Id = 9,
                     Name = "Name"
                 },
-                AvailableCategories = categoryViewModels
+                AvailableCategories = categoryViewModels,
+                AvailableOwners = ownerViewModels,
+                AvailableRatings = ratingViewModels
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeInvalid().BuildViewModelStubbedToReturn(viewModel); ;
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
-            var result = await controller.Edit(22, viewModel);
+            var result = await controller.Edit(9, viewModel);
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
             var model = viewResult.Model.Should().BeAssignableTo<GameSaveViewModel>().Subject;
-            model.Game.Id.Should().Be(22);
+            model.Game.Id.Should().Be(9);
             model.Game.Name.Should().Be("Name");
-            model.AvailableCategories.Should().BeEquivalentTo(categoryViewModels);
+            model.AvailableCategories.ShouldBeEquivalentTo(categoryViewModels);
+            model.AvailableOwners.ShouldBeEquivalentTo(ownerViewModels);
+            model.AvailableRatings.ShouldBeEquivalentTo(ratingViewModels);
             context.VerifyValidateCalled(viewModel);
             context.VerifySaveNotCalled();
             context.VerifyBuildViewModelCalled();
@@ -314,9 +348,16 @@ namespace MagickyBoardGames.Tests.Controllers {
             contextLoader.VerifyLoadGameSaveContextCalled();
         }
 
-        private static GameController BuildGameController(IGameContextLoader contextLoader = null) {
+        private static GameController BuildGameController(IGameContextLoader contextLoader = null, IApplicationUserManager applicationUserManager = null, ClaimsPrincipal claimsPrincipal = null) {
             contextLoader = contextLoader ?? new MockGameContextLoader();
-            return new GameController(contextLoader);
+            applicationUserManager = applicationUserManager ?? new MockApplicationUserManager();
+            claimsPrincipal = claimsPrincipal ?? new ClaimsPrincipal();
+            var controller = new GameController(contextLoader, applicationUserManager);
+
+            controller.ControllerContext = new ControllerContext {
+                HttpContext = new DefaultHttpContext() { User = claimsPrincipal }
+            };
+            return controller;
         }
     }
 }

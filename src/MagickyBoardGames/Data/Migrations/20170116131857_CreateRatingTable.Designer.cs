@@ -8,7 +8,7 @@ using MagickyBoardGames.Data;
 namespace MagickyBoardGames.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170112184824_CreateRatingTable")]
+    [Migration("20170116131857_CreateRatingTable")]
     partial class CreateRatingTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,28 +156,6 @@ namespace MagickyBoardGames.Data.Migrations
                         .HasAnnotation("SqlServer:Clustered", true);
 
                     b.ToTable("GameOwners");
-                });
-
-            modelBuilder.Entity("MagickyBoardGames.Models.GamePlayerRating", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("GameId");
-
-                    b.Property<string>("PlayerId");
-
-                    b.Property<int>("RatingId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.HasIndex("RatingId");
-
-                    b.ToTable("GamePlayerRating");
                 });
 
             modelBuilder.Entity("MagickyBoardGames.Models.Rating", b =>
@@ -337,23 +315,6 @@ namespace MagickyBoardGames.Data.Migrations
                     b.HasOne("MagickyBoardGames.Models.ApplicationUser", "Owner")
                         .WithMany("GameOwners")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("MagickyBoardGames.Models.GamePlayerRating", b =>
-                {
-                    b.HasOne("MagickyBoardGames.Models.Game", "Game")
-                        .WithMany("GamePlayerRatings")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MagickyBoardGames.Models.ApplicationUser", "Player")
-                        .WithMany("GamePlayerRatings")
-                        .HasForeignKey("PlayerId");
-
-                    b.HasOne("MagickyBoardGames.Models.Rating", "Rating")
-                        .WithMany("GamePlayerRatings")
-                        .HasForeignKey("RatingId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
