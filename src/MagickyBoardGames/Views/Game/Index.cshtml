@@ -7,7 +7,7 @@
 <h2>Games</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -15,10 +15,10 @@
             <th>
                 Name
             </th>
-            <th>
+            <th class="visible-md visible-lg">
                 Description
             </th>
-            <th class="text-center">
+            <th class="text-center visible-sm visible-md visible-lg">
                 Number Of Players
             </th>
             <th></th>
@@ -30,17 +30,17 @@
             <td class="col-md-2">
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
+            <td class="hidden-sm">
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td class="col-md-2 text-center">
+            <td class="col-md-2 text-center hidden-xs">
                 @Html.DisplayFor(modelItem => item.PlayerRange)
             </td>
             <td class="col-md-2">
-                <a asp-action="Rate" asp-route-id="@item.Id">Rate</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Rate" asp-route-id="@item.Id" data-toggle="tooltip" title="Rate" class="fa fa-star" style="color:yellow"></a> |
+                <a asp-action="Details" asp-route-id="@item.Id" data-toggle="tooltip" title="View Details" class="fa fa-info"></a> |
+                <a asp-action="Edit" asp-route-id="@item.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil"></a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" data-toggle="tooltip" title="Delete" class="fa fa-ban" style="color:red"></a>
             </td>
         </tr>
 }

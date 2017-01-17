@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations;
 namespace MagickyBoardGames.ViewModels {
     public class GameRateViewModel: IViewModel {
         public GameViewModel Game { get; set; }
-        public string UserId { get; set; }        
+        public string UserId { get; set; }
+        [Display(Name = "Rating")]
         public int RatingId { get; set; }
         public IEnumerable<RatingViewModel> AvailableRatings { get; set; } = new List<RatingViewModel>();
         [Display(Name = "Player Ratings")]
