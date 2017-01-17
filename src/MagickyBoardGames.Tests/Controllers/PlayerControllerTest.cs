@@ -3,6 +3,7 @@ using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.PlayerContexts;
 using MagickyBoardGames.Controllers;
 using MagickyBoardGames.Tests.Mocks.MockContexts;
+using MagickyBoardGames.Tests.Mocks.MockContexts.Player;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;

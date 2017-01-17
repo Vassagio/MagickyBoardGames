@@ -3,7 +3,7 @@ using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.ViewModels;
 using Moq;
 
-namespace MagickyBoardGames.Tests.Mocks.MockContexts {
+namespace MagickyBoardGames.Tests.Mocks.MockContexts.Game {
     public class MockGameRateContext : IGameRateContext {
         private readonly Mock<IGameRateContext> _mock;
 

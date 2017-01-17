@@ -4,7 +4,7 @@ using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.ViewModels;
 using Moq;
 
-namespace MagickyBoardGames.Tests.Mocks.MockContexts {
+namespace MagickyBoardGames.Tests.Mocks.MockContexts.Game {
     public class MockGameSaveContext : IGameSaveContext {
         private readonly Mock<IGameSaveContext> _mock;
 

@@ -1,7 +1,7 @@
 ﻿using MagickyBoardGames.Contexts.GameContexts;
 using Moq;
 
-namespace MagickyBoardGames.Tests.Mocks.MockContexts {
+namespace MagickyBoardGames.Tests.Mocks.MockContexts.Game {
     public class MockGameContextLoader : IGameContextLoader {
         private readonly Mock<IGameContextLoader> _mock;
 

@@ -1,8 +1,7 @@
-﻿using MagickyBoardGames.Contexts;
-using MagickyBoardGames.Contexts.CategoryContexts;
+﻿using MagickyBoardGames.Contexts.CategoryContexts;
 using Moq;
 
-namespace MagickyBoardGames.Tests.Mocks.MockContexts {
+namespace MagickyBoardGames.Tests.Mocks.MockContexts.Category {
     public class MockCategoryContextLoader : ICategoryContextLoader {
         private readonly Mock<ICategoryContextLoader> _mock;
 

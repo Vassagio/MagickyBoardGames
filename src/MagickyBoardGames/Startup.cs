@@ -5,6 +5,7 @@ using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.Contexts.PlayerContexts;
+using MagickyBoardGames.Contexts.RatingContexts;
 using MagickyBoardGames.Data;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.Repositories;
@@ -79,6 +80,10 @@ namespace MagickyBoardGames {
             services.AddTransient<IPlayerListContext, PlayerListContext>();
             services.AddTransient<IPlayerViewContext, PlayerViewContext>();
             services.AddTransient<IPlayerContextLoader, PlayerContextLoader>();
+
+            services.AddTransient<IRatingListContext, RatingListContext>();
+            services.AddTransient<IRatingViewContext, RatingViewContext>();
+            services.AddTransient<IRatingContextLoader, RatingContextLoader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

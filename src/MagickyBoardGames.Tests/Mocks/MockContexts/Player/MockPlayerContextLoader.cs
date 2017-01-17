@@ -1,8 +1,7 @@
-﻿using MagickyBoardGames.Contexts;
-using MagickyBoardGames.Contexts.PlayerContexts;
+﻿using MagickyBoardGames.Contexts.PlayerContexts;
 using Moq;
 
-namespace MagickyBoardGames.Tests.Mocks.MockContexts {
+namespace MagickyBoardGames.Tests.Mocks.MockContexts.Player {
     public class MockPlayerContextLoader : IPlayerContextLoader {
         private readonly Mock<IPlayerContextLoader> _mock;
 

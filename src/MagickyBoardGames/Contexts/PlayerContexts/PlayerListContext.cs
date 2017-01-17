@@ -18,9 +18,9 @@ namespace MagickyBoardGames.Contexts.PlayerContexts
         }
 
         public async Task<PlayerListViewModel> BuildViewModel() {
-            var categories = await _userRepository.GetAll();
+            var players = await _userRepository.GetAll();
 
-            var viewModels = categories.Select(player => _playerBuilder.Build(player)).ToList();
+            var viewModels = players.Select(player => _playerBuilder.Build(player)).ToList();
             return new PlayerListViewModel {
                 Players = viewModels
             };
