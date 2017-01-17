@@ -27,18 +27,44 @@
 <h4>Games Owned</h4>
 <table class="table">
     <thead>
+    <tr>
+        <th>
+            Name
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Games) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<h4>Games Rated</h4>
+<table class="table">
+    <thead>
         <tr>
             <th>
                 Name
+            </th>
+            <th>
+                Rating
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Games) {
+        @foreach (var item in Model.GamesRated) {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.GameName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating.LongDescription)
                 </td>
             </tr>
         }
