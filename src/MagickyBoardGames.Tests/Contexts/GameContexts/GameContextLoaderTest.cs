@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.Tests.Mocks.MockContexts;
+using MagickyBoardGames.Tests.Mocks.MockContexts.Game;
 using Xunit;
 
 namespace MagickyBoardGames.Tests.Contexts.GameContexts {

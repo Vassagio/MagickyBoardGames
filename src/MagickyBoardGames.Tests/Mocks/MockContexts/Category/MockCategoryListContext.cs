@@ -3,7 +3,7 @@ using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.ViewModels;
 using Moq;
 
-namespace MagickyBoardGames.Tests.Mocks.MockContexts
+namespace MagickyBoardGames.Tests.Mocks.MockContexts.Category
 {
     public class MockCategoryListContext: ICategoryListContext
     {

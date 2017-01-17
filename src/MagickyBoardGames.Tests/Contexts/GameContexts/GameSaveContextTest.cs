@@ -212,11 +212,11 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             };
             var ratingViewModel1 = new RatingViewModel {
                 Id = 1,
-                Description = "1 - Rate 1 - Rating 1"
+                LongDescription = "1 - Rate 1 - Rating 1"
             };
             var ratingViewModel2 = new RatingViewModel {
                 Id = 2,
-                Description = "2 - Rate 2 - Rating 2"
+                LongDescription = "2 - Rate 2 - Rating 2"
             };            
             var gameRepository = new MockGameRepository().GetByStubbedToReturn(game);
             var gameBuilder = new MockBuilder<Game, GameViewModel>().BuildStubbedToReturn(gameViewModel);

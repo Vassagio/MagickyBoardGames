@@ -1,8 +1,7 @@
 ﻿using FluentAssertions;
-using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.Controllers;
-using MagickyBoardGames.Tests.Mocks.MockContexts;
+using MagickyBoardGames.Tests.Mocks.MockContexts.Category;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;

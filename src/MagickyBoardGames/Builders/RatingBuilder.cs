@@ -14,7 +14,10 @@ namespace MagickyBoardGames.Builders
         public RatingViewModel ToViewModel() {
             return new RatingViewModel {
                 Id = _id,
-                Description = BuildDescription()
+                Rate = _rate,
+                ShortDescription = _shortDescription,
+                Description = _description,
+                LongDescription = BuildLongDescription()
             };
         }
 
@@ -39,19 +42,14 @@ namespace MagickyBoardGames.Builders
 
         public Rating Build(RatingViewModel viewModel) {
             _id = viewModel.Id;
-            var parsedText = Parse(viewModel.Description);
-            _rate = int.Parse(parsedText[0]);
-            _shortDescription = parsedText[1];
-            _description = parsedText[2];
+            _rate = viewModel.Rate;
+            _shortDescription = viewModel.ShortDescription;
+            _description = viewModel.Description;
             return ToEntity();
         }
 
-        private string BuildDescription() {
+        private string BuildLongDescription() {
             return string.Join(SEPARATOR, _rate, _shortDescription, _description);
-        }
-
-        private string[] Parse(string description) {
-            return description.Split(new[] { SEPARATOR }, StringSplitOptions.None);
         }
     }
 }

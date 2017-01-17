@@ -20,7 +20,7 @@ namespace MagickyBoardGames.Tests.Builders
                 ShortDescription = "Short"
             };
             var ratingViewModel = new RatingViewModel {
-                Description = "Description"
+                LongDescription = "Description"
             };
             var player = new ApplicationUser {
                 Id = "7",

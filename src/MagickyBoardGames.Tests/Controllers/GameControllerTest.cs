@@ -8,6 +8,7 @@ using MagickyBoardGames.Models;
 using MagickyBoardGames.Services;
 using MagickyBoardGames.Tests.Mocks;
 using MagickyBoardGames.Tests.Mocks.MockContexts;
+using MagickyBoardGames.Tests.Mocks.MockContexts.Game;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

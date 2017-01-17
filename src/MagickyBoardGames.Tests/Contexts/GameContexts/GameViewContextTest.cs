@@ -223,7 +223,7 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             };
             var ratingViewModel = new RatingViewModel {
                 Id = rating.Id,
-                Description = rating.Description
+                LongDescription = rating.Description
             };
             var playerRatingViewModel = new PlayerRatingViewModel {
                 PlayerName = player.UserName,

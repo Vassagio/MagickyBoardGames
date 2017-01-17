@@ -1,18 +1,18 @@
 ﻿using System.Threading.Tasks;
-using MagickyBoardGames.Contexts.GameContexts;
+using MagickyBoardGames.Contexts.CategoryContexts;
 using MagickyBoardGames.ViewModels;
 using Moq;
 
-namespace MagickyBoardGames.Tests.Mocks.MockContexts
+namespace MagickyBoardGames.Tests.Mocks.MockContexts.Category
 {
-    public class MockGameViewContext: IGameViewContext {
-        private readonly Mock<IGameViewContext> _mock;
+    public class MockCategoryViewContext: ICategoryViewContext {
+        private readonly Mock<ICategoryViewContext> _mock;
 
-        public MockGameViewContext() {
-            _mock = new Mock<IGameViewContext>();
+        public MockCategoryViewContext() {
+            _mock = new Mock<ICategoryViewContext>();
         }
 
-        public Task<GameViewViewModel> BuildViewModel(int id) {
+        public Task<CategoryViewViewModel> BuildViewModel(int id) {
             return _mock.Object.BuildViewModel(id);
         }
 
@@ -20,7 +20,7 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts
             return _mock.Object.Delete(id);
         }
 
-        public MockGameViewContext BuildViewModelStubbedToReturn(GameViewViewModel viewModel) {
+        public MockCategoryViewContext BuildViewModelStubbedToReturn(CategoryViewViewModel viewModel) {
             _mock.Setup(m => m.BuildViewModel(It.IsAny<int>())).Returns(Task.FromResult(viewModel));
             return this;
         }
