@@ -15,7 +15,7 @@
             <th>
                 Short Description
             </th>
-            <th>
+            <th class="visible-md visible-lg">
                 Description
             </th>
             <th></th>
@@ -30,11 +30,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ShortDescription)
             </td>         
-            <td>
+            <td class="visible-md visible-lg">
                 @Html.DisplayFor(modelItem => item.LongDescription)
             </td>         
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>                
+                <a asp-action="Details" asp-route-id="@item.Id" class="fa fa-info"></a>             
             </td>
         </tr>
 }
