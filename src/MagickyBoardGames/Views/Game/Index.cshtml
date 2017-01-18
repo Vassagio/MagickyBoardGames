@@ -25,24 +25,25 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Games) {
-        <tr>
-            <td class="col-md-2">
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td class="hidden-sm">
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td class="col-md-2 text-center hidden-xs">
-                @Html.DisplayFor(modelItem => item.PlayerRange)
-            </td>
-            <td class="col-md-2">
-                <a asp-action="Rate" asp-route-id="@item.Id" data-toggle="tooltip" title="Rate" class="fa fa-star" style="color:yellow"></a> |
-                <a asp-action="Details" asp-route-id="@item.Id" data-toggle="tooltip" title="View Details" class="fa fa-info"></a> |
-                <a asp-action="Edit" asp-route-id="@item.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil"></a> |
-                <a asp-action="Delete" asp-route-id="@item.Id" data-toggle="tooltip" title="Delete" class="fa fa-ban" style="color:red"></a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Games) {
+            <tr>
+                <td class="col-md-2">
+                    <a asp-action="Details" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+                <td class="hidden-sm">
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td class="col-md-2 text-center hidden-xs">
+                    @Html.DisplayFor(modelItem => item.PlayerRange)
+                </td>
+                <td class="col-md-2">
+                    <a asp-action="Rate" asp-route-id="@item.Id" data-toggle="tooltip" title="Rate" class="fa fa-star" style="color:yellow"></a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil"></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" data-toggle="tooltip" title="Delete" class="fa fa-ban" style="color:red"></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

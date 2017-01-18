@@ -8,10 +8,10 @@
 
 <table class="table">
     <thead>
-        <tr>           
+        <tr>
             <th>
                 Name
-            </th>            
+            </th>
             <th>
                 Email
             </th>
@@ -19,18 +19,17 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Players) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>         
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id" class="fa fa-info"></a>              
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Players) {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
