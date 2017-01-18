@@ -38,10 +38,20 @@
                 <td class="col-md-2 text-center hidden-xs">
                     @Html.DisplayFor(modelItem => item.PlayerRange)
                 </td>
-                <td class="col-md-2">
-                    <a asp-action="Rate" asp-route-id="@item.Id" data-toggle="tooltip" title="Rate" class="fa fa-star" style="color:yellow"></a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil"></a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" data-toggle="tooltip" title="Delete" class="fa fa-ban" style="color:red"></a>
+                <td width="100px" style="text-align: right">
+                    <table class="table-condensed">
+                        <tr>
+                            <td>
+                                <a asp-action="Rate" asp-route-id="@item.Id" data-toggle="tooltip" title="Rate" class="fa fa-star fa-2x" style="color: yellow"></a>
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil fa-2x"></a>
+                            </td>
+                            <td>
+                                <a asp-action="Delete" asp-route-id="@item.Id" data-toggle="tooltip" title="Delete" class="fa fa-trash-o fa-2x" style="color: red"></a>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         }
