@@ -46,21 +46,15 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a asp-area="" asp-controller="Game" asp-action="Index">Games</a></li>
-                        <li><a asp-area="" asp-controller="Category" asp-action="Index">Categories</a></li>
-                        <li><a asp-area="" asp-controller="Player" asp-action="Index">Players</a></li>
-                        <li><a asp-area="" asp-controller="Rating" asp-action="Index">Ratings</a></li>
+                        
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")
                 </div>
             </div>
 
             <div id="sidebar-wrapper">
-                <ul class="sidebar-nav navbar-inverse">
-                    <li><a asp-area="" asp-controller="Game" asp-action="Index">Games</a></li>
-                    <li><a asp-area="" asp-controller="Category" asp-action="Index">Categories</a></li>
-                    <li><a asp-area="" asp-controller="Player" asp-action="Index">Players</a></li>
-                    <li><a asp-area="" asp-controller="Rating" asp-action="Index">Ratings</a></li>
+                
+                    
                 @await Html.PartialAsync("_LoginPartialSidebar")
                 </ul>
             </div>
