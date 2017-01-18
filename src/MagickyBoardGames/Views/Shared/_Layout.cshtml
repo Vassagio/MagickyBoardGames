@@ -39,7 +39,9 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand visible-sm visible-md visible-lg">Magicky Gaming Unicorn Butterfly</a>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand visible-sm visible-md visible-lg">
+                        Magicky Gaming Unicorn Butterfly
+                    </a>
                     <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand visible-xs">Magicky Gaming</a>
                 </div>
                 <div class="navbar-collapse collapse">
@@ -59,6 +61,7 @@
                     <li><a asp-area="" asp-controller="Category" asp-action="Index">Categories</a></li>
                     <li><a asp-area="" asp-controller="Player" asp-action="Index">Players</a></li>
                     <li><a asp-area="" asp-controller="Rating" asp-action="Index">Ratings</a></li>
+                @await Html.PartialAsync("_LoginPartialSidebar")
                 </ul>
             </div>
         </div>
