@@ -59,11 +59,11 @@
     <tbody>
         @foreach (var item in Model.PlayerRatings) {
             <tr>
-                <td>
+                <td width="200px">
                     @Html.DisplayFor(modelItem => item.PlayerName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Rating.LongDescription)
+                    @Html.DisplayFor(modelItem => item.Rating.Rate)
                 </td>
             </tr>
         }

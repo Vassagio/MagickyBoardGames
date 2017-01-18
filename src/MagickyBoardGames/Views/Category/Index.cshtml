@@ -19,17 +19,18 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Categories) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id" data-toggle="tooltip" title="View Details" class="fa fa-info"></a> |
-                <a asp-action="Edit" asp-route-id="@item.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil"></a> |
-                <a asp-action="Delete" asp-route-id="@item.Id" data-toggle="tooltip" title="Delete" class="fa fa-ban" style="color:red"></a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Categories) {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" >
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil"></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" data-toggle="tooltip" title="Delete" class="fa fa-ban" style="color:red"></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
