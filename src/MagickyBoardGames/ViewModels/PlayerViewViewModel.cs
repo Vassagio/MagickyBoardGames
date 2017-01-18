@@ -6,5 +6,6 @@ namespace MagickyBoardGames.ViewModels
     {
         public PlayerViewModel Player { get; set; }
         public IEnumerable<GameViewModel> Games { get; set; }
+        public IEnumerable<GameRatingViewModel> GamesRated { get; set; }
     }
 }

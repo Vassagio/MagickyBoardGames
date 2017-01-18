@@ -54,6 +54,7 @@ namespace MagickyBoardGames {
             services.AddTransient<IBuilder<ApplicationUser, PlayerViewModel>, PlayerBuilder>();
             services.AddTransient<IBuilder<Rating, RatingViewModel>, RatingBuilder>();
             services.AddTransient<IBuilder<GamePlayerRating, PlayerRatingViewModel>, PlayerRatingBuilder>();
+            services.AddTransient<IBuilder<GamePlayerRating, GameRatingViewModel>, GameRatingBuilder>();
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IGameRepository, GameRepository>();

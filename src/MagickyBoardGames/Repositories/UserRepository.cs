@@ -20,7 +20,8 @@ namespace MagickyBoardGames.Repositories
         }
 
         private IQueryable<ApplicationUser> Users() {
-            return _context.Users.Include(c => c.GameOwners).ThenInclude(gc => gc.Game);
+            return _context.Users.Include(u => u.GameOwners).ThenInclude(go => go.Game)
+                                 .Include(u => u.GamePlayerRatings);
         }
 
         public async Task<ApplicationUser> GetById(string id) {

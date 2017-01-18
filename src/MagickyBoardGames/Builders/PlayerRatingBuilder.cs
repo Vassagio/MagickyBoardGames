@@ -3,32 +3,32 @@ using MagickyBoardGames.Repositories;
 using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Builders {
-    public class PlayerRatingBuilder : IBuilder<GamePlayerRating, PlayerRatingViewModel> {
+    public class GameRatingBuilder : IBuilder<GamePlayerRating, GameRatingViewModel> {
         private readonly IRatingRepository _ratingRepository;
         private readonly IBuilder<Rating, RatingViewModel> _ratingBuilder;
-        private readonly IUserRepository _userRepository;
-        private string _playerName;
+        private readonly IGameRepository _gameRepository;
+        private string _gameName;
         private RatingViewModel _rating;
 
-        public PlayerRatingBuilder(IRatingRepository ratingRepository, IBuilder<Rating, RatingViewModel> ratingBuilder, IUserRepository userRepository) {
+        public GameRatingBuilder(IRatingRepository ratingRepository, IBuilder<Rating, RatingViewModel> ratingBuilder, IGameRepository gameRepository) {
             _ratingRepository = ratingRepository;
             _ratingBuilder = ratingBuilder;
-            _userRepository = userRepository;
+            _gameRepository = gameRepository;
         }
 
-        public PlayerRatingViewModel ToViewModel() {
-            return new PlayerRatingViewModel {
-                PlayerName = _playerName,
+        public GameRatingViewModel ToViewModel() {
+            return new GameRatingViewModel {
+                GameName = _gameName,
                 Rating = _rating
             };
         }
 
-        public PlayerRatingViewModel Build(GamePlayerRating entity) {
-            var player = _userRepository.GetById(entity.PlayerId).Result;
+        public GameRatingViewModel Build(GamePlayerRating entity) {
+            var game = _gameRepository.GetBy(entity.GameId).Result;
             var rating = _ratingRepository.GetBy(entity.RatingId).Result;
-            if (player == null || rating == null)
-                return new PlayerRatingViewModel();
-            _playerName = player.UserName;
+            if (game == null || rating == null)
+                return new GameRatingViewModel();
+            _gameName = game.Name;
             _rating = _ratingBuilder.Build(rating);
             return ToViewModel();
         }
@@ -37,7 +37,7 @@ namespace MagickyBoardGames.Builders {
             return new GamePlayerRating();
         }
 
-        public GamePlayerRating Build(PlayerRatingViewModel viewModel) {
+        public GamePlayerRating Build(GameRatingViewModel viewModel) {
             return ToEntity();
         }
     }

@@ -52,5 +52,9 @@ namespace MagickyBoardGames.Tests.Mocks
             _mock.Verify(m => m.Build(It.IsAny<TEntity>()), Times.Never);
             _mock.Verify(m => m.Build(It.IsAny<TViewModel>()), Times.Never);
         }
+
+        public void VerifyBuildNotCalled(TEntity entity) {
+            _mock.Verify(m => m.Build(entity), Times.Never);
+        }
     }
 }
