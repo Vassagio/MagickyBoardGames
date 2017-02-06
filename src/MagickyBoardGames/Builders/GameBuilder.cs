@@ -7,8 +7,10 @@ using System.Xml.Linq;
 
 namespace MagickyBoardGames.Builders {
     public class GameBuilder : IBuilder<Game, GameViewModel>, IXmlElementBuilder<GameViewModel> {
+        private const int SHORT_DESCRIPTION_LENGTH = 100;
         private int? _id;
         private string _name;
+        private string _shortDescription;
         private string _description;
         private int? _minPlayers;
         private int? _maxPlayers;
@@ -21,6 +23,7 @@ namespace MagickyBoardGames.Builders {
                 Id = _id,
                 Name = _name,
                 Description = _description,
+                ShortDescription = _shortDescription,
                 MinPlayers = _minPlayers,
                 MaxPlayers = _maxPlayers,
                 Image = _image,
@@ -50,6 +53,7 @@ namespace MagickyBoardGames.Builders {
             _id = entity.Id;
             _name = entity.Name;
             _description = entity.Description;
+            _shortDescription = BuildShortDescription(_description);
             _minPlayers = entity.MinPlayers;
             _maxPlayers = entity.MaxPlayers;
             _image = entity.Image;
@@ -60,6 +64,7 @@ namespace MagickyBoardGames.Builders {
         public GameViewModel Build(XElement element) {
             _name = GetNameFromElement(element);
             _description = element.Element("description").Value.Replace("&#10;&#10;", string.Empty);
+            _shortDescription = BuildShortDescription(_description);
             _maxPlayers = int.Parse(element.Element("maxplayers").Attribute("value").Value);
             _minPlayers = int.Parse(element.Element("minplayers").Attribute("value").Value);
             _image = element.Element("image") != null ? element.Element("image").Value : string.Empty;
@@ -84,6 +89,18 @@ namespace MagickyBoardGames.Builders {
             _image = viewModel.Image;
             _thumbnail = viewModel.Thumbnail;
             return ToEntity();
+        }
+
+        private string BuildShortDescription(string description, int startIndex = 0) {
+            var position = description.IndexOf('.', startIndex) + 1;
+            if (position == 0 && description.Length >= SHORT_DESCRIPTION_LENGTH)
+                return description.Substring(SHORT_DESCRIPTION_LENGTH);
+            else if (position == 0)
+                return description;
+            var result = description.Substring(0, position);
+            if (result.Length <= SHORT_DESCRIPTION_LENGTH && !result.Equals(description))
+                return BuildShortDescription(description, position);
+            return result;
         }
     }
 }

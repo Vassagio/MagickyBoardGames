@@ -32,8 +32,8 @@
                         @Html.DisplayFor(modelItem => item.Name)
                     </a>
                 </td>
-                <td class="hidden-sm">
-                    @Html.DisplayFor(modelItem => item.Description)
+                <td class="hidden-sm" data-toggle="tooltip" title="@item.Description">
+                    @Html.DisplayFor(modelItem => item.ShortDescription)
                 </td>
                 <td class="col-md-2 text-center hidden-xs">
                     @Html.DisplayFor(modelItem => item.PlayerRange)
