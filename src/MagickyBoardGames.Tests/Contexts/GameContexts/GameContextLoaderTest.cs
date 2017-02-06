@@ -53,12 +53,23 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             context.Should().Be(gameRateContext);
         }
 
-        private static GameContextLoader BuildContextLoader(IGameListContext gameListContext = null, IGameViewContext gameViewContext = null, IGameSaveContext gameSaveContext = null, IGameRateContext gameRateContext = null) {
+        [Fact]
+        public void Loads_Game_Search_Context() {
+            var gameSearchContext = new MockGameSearchContext();
+            var contextLoader = BuildContextLoader(gameSearchContext: gameSearchContext);
+
+            var context = contextLoader.LoadGameSearchContext();
+
+            context.Should().Be(gameSearchContext);
+        }
+
+        private static GameContextLoader BuildContextLoader(IGameListContext gameListContext = null, IGameViewContext gameViewContext = null, IGameSaveContext gameSaveContext = null, IGameRateContext gameRateContext = null, IGameSearchContext gameSearchContext = null) {
             gameListContext = gameListContext ?? new MockGameListContext();
             gameViewContext = gameViewContext ?? new MockGameViewContext();
             gameSaveContext = gameSaveContext ?? new MockGameSaveContext();
             gameRateContext = gameRateContext ?? new MockGameRateContext();
-            return new GameContextLoader(gameListContext, gameViewContext, gameSaveContext, gameRateContext);
+            gameSearchContext = gameSearchContext ?? new MockGameSearchContext();
+            return new GameContextLoader(gameListContext, gameViewContext, gameSaveContext, gameRateContext, gameSearchContext);
         }
     }
 }

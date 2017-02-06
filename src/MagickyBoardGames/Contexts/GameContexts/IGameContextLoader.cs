@@ -4,5 +4,6 @@
         IGameViewContext LoadGameViewContext();
         IGameSaveContext LoadGameSaveContext();
         IGameRateContext LoadGameRateContext();
+        IGameSearchContext LoadGameSearchContext();
     }
 }

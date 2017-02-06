@@ -6,6 +6,7 @@ using FluentValidation.Results;
 using MagickyBoardGames.Builders;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.Repositories;
+using MagickyBoardGames.Services;
 using MagickyBoardGames.ViewModels;
 
 namespace MagickyBoardGames.Contexts.GameContexts {
@@ -19,11 +20,12 @@ namespace MagickyBoardGames.Contexts.GameContexts {
         private readonly IBuilder<ApplicationUser, OwnerViewModel> _ownerBuilder;
         private readonly IRatingRepository _ratingRepository;
         private readonly IBuilder<Rating, RatingViewModel> _ratingBuilder;
+        private readonly IGameInfoService _gameInfoService;
 
-        public GameSaveContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IValidator<GameSaveViewModel> validator, 
-                               ICategoryRepository categoryRepository, IBuilder<Category, CategoryViewModel> categoryBuilder, 
+        public GameSaveContext(IGameRepository gameRepository, IBuilder<Game, GameViewModel> gameBuilder, IValidator<GameSaveViewModel> validator,
+                               ICategoryRepository categoryRepository, IBuilder<Category, CategoryViewModel> categoryBuilder,
                                IUserRepository userRepository, IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder,
-                               IRatingRepository ratingRepository, IBuilder<Rating, RatingViewModel> ratingBuilder) {
+                               IRatingRepository ratingRepository, IBuilder<Rating, RatingViewModel> ratingBuilder, IGameInfoService gameInfoService) {
             _gameRepository = gameRepository;
             _gameBuilder = gameBuilder;
             _validator = validator;
@@ -33,6 +35,7 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             _ownerBuilder = ownerBuilder;
             _ratingRepository = ratingRepository;
             _ratingBuilder = ratingBuilder;
+            _gameInfoService = gameInfoService;
         }
 
         public ValidationResult Validate(GameSaveViewModel viewModel) {
@@ -86,13 +89,16 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             await _gameRepository.Add(game, categories, owners, ratingId, playerId);
         }
 
-        public async Task<GameSaveViewModel> BuildViewModel() {
+        public async Task<GameSaveViewModel> BuildViewModel(int? id = null) {
+            var game = id.HasValue ? await _gameInfoService.LoadGame(id.Value) : new GameViewModel();
             return new GameSaveViewModel {
                 AvailableCategories = await BuildCategoryViewModels(),
                 AvailableOwners = await BuildOwnerViewModels(),
-                AvailableRatings = await BuildRatingViewModels()
+                AvailableRatings = await BuildRatingViewModels(),
+                Game = game
             };
         }
+
         private async Task<IEnumerable<CategoryViewModel>> BuildCategoryViewModels() {
             var categories = await _categoryRepository.GetAll();
             return categories.Select(c => _categoryBuilder.Build(c)).ToList();

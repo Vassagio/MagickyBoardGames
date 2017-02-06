@@ -13,5 +13,8 @@ namespace MagickyBoardGames.ViewModels
         public int? MaxPlayers { get; set; }
         [Display(Name = "Number Of Players")]
         public string PlayerRange { get; set; }
+        public string Thumbnail { get; set; }
+        public string Image { get; set; }
+        public int GameId { get; set; }
     }
 }

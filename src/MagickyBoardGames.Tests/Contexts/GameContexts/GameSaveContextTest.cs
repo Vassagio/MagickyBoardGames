@@ -9,6 +9,7 @@ using Xunit;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
+using MagickyBoardGames.Services;
 using MagickyBoardGames.Validations;
 
 namespace MagickyBoardGames.Tests.Contexts.GameContexts {
@@ -613,7 +614,8 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
                                                             IUserRepository userRepository = null,
                                                             IBuilder<ApplicationUser, OwnerViewModel> ownerBuilder = null,
                                                             IRatingRepository ratingRepository = null,
-                                                            IBuilder<Rating, RatingViewModel> ratingBuilder = null) {
+                                                            IBuilder<Rating, RatingViewModel> ratingBuilder = null,
+                                                            IGameInfoService gameInfoService = null) {
             gameRepository = gameRepository ?? new MockGameRepository();
             gameBuilder = gameBuilder ?? new MockBuilder<Game, GameViewModel>();
             validator = validator ?? new MockValidator<GameSaveViewModel>();
@@ -623,7 +625,8 @@ namespace MagickyBoardGames.Tests.Contexts.GameContexts {
             ownerBuilder = ownerBuilder ?? new MockBuilder<ApplicationUser, OwnerViewModel>();
             ratingRepository = ratingRepository ?? new MockRatingRepository();
             ratingBuilder = ratingBuilder ?? new MockBuilder<Rating, RatingViewModel>();
-            return new GameSaveContext(gameRepository, gameBuilder, validator, categoryRepository, categoryBuilder, userRepository, ownerBuilder, ratingRepository, ratingBuilder);
+            gameInfoService = gameInfoService ?? new MockGameInfoService();
+            return new GameSaveContext(gameRepository, gameBuilder, validator, categoryRepository, categoryBuilder, userRepository, ownerBuilder, ratingRepository, ratingBuilder, gameInfoService);
         }
     }
 }

@@ -13,6 +13,8 @@ namespace MagickyBoardGames.Data.ModelBuilders {
             Builder.Entity<Game>().Property(c => c.Description).IsRequired(false);
             Builder.Entity<Game>().Property(c => c.MinPlayers).IsRequired();
             Builder.Entity<Game>().Property(c => c.MaxPlayers).IsRequired();
+            Builder.Entity<Game>().Property(c => c.Thumbnail);
+            Builder.Entity<Game>().Property(c => c.Image);
         }
     }
 }

@@ -1,0 +1,50 @@
+@model MagickyBoardGames.ViewModels.ImportSearchViewModel
+@{
+    ViewData["Title"] = "Search";
+}
+
+<form asp-action="Search">
+    <div>
+        <h4>Search</h4>
+        <hr />
+    </div>
+    <div class="form-group">
+        <label asp-for="Query" class="col-md-2 control-label"></label>
+        <div class="list-inline col-md-9">
+            <input asp-for="Query" class="form-control" />
+            <span asp-validation-for="Query" class="text-danger"></span>
+            <input type="submit" value="Search" class="btn btn-success" />
+        </div>
+    </div>
+</form>
+<table class="table">
+    @foreach (var item in Model.BoardGames) {
+        <tr>
+            <td class="col-md-2">
+                <h4>
+                    <a asp-action="Create" asp-route-id="@item.GameId" data-toggle="tooltip" title="Import" class="fa fa-upload" style="color: green"></a>
+
+                    <b>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </b>
+                </h4>
+            </td>
+            <td rowspan="2" align="center" valign="middle">
+                <img src="@item.Thumbnail" />
+            </td>
+        </tr>
+        <tr>
+            <td class="col-md-10" height="99%">
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+        </tr>
+    }
+</table>
+
+<div>
+    <a asp-action="Create">Back to Create</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
