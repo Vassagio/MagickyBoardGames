@@ -6,6 +6,8 @@ namespace MagickyBoardGames.ViewModels
     {
         public int? Id { get; set; }
         public string Name { get; set; }
+        [Display(Name = "Description")]
+        public string ShortDescription { get; set; }
         public string Description { get; set; }
         [Display(Name = "Minimum Number Of Players")]
         public int? MinPlayers { get; set; }

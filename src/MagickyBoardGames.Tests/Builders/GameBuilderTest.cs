@@ -49,6 +49,29 @@ namespace MagickyBoardGames.Tests.Builders
             viewModel.Id.Should().Be(game.Id);
             viewModel.Name.Should().Be(game.Name);
             viewModel.Description.Should().Be(game.Description);
+            viewModel.ShortDescription.Should().Be(game.Description);
+            viewModel.MinPlayers.Should().Be(game.MinPlayers);
+            viewModel.MaxPlayers.Should().Be(game.MaxPlayers);
+            viewModel.PlayerRange.Should().Be("1 - 10");
+        }
+
+        [Fact]
+        public void Game_To_View_Model_With_Long_Description() {
+            var game = new Game {
+                Id = 4,
+                Name = "Name",
+                Description = new string('x', 1000),
+                MinPlayers = 1,
+                MaxPlayers = 10
+            };
+            var builder = new GameBuilder();
+
+            var viewModel = builder.Build(game);
+
+            viewModel.Id.Should().Be(game.Id);
+            viewModel.Name.Should().Be(game.Name);
+            viewModel.Description.Should().Be(game.Description);
+            viewModel.ShortDescription.Length.Should().NotBe(game.Description.Length);
             viewModel.MinPlayers.Should().Be(game.MinPlayers);
             viewModel.MaxPlayers.Should().Be(game.MaxPlayers);
             viewModel.PlayerRange.Should().Be("1 - 10");
