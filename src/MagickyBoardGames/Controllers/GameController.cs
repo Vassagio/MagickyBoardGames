@@ -1,6 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MagickyBoardGames.Contexts.GameContexts;
+using MagickyBoardGames.Models;
 using MagickyBoardGames.Services;
+using MagickyBoardGames.Services.BoardGameGeek;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +24,20 @@ namespace MagickyBoardGames.Controllers {
             return View(await context.BuildViewModel());
         }
 
+        [Authorize]
+        public IActionResult Search() {            
+            return View(new ImportSearchViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Search(ImportSearchViewModel viewModel) {
+            var context = _loader.LoadGameSearchContext();
+            viewModel = await context.BuildViewModel(viewModel);
+            return View(viewModel);
+        }
+
         public async Task<IActionResult> Details(int? id) {
             if (id == null)
                 return NotFound();
@@ -33,11 +51,11 @@ namespace MagickyBoardGames.Controllers {
         }
 
         [Authorize]
-        public async Task<IActionResult> Create() {
+        public async Task<IActionResult> Create(int id) {
             var context = _loader.LoadGameSaveContext();
             var userId = _applicationUserManager.GetUserId(HttpContext.User);
-            var viewModel = await context.BuildViewModel();
-            viewModel.UserId = userId;
+            var viewModel = await context.BuildViewModel(id);
+            viewModel.UserId = userId;            
             return View(viewModel);
         }
 

@@ -24,22 +24,13 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts.Game {
         public IGameRateContext LoadGameRateContext() {
             return _mock.Object.LoadGameRateContext();
         }
+        public IGameSearchContext LoadGameSearchContext() {
+            return _mock.Object.LoadGameSearchContext();
+        }
 
         public MockGameContextLoader LoadGameListContextStubbedToReturn(IGameListContext context) {
             _mock.Setup(m => m.LoadGameListContext()).Returns(context);
             return this;
-        }
-
-        public void VerifyLoadGameListContextCalled(int times = 1) {
-            _mock.Verify(m => m.LoadGameListContext(), Times.Exactly(times));
-        }
-
-        public void VerifyLoadGameViewContextNotCalled() {
-            _mock.Verify(m => m.LoadGameViewContext(), Times.Never);
-        }
-
-        public void VerifyLoadGameViewContextCalled(int times = 1) {
-            _mock.Verify(m => m.LoadGameViewContext(), Times.Exactly(times));
         }
 
         public MockGameContextLoader LoadGameViewContextStubbedToReturn(IGameViewContext context) {
@@ -57,6 +48,23 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts.Game {
             return this;
         }
 
+        public MockGameContextLoader LoadGameSearchContextStubbedToReturn(IGameSearchContext context) {
+            _mock.Setup(m => m.LoadGameSearchContext()).Returns(context);
+            return this;
+        }
+
+        public void VerifyLoadGameListContextCalled(int times = 1) {
+            _mock.Verify(m => m.LoadGameListContext(), Times.Exactly(times));
+        }
+
+        public void VerifyLoadGameViewContextNotCalled() {
+            _mock.Verify(m => m.LoadGameViewContext(), Times.Never);
+        }
+
+        public void VerifyLoadGameViewContextCalled(int times = 1) {
+            _mock.Verify(m => m.LoadGameViewContext(), Times.Exactly(times));
+        }
+
         public void VerifyLoadGameSaveContextCalled(int times = 1) {
             _mock.Verify(m => m.LoadGameSaveContext(), Times.Exactly(times));
         }
@@ -71,6 +79,14 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts.Game {
 
         public void VerifyLoadGameRateContextNotCalled() {
             _mock.Verify(m => m.LoadGameRateContext(), Times.Never);
+        }
+
+        public void VerifyLoadGameSearchContextCalled(int times = 1) {
+            _mock.Verify(m => m.LoadGameSearchContext(), Times.Exactly(times));
+        }
+
+        public void VerifyLoadGameSearchContextNotCalled() {
+            _mock.Verify(m => m.LoadGameSearchContext(), Times.Never);
         }
     }
 }

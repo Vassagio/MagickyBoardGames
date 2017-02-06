@@ -1,20 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using FluentAssertions;
-using MagickyBoardGames.Contexts;
 using MagickyBoardGames.Contexts.GameContexts;
 using MagickyBoardGames.Controllers;
-using MagickyBoardGames.Models;
 using MagickyBoardGames.Services;
 using MagickyBoardGames.Tests.Mocks;
-using MagickyBoardGames.Tests.Mocks.MockContexts;
 using MagickyBoardGames.Tests.Mocks.MockContexts.Game;
 using MagickyBoardGames.ViewModels;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Moq;
 using Xunit;
 
 namespace MagickyBoardGames.Tests.Controllers {
@@ -131,7 +125,7 @@ namespace MagickyBoardGames.Tests.Controllers {
         public async void Display_DeleteConfirmed_Result() {
             var context = new MockGameViewContext();
             var contextLoader = new MockGameContextLoader().LoadGameViewContextStubbedToReturn(context);
-            
+
             var controller = BuildGameController(contextLoader);
 
             var result = await controller.DeleteConfirmed(11);
@@ -151,14 +145,14 @@ namespace MagickyBoardGames.Tests.Controllers {
             var applicationUserManager = new MockApplicationUserManager().GetUserIdStubbedToReturn(USER_ID);
             var claimsPrincipal = new ClaimsPrincipal();
             var controller = BuildGameController(contextLoader, applicationUserManager, claimsPrincipal);
-            
-            var result = await controller.Create();
+
+            var result = await controller.Create(0);
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
             var model = viewResult.Model.Should().BeOfType<GameSaveViewModel>().Subject;
             model.UserId.Should().Be(USER_ID);
             contextLoader.VerifyLoadGameSaveContextCalled();
-            context.VerifyBuildViewModelCalled();
+            context.VerifyBuildViewModelCalled(0);
             applicationUserManager.VerifyGetUserIdCalled(claimsPrincipal);
         }
 
@@ -210,7 +204,7 @@ namespace MagickyBoardGames.Tests.Controllers {
                 }
             };
             var context = new MockGameSaveContext().ValidateStubbedToBeValid();
-            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);            
+            var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
             var result = await controller.Create(viewModel);
@@ -219,11 +213,11 @@ namespace MagickyBoardGames.Tests.Controllers {
             viewResult.ActionName.Should().Be("Index");
             contextLoader.VerifyLoadGameSaveContextCalled();
             context.VerifyValidateCalled(viewModel);
-            context.VerifySaveCalled(viewModel);            
+            context.VerifySaveCalled(viewModel);
         }
 
         [Fact]
-        public async void Display_Edit_Not_Found_When_Id_Is_Null() {           
+        public async void Display_Edit_Not_Found_When_Id_Is_Null() {
             var context = new MockGameSaveContext();
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
@@ -309,7 +303,8 @@ namespace MagickyBoardGames.Tests.Controllers {
                 AvailableOwners = ownerViewModels,
                 AvailableRatings = ratingViewModels
             };
-            var context = new MockGameSaveContext().ValidateStubbedToBeInvalid().BuildViewModelStubbedToReturn(viewModel); ;
+            var context = new MockGameSaveContext().ValidateStubbedToBeInvalid().BuildViewModelStubbedToReturn(viewModel);
+            ;
             var contextLoader = new MockGameContextLoader().LoadGameSaveContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
@@ -348,7 +343,6 @@ namespace MagickyBoardGames.Tests.Controllers {
             context.VerifySaveCalled(viewModel);
             contextLoader.VerifyLoadGameSaveContextCalled();
         }
-
 
         [Fact]
         public async void Display_Rate_Not_Found_When_Id_Is_Null() {
@@ -437,13 +431,49 @@ namespace MagickyBoardGames.Tests.Controllers {
             contextLoader.VerifyLoadGameRateContextCalled();
         }
 
+        [Fact]
+        public void Display_Search_Result() {
+            var controller = BuildGameController();
+
+            var result = controller.Search();
+
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            viewResult.Model.Should().BeOfType<ImportSearchViewModel>();
+        }
+
+        [Fact]
+        public async void Display_Create_Post_Result() {
+            var viewModel = new ImportSearchViewModel {
+                Query = "Queyr"
+            };
+            var returnViewModel = new ImportSearchViewModel() {
+                Query = "Query",
+                BoardGames = new List<GameViewModel> {
+                    new GameViewModel {
+                        Name = "Game"
+                    }
+                }
+            };
+            var context = new MockGameSearchContext().BuildViewModelStubbedToReturn(returnViewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameSearchContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
+
+            var result = await controller.Search(viewModel);
+
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeOfType<ImportSearchViewModel>().Subject;
+            model.Should().Be(returnViewModel);
+            contextLoader.VerifyLoadGameSearchContextCalled();
+            context.VerifyBuildViewModelCalled(viewModel);
+        }
+
         private static GameController BuildGameController(IGameContextLoader contextLoader = null, IApplicationUserManager applicationUserManager = null, ClaimsPrincipal claimsPrincipal = null) {
             contextLoader = contextLoader ?? new MockGameContextLoader();
             applicationUserManager = applicationUserManager ?? new MockApplicationUserManager();
             claimsPrincipal = claimsPrincipal ?? new ClaimsPrincipal();
             var controller = new GameController(contextLoader, applicationUserManager) {
                 ControllerContext = new ControllerContext {
-                    HttpContext = new DefaultHttpContext() {
+                    HttpContext = new DefaultHttpContext {
                         User = claimsPrincipal
                     }
                 }
