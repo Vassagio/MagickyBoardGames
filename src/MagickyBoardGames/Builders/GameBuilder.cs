@@ -63,7 +63,7 @@ namespace MagickyBoardGames.Builders {
 
         public GameViewModel Build(XElement element) {
             _name = GetNameFromElement(element);
-            _description = element.Element("description").Value.Replace("&#10;&#10;", string.Empty);
+            _description = RemoveHtmlFromDescription(element.Element("description").Value);
             _shortDescription = BuildShortDescription(_description);
             _maxPlayers = int.Parse(element.Element("maxplayers").Attribute("value").Value);
             _minPlayers = int.Parse(element.Element("minplayers").Attribute("value").Value);
@@ -77,7 +77,7 @@ namespace MagickyBoardGames.Builders {
             return element.Elements("name")
                 .Where(e => e.Attribute("type").Value == "primary")
                 .Select(e => e.Attribute("value").Value)
-                .SingleOrDefault();            
+                .SingleOrDefault();
         }
 
         public Game Build(GameViewModel viewModel) {
@@ -91,15 +91,22 @@ namespace MagickyBoardGames.Builders {
             return ToEntity();
         }
 
+        private string RemoveHtmlFromDescription(string description) {
+            return description.Replace("&#10;", string.Empty).
+                               Replace("&mdash;", "-").
+                               Replace("&ndash;", "-").
+                               Replace("&quot;", "'");
+        }
+
         private string BuildShortDescription(string description, int startIndex = 0) {
-            var position = description.IndexOf('.', startIndex) + 1;
-            if (position == 0 && description.Length >= SHORT_DESCRIPTION_LENGTH)
-                return description.Substring(SHORT_DESCRIPTION_LENGTH);
-            else if (position == 0)
-                return description;
-            var result = description.Substring(0, position);
+            if (string.IsNullOrEmpty(description)) return string.Empty;
+            var position = description.IndexOf('.', startIndex);
+            if (position == -1 && description.Length > SHORT_DESCRIPTION_LENGTH)
+                return description.Substring(0, SHORT_DESCRIPTION_LENGTH);
+            if (position == -1) return description;
+            var result = description.Substring(0, position + 1);
             if (result.Length <= SHORT_DESCRIPTION_LENGTH && !result.Equals(description))
-                return BuildShortDescription(description, position);
+                return BuildShortDescription(description, position + 1);
             return result;
         }
     }
