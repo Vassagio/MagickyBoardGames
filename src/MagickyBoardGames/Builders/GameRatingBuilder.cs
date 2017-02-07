@@ -7,6 +7,7 @@ namespace MagickyBoardGames.Builders {
         private readonly IRatingRepository _ratingRepository;
         private readonly IBuilder<Rating, RatingViewModel> _ratingBuilder;
         private readonly IUserRepository _userRepository;
+        private string _id;
         private string _playerName;
         private RatingViewModel _rating;
 
@@ -18,6 +19,7 @@ namespace MagickyBoardGames.Builders {
 
         public PlayerRatingViewModel ToViewModel() {
             return new PlayerRatingViewModel {
+                Id = _id,
                 PlayerName = _playerName,
                 Rating = _rating
             };
@@ -28,6 +30,7 @@ namespace MagickyBoardGames.Builders {
             var rating = _ratingRepository.GetBy(entity.RatingId).Result;
             if (player == null || rating == null)
                 return new PlayerRatingViewModel();
+            _id = player.Id;
             _playerName = player.UserName;
             _rating = _ratingBuilder.Build(rating);
             return ToViewModel();

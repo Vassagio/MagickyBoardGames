@@ -18,6 +18,12 @@
             @Html.DisplayFor(model => model.Game.Name)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Game.Image)
+        </dt>
+        <dd>
+            <img src="@Model.Game.Thumbnail" />
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Game.Description)
         </dt>
         <dd>
@@ -30,7 +36,7 @@
             @Html.DisplayFor(model => model.Game.PlayerRange)
         </dd>
     </dl>
-    
+
     <h4>Categories</h4>
     <table class="table">
         <tbody>
@@ -46,13 +52,13 @@
     <h4>Owners</h4>
     <table class="table">
         <tbody>
-        @foreach (var item in Model.Owners) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-            </tr>
-        }
+            @foreach (var item in Model.Owners) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
     <h4>Player Ratings</h4>
@@ -70,7 +76,7 @@
             }
         </tbody>
     </table>
-    
+
     <form asp-action="Delete">
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-danger" /> |

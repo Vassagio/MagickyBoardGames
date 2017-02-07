@@ -17,6 +17,14 @@
             @Html.DisplayFor(model => model.Game.Name)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Game.Image)
+        </dt>
+        <dd>
+            <a href="@Model.Game.Image">
+                <img src="@Model.Game.Thumbnail" />
+            </a>
+        </dd>        
+        <dt>
             @Html.DisplayNameFor(model => model.Game.Description)
         </dt>
         <dd>
@@ -28,30 +36,34 @@
         <dd>
             @Html.DisplayFor(model => model.Game.PlayerRange)
         </dd>
-    </dl>
+    </dl>    
 </div>
 <h4>Categories</h4>
 <table class="table">
     <tbody>
-    @foreach (var item in Model.Categories) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-        </tr>
-    }
+        @foreach (var item in Model.Categories) {
+            <tr>
+                <td>
+                    <a asp-controller="Category" asp-action="Details" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <h4>Owners</h4>
 <table class="table">
     <tbody>
-    @foreach (var item in Model.Owners) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-        </tr>
-    }
+        @foreach (var item in Model.Owners) {
+            <tr>
+                <td>
+                    <a asp-controller="Player" asp-action="Details" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <h4>Player Ratings</h4>
@@ -60,16 +72,20 @@
         @foreach (var item in Model.PlayerRatings) {
             <tr>
                 <td width="200px">
-                    @Html.DisplayFor(modelItem => item.PlayerName)
+                    <a asp-controller="Player" asp-action="Details" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.PlayerName)
+                    </a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Rating.Rate)
+                    <a asp-controller="Rating" asp-action="Details" asp-route-id="@item.Rating.Id">
+                        @Html.DisplayFor(modelItem => item.Rating.Rate)
+                    </a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Game.Id"  data-toggle="tooltip" title="Edit" class="fa fa-pencil fa-2x"></a> |
+    <a asp-action="Edit" asp-route-id="@Model.Game.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil fa-2x"></a> |
     <a asp-action="Index">Back to List</a>
 </div>
