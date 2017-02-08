@@ -5,6 +5,6 @@ namespace MagickyBoardGames.Contexts.GameContexts
 {
     public interface IGameListContext
     {
-        Task<GameListViewModel> BuildViewModel();
+        Task<GameListViewModel> BuildViewModel(GameListViewModel viewModel = null);
     }
 }

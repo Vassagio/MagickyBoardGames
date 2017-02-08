@@ -33,8 +33,8 @@
         <h4>Rate</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Game.Id" />        
-        <input type="hidden" asp-for="UserId" /> 
+        <input type="hidden" asp-for="Game.Id" />
+        <input type="hidden" asp-for="UserId" />
         <div class="form-group">
             <label asp-for="RatingId" class="col-md-3 control-label"></label>
             <div class="col-md-9">
@@ -49,21 +49,7 @@
         </div>
     </div>
 </form>
-<h4>Player Ratings</h4>
-<table class="table">
-    <tbody>
-        @foreach (var item in Model.PlayerRatings) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PlayerName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Rating.LongDescription)
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@await Html.PartialAsync("_PlayerRatings", Model.PlayerRatings)
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

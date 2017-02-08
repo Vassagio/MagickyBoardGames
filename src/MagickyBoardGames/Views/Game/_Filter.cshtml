@@ -1,0 +1,21 @@
+@model MagickyBoardGames.ViewModels.GameListViewModel
+
+@{
+    ViewData["Title"] = "Filter";
+}
+
+<form asp-action="Index">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-lg-1">Name:</label>
+            <input asp-for="Filter.Name" class="form-control col-lg-3" />
+            <label class="col-lg-1">Description:</label>
+            <input asp-for="Filter.Description" class="form-control col-lg-3" />
+            <label class="col-lg-1"># Of Players:</label>
+            <input asp-for="Filter.NumberOfPlayers" class="form-control col-lg-1" />
+            <input type="submit" value="Filter" class="btn btn-primary col-lg-1" />
+            <a asp-action="Index" class="btn btn-default col-lg-1">Reset</a>
+        </div>
+    </div>
+</form>
+<hr />

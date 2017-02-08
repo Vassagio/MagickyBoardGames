@@ -24,58 +24,9 @@
         </dd>
     </dl>
 </div>
-<h4>Games Owned</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Games) {
-            <tr>
-                <td>
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<h4>Games Rated</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Rating
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.GamesRated) {
-            <tr>
-                <td width="200px">
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">
-                        @Html.DisplayFor(modelItem => item.GameName)
-                    </a>
-                </td>
-                <td>
-                    <a asp-controller="Rating" asp-action="Details" asp-route-id="@item.Rating.Id">
-                        @Html.DisplayFor(modelItem => item.Rating.Rate)
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@await Html.PartialAsync("_Games", Model.Games)
+@await Html.PartialAsync("_GamesRated", Model.GamesRated)
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

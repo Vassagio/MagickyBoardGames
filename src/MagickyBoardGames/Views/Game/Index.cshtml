@@ -5,7 +5,7 @@
 }
 
 <h2>Games</h2>
-
+@await Html.PartialAsync("_Filter", Model)
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
@@ -19,7 +19,7 @@
                 Description
             </th>
             <th class="text-center visible-sm visible-md visible-lg">
-                Number Of Players
+                # Of Players
             </th>
             <th></th>
         </tr>
