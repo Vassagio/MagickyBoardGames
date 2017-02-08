@@ -1,0 +1,17 @@
+@using MagickyBoardGames.ViewModels
+@model IEnumerable<MagickyBoardGames.ViewModels.OwnerViewModel>
+
+<h4>Owners</h4>
+<table class="table">
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    <a asp-controller="Player" asp-action="Details" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

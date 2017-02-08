@@ -1,0 +1,16 @@
+@using MagickyBoardGames.ViewModels
+@model IEnumerable<MagickyBoardGames.ViewModels.CategoryViewModel>
+
+<h4>Categories</h4>
+<table class="table">
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

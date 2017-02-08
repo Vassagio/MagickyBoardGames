@@ -24,6 +24,14 @@ namespace MagickyBoardGames.Controllers {
             return View(await context.BuildViewModel());
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Index(GameListViewModel viewModel) {
+            var context = _loader.LoadGameListContext();
+            return View(await context.BuildViewModel(viewModel));
+        }
+
         [Authorize]
         public IActionResult Search() {            
             return View(new ImportSearchViewModel());

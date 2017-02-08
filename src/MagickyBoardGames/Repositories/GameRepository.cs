@@ -21,7 +21,7 @@ namespace MagickyBoardGames.Repositories {
         }
 
         public async Task<IEnumerable<Game>> GetAll() {
-            return await _context.Games.ToListAsync();
+            return await _context.Games.AsNoTracking().ToListAsync();
         }
 
         private IQueryable<Game> Games() {

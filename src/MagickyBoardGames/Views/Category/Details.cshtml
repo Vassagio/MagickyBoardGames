@@ -1,45 +1,9 @@
 @model MagickyBoardGames.ViewModels.CategoryViewViewModel
 
-@{
-    ViewData["Title"] = "Details";
-}
-
 <h2>Details</h2>
 
-<div>
-    <h4>Category</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Category.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Category.Description)
-        </dd>
-    </dl>
-</div>
-<h4>Games</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Games) {
-            <tr>
-                <td>
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@await Html.PartialAsync("_Info", Model.Category)
+@await Html.PartialAsync("_Games", Model.Games)
 
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Category.Id" class="fa fa-pencil fa-2x"></a> |
