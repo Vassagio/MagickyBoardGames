@@ -28,6 +28,22 @@ namespace MagickyBoardGames.Tests.Controllers {
             var contextLoader = new MockGameContextLoader().LoadGameListContextStubbedToReturn(context);
             var controller = BuildGameController(contextLoader);
 
+            var result = await controller.Index();
+
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            viewResult.Model.Should().BeAssignableTo<GameListViewModel>();
+            viewResult.Model.Should().Be(viewModel);
+            context.VerifyBuildViewModelCalled();
+            contextLoader.VerifyLoadGameListContextCalled();
+        }
+
+        [Fact]
+        public async void Display_Index_Post_Result() {
+            var viewModel = new GameListViewModel();
+            var context = new MockGameListContext().BuildViewModelStubbedToReturn(viewModel);
+            var contextLoader = new MockGameContextLoader().LoadGameListContextStubbedToReturn(context);
+            var controller = BuildGameController(contextLoader);
+
             var result = await controller.Index(viewModel);
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;

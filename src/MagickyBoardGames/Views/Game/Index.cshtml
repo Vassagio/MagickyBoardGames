@@ -1,9 +1,5 @@
 @model MagickyBoardGames.ViewModels.GameListViewModel
 
-@{
-    ViewData["Title"] = "Index";
-}
-
 <h2>Games</h2>
 @await Html.PartialAsync("_Filter", Model)
 <p>

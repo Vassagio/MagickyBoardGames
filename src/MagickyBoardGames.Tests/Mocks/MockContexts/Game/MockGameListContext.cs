@@ -22,7 +22,7 @@ namespace MagickyBoardGames.Tests.Mocks.MockContexts.Game
             return this;
         }
 
-        public void VerifyBuildViewModelCalled(GameListViewModel viewModel, int times = 1) {
+        public void VerifyBuildViewModelCalled(GameListViewModel viewModel = null, int times = 1) {
             _mock.Verify(m => m.BuildViewModel(viewModel), Times.Exactly(times));
         }
     }
