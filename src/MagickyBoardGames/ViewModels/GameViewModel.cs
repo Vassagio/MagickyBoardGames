@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MagickyBoardGames.ViewModels
-{
-    public class GameViewModel : IViewModel
-    {
+namespace MagickyBoardGames.ViewModels {
+    public class GameViewModel : IViewModel {
         public int? Id { get; set; }
         public string Name { get; set; }
         [Display(Name = "Description")]
@@ -18,5 +16,6 @@ namespace MagickyBoardGames.ViewModels
         public string Thumbnail { get; set; }
         public string Image { get; set; }
         public int GameId { get; set; }
+        public string AverageRating { get; set; }
     }
 }

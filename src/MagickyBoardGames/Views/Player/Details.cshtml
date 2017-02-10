@@ -1,17 +1,11 @@
 @model MagickyBoardGames.ViewModels.PlayerViewViewModel
 
-<h2>Details</h2>
+<h2>Player Details</h2>
 
 <div>
-    <h4>Player</h4>
+    <h4>@Html.DisplayFor(model => model.Player.Name)</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Player.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Player.Name)
-        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Player.Email)
         </dt>
@@ -23,6 +17,6 @@
 @await Html.PartialAsync("_Games", Model.Games)
 @await Html.PartialAsync("_GamesRated", Model.GamesRated)
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<ul class="pager">
+    <li><a asp-action="Index">Back to List</a></li>
+</ul>

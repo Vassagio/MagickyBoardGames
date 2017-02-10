@@ -64,9 +64,9 @@
     </div>
 </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<ul class="pager">
+    <li><a asp-action="Index">Back to List</a></li>
+</ul>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

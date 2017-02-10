@@ -1,18 +1,16 @@
 @model MagickyBoardGames.ViewModels.GameViewViewModel
 
-<h2>Delete</h2>
-
-<h3>Are you sure you want to delete this?</h3>
 <div>
+    <form asp-action="Delete" style="float: right">
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+    </form>
     @await Html.PartialAsync("_Info", Model.Game)
     @await Html.PartialAsync("_Categories", Model.Categories)
     @await Html.PartialAsync("_Owners", Model.Owners)
     @await Html.PartialAsync("_PlayerRatings", Model.PlayerRatings)
-
-    <form asp-action="Delete">
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-danger" /> |
-            <a asp-action="Index">Back to List</a>
-        </div>
-    </form>
 </div>
+<ul class="pager">
+    <li><a asp-action="Index">Back to List</a></li>
+</ul>

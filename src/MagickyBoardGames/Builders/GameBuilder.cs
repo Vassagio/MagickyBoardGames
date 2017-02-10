@@ -4,9 +4,11 @@ using System.Linq;
 using MagickyBoardGames.Models;
 using MagickyBoardGames.ViewModels;
 using System.Xml.Linq;
+using MagickyBoardGames.Repositories;
 
 namespace MagickyBoardGames.Builders {
     public class GameBuilder : IBuilder<Game, GameViewModel>, IXmlElementBuilder<GameViewModel> {
+        private readonly IGamePlayerRatingRepository _gamePlayerRatingRepository;
         private const int SHORT_DESCRIPTION_LENGTH = 100;
         private int? _id;
         private string _name;
@@ -17,6 +19,11 @@ namespace MagickyBoardGames.Builders {
         private string _image;
         private string _thumbnail;
         private int _gameId;
+        private string _averageRating; //TODO: Needs Testing
+
+        public GameBuilder(IGamePlayerRatingRepository gamePlayerRatingRepository) {
+            _gamePlayerRatingRepository = gamePlayerRatingRepository;
+        }
 
         public GameViewModel ToViewModel() {
             return new GameViewModel {
@@ -29,7 +36,8 @@ namespace MagickyBoardGames.Builders {
                 Image = _image,
                 Thumbnail = _thumbnail,
                 GameId = _gameId,
-                PlayerRange = _minPlayers.HasValue && _maxPlayers.HasValue ? $"{_minPlayers.Value} - {_maxPlayers.Value}" : string.Empty
+                PlayerRange = _minPlayers.HasValue && _maxPlayers.HasValue ? $"{_minPlayers.Value} - {_maxPlayers.Value}" : string.Empty,
+                AverageRating = _averageRating
             };
         }
 
@@ -58,9 +66,11 @@ namespace MagickyBoardGames.Builders {
             _maxPlayers = entity.MaxPlayers;
             _image = entity.Image;
             _thumbnail = entity.Thumbnail;
+            _averageRating = $"{_gamePlayerRatingRepository.GetAverageRating(entity.Id).Result:N2}";
             return ToViewModel();
         }
 
+        //TODO: Needs Testing
         public GameViewModel Build(XElement element) {
             _name = GetNameFromElement(element);
             _description = RemoveHtmlFromDescription(element.Element("description").Value);

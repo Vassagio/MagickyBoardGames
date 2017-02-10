@@ -1,14 +1,6 @@
 @model MagickyBoardGames.ViewModels.CategoryViewModel
 
 <div>
-    <h4>Category</h4>
+    <h3>@Html.DisplayFor(model => model.Description)</h3>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-    </dl>
 </div>

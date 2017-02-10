@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MagickyBoardGames.Builders;
 using MagickyBoardGames.Models;
@@ -15,18 +17,18 @@ namespace MagickyBoardGames.Contexts.GameContexts {
             _gameBuilder = gameBuilder;
         }
 
+        //TODO: Needs Testing
         public async Task<GameListViewModel> BuildViewModel(GameListViewModel viewModel = null) {
-            var games = await _gameRepository.GetAll();
             viewModel = viewModel ?? new GameListViewModel();
-            if (!string.IsNullOrEmpty(viewModel.Filter.Name))
-                games = games.Where(g => g.Name.Contains(viewModel.Filter.Name));
-            if (!string.IsNullOrEmpty(viewModel.Filter.Description))
-                games = games.Where(g => g.Description.Contains(viewModel.Filter.Description));
-            if (viewModel.Filter.NumberOfPlayers.HasValue)
-                games = games.Where(g => g.MinPlayers <= viewModel.Filter.NumberOfPlayers && g.MaxPlayers >= viewModel.Filter.NumberOfPlayers);
-
-            var viewModels = games.Select(game => _gameBuilder.Build(game)).ToList();
-            viewModel.Games = viewModels;
+            var games = (await _gameRepository.GetAll())
+                         .ToSearchableQuery()
+                         .FilterByName(viewModel.Filter.Name)
+                         .FilterByDescription(viewModel.Filter.Description)
+                         .FilterByNumberOfPlayers(viewModel.Filter.NumberOfPlayers)
+                         .FilterByAverageRating(viewModel.Filter.Rating)
+                         .Execute();
+                            
+            viewModel.Games = games.Select(game => _gameBuilder.Build(game)).ToList();
             return viewModel;
         }
     }

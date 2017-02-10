@@ -2,25 +2,13 @@
 @model IEnumerable<MagickyBoardGames.ViewModels.GameViewModel>
 
 <h4>Games</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model) {
-            <tr>
-                <td>
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<ul class="list-group">
+    @foreach (var item in Model) {
+        <li class="list-group-item">
+            <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">
+                @Html.DisplayFor(modelItem => item.Name)
+            </a>
+        </li>
+    }
+</ul>
 
