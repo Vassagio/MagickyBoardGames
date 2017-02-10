@@ -7,6 +7,8 @@ using MagickyBoardGames.ViewModels;
 using Xunit;
 using FluentAssertions;
 using MagickyBoardGames.Models;
+using MagickyBoardGames.Repositories;
+using MagickyBoardGames.Tests.Mocks;
 
 namespace MagickyBoardGames.Tests.Builders
 {
@@ -22,7 +24,7 @@ namespace MagickyBoardGames.Tests.Builders
                 MaxPlayers = 10,
                 PlayerRange = "1 - 10"
             };
-            var builder = new GameBuilder();
+            var builder = BuildGameBuilder();
 
             var game = builder.Build(viewModel);
 
@@ -34,7 +36,7 @@ namespace MagickyBoardGames.Tests.Builders
         }
 
         [Fact]
-        public void Game_To_View_Model() {
+        public void Game_To_View_Model() {           
             var game = new Game {
                 Id = 4,
                 Name = "Name",
@@ -42,7 +44,7 @@ namespace MagickyBoardGames.Tests.Builders
                 MinPlayers = 1,
                 MaxPlayers = 10
             };
-            var builder = new GameBuilder();
+            var builder = BuildGameBuilder();
 
             var viewModel = builder.Build(game);
 
@@ -60,7 +62,7 @@ namespace MagickyBoardGames.Tests.Builders
             var game = new Game {
                 Description = new string('x', 1000),
             };
-            var builder = new GameBuilder();
+            var builder = BuildGameBuilder();
 
             var viewModel = builder.Build(game);
 
@@ -77,7 +79,7 @@ namespace MagickyBoardGames.Tests.Builders
             var game = new Game {
                 Description = description,
             };
-            var builder = new GameBuilder();
+            var builder = BuildGameBuilder();
 
             var viewModel = builder.Build(game);
 
@@ -88,12 +90,17 @@ namespace MagickyBoardGames.Tests.Builders
         [Fact]
         public void Game_To_View_Model_With_No_Description() {
             var game = new Game ();
-            var builder = new GameBuilder();
+            var builder = BuildGameBuilder();
 
             var viewModel = builder.Build(game);
 
             viewModel.Description.Should().Be(game.Description);
             viewModel.ShortDescription.Should().BeEmpty();
+        }
+
+        private static GameBuilder BuildGameBuilder(IGamePlayerRatingRepository gamePlayerRatingRepository = null) {
+            gamePlayerRatingRepository = gamePlayerRatingRepository ?? new MockGamePlayerRatingRepository();
+            return new GameBuilder(gamePlayerRatingRepository);
         }
     }
 }

@@ -1,17 +1,11 @@
 @model MagickyBoardGames.ViewModels.RatingViewViewModel
 
-<h2>Details</h2>
+<h2>Rating Details</h2>
 
 <div>
-    <h4>Rating</h4>
+    <h4>@Html.DisplayFor(model => model.Rating.Rate)</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Rating.Rate)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Rating.Rate)
-        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Rating.ShortDescription)
         </dt>
@@ -27,6 +21,6 @@
     </dl>
 </div>
 @await Html.PartialAsync("_Games", Model.Games)
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<ul class="pager">
+    <li><a asp-action="Index">Back to List</a></li>
+</ul>

@@ -1,11 +1,11 @@
 @model MagickyBoardGames.ViewModels.CategoryViewViewModel
 
-<h2>Details</h2>
-
+<div style="float: right">
+    <a asp-action="Edit" asp-route-id="@Model.Category.Id" data-toggle="tooltip" title="Edit" class="fa fa-pencil fa-2x"></a>
+    <a asp-action="Delete" asp-route-id="@Model.Category.Id" data-toggle="tooltip" title="Delete" class="fa fa-trash-o fa-2x" style="color: red"></a>
+</div>
 @await Html.PartialAsync("_Info", Model.Category)
 @await Html.PartialAsync("_Games", Model.Games)
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Category.Id" class="fa fa-pencil fa-2x"></a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<ul class="pager">
+    <li><a asp-action="Index">Back to List</a></li>
+</ul>

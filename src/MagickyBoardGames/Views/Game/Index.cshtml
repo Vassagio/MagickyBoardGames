@@ -17,6 +17,9 @@
             <th class="text-center visible-sm visible-md visible-lg">
                 # Of Players
             </th>
+            <th class="text-center visible-sm visible-md visible-lg">
+                Average Rating
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -33,6 +36,9 @@
                 </td>
                 <td class="col-md-2 text-center hidden-xs">
                     @Html.DisplayFor(modelItem => item.PlayerRange)
+                </td>
+                <td class="col-md-2 text-center hidden-xs">
+                    @Html.DisplayFor(modelItem => item.AverageRating)
                 </td>
                 <td width="100px" style="text-align: right">
                     <table class="table-condensed">

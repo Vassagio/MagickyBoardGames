@@ -2,33 +2,16 @@
 @model IEnumerable<MagickyBoardGames.ViewModels.GameRatingViewModel>
 
 <h4>Games Rated</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Rating
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model) {
-            <tr>
-                <td width="200px">
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">
-                        @Html.DisplayFor(modelItem => item.GameName)
-                    </a>
-                </td>
-                <td>
-                    <a asp-controller="Rating" asp-action="Details" asp-route-id="@item.Rating.Id">
-                        @Html.DisplayFor(modelItem => item.Rating.Rate)
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<ul class="list-group">
+    @foreach (var item in Model) {
+        <li class="list-group-item">
+            <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">
+                @Html.DisplayFor(modelItem => item.GameName)
+            </a>
+            <span class="badge">
+                @Html.DisplayFor(modelItem => item.Rating.Rate)
+            </span>
+        </li>
+    }
+</ul>
 

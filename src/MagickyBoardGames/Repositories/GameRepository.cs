@@ -21,14 +21,13 @@ namespace MagickyBoardGames.Repositories {
         }
 
         public async Task<IEnumerable<Game>> GetAll() {
-            return await _context.Games.AsNoTracking().ToListAsync();
+            return await _context.Games
+                .AsNoTracking().IncludeAllAssociations()               
+                .ToListAsync();
         }
 
         private IQueryable<Game> Games() {
-            return _context.Games
-                .Include(g => g.GameCategories).ThenInclude(gc => gc.Category)
-                .Include(g => g.GameOwners).ThenInclude(go => go.Owner)
-                .Include(g => g.GamePlayerRatings).ThenInclude(gpr => gpr.Rating);
+            return _context.Games.IncludeAllAssociations();
         }
 
         public async Task<Game> GetBy(int id) {       

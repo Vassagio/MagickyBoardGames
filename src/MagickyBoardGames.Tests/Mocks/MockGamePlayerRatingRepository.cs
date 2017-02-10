@@ -19,6 +19,10 @@ namespace MagickyBoardGames.Tests.Mocks {
             return _mock.Object.GetBy(gameId, playerId);
         }
 
+        public Task<double?> GetAverageRating(int gameId) {
+            return _mock.Object.GetAverageRating(gameId);
+        }
+
         public MockGamePlayerRatingRepository GetByStubbedToReturn(GamePlayerRating gamePlayerRating) {
             _mock.Setup(m => m.GetBy(It.IsAny<int>(), It.IsAny<string>())).Returns(Task.FromResult(gamePlayerRating));
             return this;
