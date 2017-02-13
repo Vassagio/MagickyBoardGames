@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MagickyBoardGames.Models {
     public class Game : IEntity {
@@ -9,6 +10,7 @@ namespace MagickyBoardGames.Models {
         public int MaxPlayers { get; set; }
         public string Thumbnail { get; set; }
         public string Image { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         public virtual ICollection<GameCategory> GameCategories { get; set; }
         public virtual ICollection<GameOwner> GameOwners { get; set; }

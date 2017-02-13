@@ -1,37 +1,26 @@
 @model MagickyBoardGames.ViewModels.GameListViewModel
 
-<form asp-action="Index">
-    <div class="form-horizontal">
-        <div class="form-group">
-            <div class="col-lg-1">
-                <label>Name:</label>
-            </div>
-            <div class="col-lg-2">
-                <input asp-for="Filter.Name" class="form-control" />
-            </div>
-            <div class="col-lg-1">
-                <label>Description:</label>
-            </div>
-            <div class="col-lg-2">
-                <input asp-for="Filter.Description" class="form-control" />
-            </div>
-            <div class="col-lg-1">
-                <label># Of Players:</label>
-            </div>
-            <div class="col-lg-1">
-                <input asp-for="Filter.NumberOfPlayers" class="form-control" />
-            </div>
-            <div class="col-lg-1">
-                <label>Rating</label>
-            </div>
-            <div class="col-lg-1">
-                <input asp-for="Filter.Rating" class="form-control" />
-            </div>
-            <div class="col-lg-2">
-                <input type="submit" value="Filter" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-default">Reset</a>
+<div class="well">
+    <form asp-action="Index">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-lg-2">
+                    <input asp-for="Filter.Name" class="form-control" placeholder="Name" />
+                </div>
+                <div class="col-lg-2">
+                    <input asp-for="Filter.Description" class="form-control" placeholder="Description" />
+                </div>
+                <div class="col-lg-2">
+                    <input asp-for="Filter.NumberOfPlayers" class="form-control" placeholder="# Of Players" />
+                </div>
+                <div class="col-lg-2">
+                    <input asp-for="Filter.Rating" class="form-control" placeholder="Rating" />
+                </div>
+                <div class="col-lg-2">
+                    <input type="submit" value="Filter" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-default">Reset</a>
+                </div>
             </div>
         </div>
-    </div>
-</form>
-<hr />
+    </form>
+</div>

@@ -1,4 +1,5 @@
-﻿using MagickyBoardGames.Models;
+﻿using System;
+using MagickyBoardGames.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagickyBoardGames.Data.ModelBuilders {
@@ -15,6 +16,7 @@ namespace MagickyBoardGames.Data.ModelBuilders {
             Builder.Entity<Game>().Property(c => c.MaxPlayers).IsRequired();
             Builder.Entity<Game>().Property(c => c.Thumbnail);
             Builder.Entity<Game>().Property(c => c.Image);
+            Builder.Entity<Game>().Property(c => c.CreatedDate).IsRequired().HasDefaultValue(DateTime.Now);
         }
     }
 }
